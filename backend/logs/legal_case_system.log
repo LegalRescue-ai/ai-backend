@@ -1,0 +1,197 @@
+2025-02-11 14:49:52 - main - INFO - [main.py:154] - Host: 0.0.0.0
+2025-02-11 14:49:52 - main - INFO - [main.py:155] - Port: 5000
+2025-02-11 14:49:52 - main - INFO - [main.py:156] - Environment: development
+2025-02-11 14:49:52 - main - INFO - [main.py:157] - Debug Mode: False
+2025-02-11 14:50:05 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 14:56:54 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 15:15:27 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 15:15:32 - main - ERROR - [category_routes.py:19] - Error retrieving categories: CategoryManager.get_all_categories() missing 1 required positional argument: 'self'
+2025-02-11 15:16:08 - main - ERROR - [category_routes.py:19] - Error retrieving categories: CategoryManager.get_all_categories() missing 1 required positional argument: 'self'
+2025-02-11 15:21:54 - main - ERROR - [category_routes.py:19] - Error retrieving categories: CategoryManager.get_all_categories() missing 1 required positional argument: 'self'
+2025-02-11 15:23:20 - main - ERROR - [category_routes.py:19] - Error retrieving categories: CategoryManager.get_all_categories() missing 1 required positional argument: 'self'
+2025-02-11 15:23:27 - main - ERROR - [category_routes.py:19] - Error retrieving categories: CategoryManager.get_all_categories() missing 1 required positional argument: 'self'
+2025-02-11 15:23:37 - main - ERROR - [category_routes.py:19] - Error retrieving categories: CategoryManager.get_all_categories() missing 1 required positional argument: 'self'
+2025-02-11 15:24:06 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 15:55:39 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 15:57:30 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:01:46 - main - INFO - [main.py:154] - Host: 0.0.0.0
+2025-02-11 16:01:46 - main - INFO - [main.py:155] - Port: 5000
+2025-02-11 16:01:46 - main - INFO - [main.py:156] - Environment: development
+2025-02-11 16:01:46 - main - INFO - [main.py:157] - Debug Mode: False
+2025-02-11 16:02:01 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:02:17 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:02:47 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:03:20 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:03:26 - main - ERROR - [main.py:132] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:24:50 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 16:24:50 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 16:24:50 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 16:24:50 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 16:24:50 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 16:25:14 - main - ERROR - [main.py:137] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:26:58 - main - ERROR - [main.py:137] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:27:14 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 16:27:14 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 16:27:14 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 16:27:14 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 16:27:14 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 16:27:19 - main - ERROR - [main.py:137] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:27:24 - main - ERROR - [main.py:137] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 16:28:16 - main - ERROR - [case.py:35] - Error analyzing case: 'Request' object has no attribute 'session'
+2025-02-11 16:33:28 - main - ERROR - [case.py:35] - Error analyzing case: 'Request' object has no attribute 'session'
+2025-02-11 16:35:30 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 16:35:30 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 16:35:30 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 16:35:30 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 16:35:30 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 16:39:09 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 16:39:09 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 16:39:09 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 16:39:09 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 16:39:09 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 17:18:42 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 17:18:42 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 17:18:42 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 17:18:42 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 17:18:42 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 17:29:43 - main - ERROR - [case.py:82] - Error prefilling form: 'Request' object has no attribute 'session'
+2025-02-11 17:31:45 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 17:31:46 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 17:31:46 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 17:31:46 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 17:31:46 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 17:31:55 - main - ERROR - [case.py:41] - Error analyzing case: the JSON object must be str, bytes or bytearray, not dict
+2025-02-11 17:32:14 - main - ERROR - [case.py:41] - Error analyzing case: the JSON object must be str, bytes or bytearray, not dict
+2025-02-11 17:33:13 - main - ERROR - [case.py:41] - Error analyzing case: the JSON object must be str, bytes or bytearray, not dict
+2025-02-11 17:33:44 - main - ERROR - [case.py:41] - Error analyzing case: the JSON object must be str, bytes or bytearray, not dict
+2025-02-11 17:36:39 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 17:36:39 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 17:36:39 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 17:36:39 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 17:36:39 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 17:37:22 - main - ERROR - [case.py:82] - Error prefilling form: 'Request' object has no attribute 'session'
+2025-02-11 17:38:45 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 17:38:45 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 17:38:45 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 17:38:45 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 17:38:45 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 17:44:19 - main - ERROR - [main.py:137] - Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-02-11 17:52:44 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 17:52:44 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 17:52:44 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 17:52:44 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 17:52:44 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 18:17:31 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 18:17:32 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 18:17:32 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 18:17:32 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 18:17:32 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 18:27:58 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 18:27:58 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 18:27:58 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 18:27:58 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 18:27:58 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 18:28:49 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 18:28:49 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 18:28:49 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 18:28:49 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 18:28:49 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 18:30:22 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 18:30:22 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 18:30:22 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 18:30:22 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 18:30:22 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 18:36:18 - main - ERROR - [case.py:83] - Error prefilling form: 'dict' object has no attribute 'initial_analysis'
+2025-02-11 18:37:12 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 18:37:12 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 18:37:12 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 18:37:12 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 18:37:12 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 18:37:17 - main - ERROR - [case.py:83] - Error prefilling form: 'dict' object has no attribute 'initial_analysis'
+2025-02-11 18:38:13 - main - ERROR - [case.py:83] - Error prefilling form: 'dict' object has no attribute 'initial_analysis'
+2025-02-11 18:38:27 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 18:38:27 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 18:38:27 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 18:38:27 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 18:38:27 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 18:38:41 - main - ERROR - [case.py:84] - Error prefilling form: 'dict' object has no attribute 'initial_analysis'
+2025-02-11 18:40:41 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 18:40:41 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 18:40:41 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 18:40:41 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 18:40:41 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 18:44:25 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 18:44:25 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 18:44:25 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 18:44:25 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 18:44:25 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 19:03:00 - main - INFO - [main.py:146] - Application created successfully
+2025-02-11 19:03:00 - main - INFO - [main.py:162] - Host: 0.0.0.0
+2025-02-11 19:03:00 - main - INFO - [main.py:163] - Port: 5000
+2025-02-11 19:03:00 - main - INFO - [main.py:164] - Environment: development
+2025-02-11 19:03:00 - main - INFO - [main.py:165] - Debug Mode: False
+2025-02-11 19:03:54 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 19:03:54 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 19:03:54 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 19:03:54 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 19:03:54 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 19:10:47 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 19:10:47 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 19:10:47 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 19:10:47 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 19:10:47 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 19:16:32 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 19:16:32 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 19:16:32 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 19:16:32 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 19:16:32 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 19:18:32 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 19:18:32 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 19:18:32 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 19:18:32 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 19:18:32 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 19:21:34 - main - ERROR - [case.py:84] - Error prefilling form: FormPrefillerService() takes no arguments
+2025-02-11 19:23:33 - main - ERROR - [case.py:84] - Error prefilling form: FormPrefillerService() takes no arguments
+2025-02-11 19:24:30 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 19:24:30 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 19:24:30 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 19:24:30 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 19:24:30 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 19:25:15 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 19:25:15 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 19:25:15 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 19:25:15 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 19:25:15 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-11 19:25:28 - main - ERROR - [case.py:84] - Error prefilling form: FormPrefillerService() takes no arguments
+2025-02-11 19:28:44 - main - INFO - [main.py:147] - Application created successfully
+2025-02-11 19:28:44 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-11 19:28:44 - main - INFO - [main.py:164] - Port: 5000
+2025-02-11 19:28:44 - main - INFO - [main.py:165] - Environment: development
+2025-02-11 19:28:44 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-12 00:41:51 - main - INFO - [main.py:147] - Application created successfully
+2025-02-12 00:41:51 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-12 00:41:51 - main - INFO - [main.py:164] - Port: 5000
+2025-02-12 00:41:51 - main - INFO - [main.py:165] - Environment: development
+2025-02-12 00:41:51 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-12 00:50:37 - main - INFO - [main.py:147] - Application created successfully
+2025-02-12 00:50:37 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-12 00:50:37 - main - INFO - [main.py:164] - Port: 5000
+2025-02-12 00:50:37 - main - INFO - [main.py:165] - Environment: development
+2025-02-12 00:50:37 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-12 00:52:17 - main - INFO - [main.py:147] - Application created successfully
+2025-02-12 00:52:17 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-12 00:52:17 - main - INFO - [main.py:164] - Port: 5000
+2025-02-12 00:52:17 - main - INFO - [main.py:165] - Environment: development
+2025-02-12 00:52:17 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-12 01:09:33 - main - INFO - [main.py:147] - Application created successfully
+2025-02-12 01:09:33 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-12 01:09:33 - main - INFO - [main.py:164] - Port: 5000
+2025-02-12 01:09:33 - main - INFO - [main.py:165] - Environment: development
+2025-02-12 01:09:33 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-12 01:11:05 - main - INFO - [main.py:147] - Application created successfully
+2025-02-12 01:11:05 - main - INFO - [main.py:163] - Host: 0.0.0.0
+2025-02-12 01:11:05 - main - INFO - [main.py:164] - Port: 5000
+2025-02-12 01:11:05 - main - INFO - [main.py:165] - Environment: development
+2025-02-12 01:11:05 - main - INFO - [main.py:166] - Debug Mode: False
+2025-02-12 01:47:58 - main - ERROR - [main.py:90] - Failed to initialize OpenAI client: Client.__init__() got an unexpected keyword argument 'proxies'
+2025-02-12 01:48:40 - main - ERROR - [main.py:90] - Failed to initialize OpenAI client: Client.__init__() got an unexpected keyword argument 'proxies'
