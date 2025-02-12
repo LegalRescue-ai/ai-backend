@@ -3,10 +3,10 @@ import sys
 import logging
 from logging.handlers import RotatingFileHandler
 
-from dotenv import load_dotenv # type: ignore
-from flask import Flask # type: ignore
-from flask_cors import CORS # type: ignore
-import openai # type: ignore
+from dotenv import load_dotenv  # type: ignore
+from flask import Flask  # type: ignore
+from flask_cors import CORS  # type: ignore
+import openai  # type: ignore
 from flask_session import Session
 
 # Configure base path
@@ -20,9 +20,6 @@ sys.path.extend([
 
 
 def configure_logging(app):
-    """
-    Configure logging with UTF-8 support to avoid encoding errors on Windows.
-    """
     logs_dir = os.path.join(BASE_DIR, 'logs')
     os.makedirs(logs_dir, exist_ok=True)
 
@@ -32,20 +29,19 @@ def configure_logging(app):
         os.path.join(logs_dir, 'app.log'),
         maxBytes=10 * 1024 * 1024,  # 10MB
         backupCount=5,
-        encoding='utf-8'  # Ensure UTF-8 encoding
+        encoding='utf-8'
     )
-    
+
     console_handler = logging.StreamHandler(sys.stdout)
 
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
-    
+
     file_handler.setFormatter(formatter)
     console_handler.setFormatter(formatter)
 
-    # Prevent duplicate log handlers
     if not app.logger.handlers:
         app.logger.addHandler(file_handler)
         app.logger.addHandler(console_handler)
@@ -54,9 +50,6 @@ def configure_logging(app):
 
 
 def validate_environment():
-    """
-    Validate critical environment variables.
-    """
     load_dotenv()
 
     required_vars = ['SECRET_KEY', 'OPENAI_API_KEY', 'FLASK_ENV']
@@ -68,27 +61,20 @@ def validate_environment():
 
 
 def create_app(config_object=None):
-    """
-    Application factory function.
-    """
     validate_environment()
 
     app = Flask(__name__)
 
-    # Load configuration
     from app.config.settings import Config
     app.config.from_object(config_object or Config)
 
-    # Session Configuration
     app.config['SESSION_TYPE'] = 'filesystem'
     Session(app)
 
     configure_logging(app)
 
-    # CORS Configuration
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
-    # OpenAI API Key Setup
     try:
         openai.api_key = os.getenv('OPENAI_API_KEY')
         app.config['OPENAI_CLIENT'] = openai
@@ -97,7 +83,6 @@ def create_app(config_object=None):
         app.logger.error(f"❌ Failed to initialize OpenAI API: {str(e)}")
         sys.exit(1)
 
-    # Register Blueprints
     try:
         from app.api.routes import api_bp
         app.register_blueprint(api_bp, url_prefix='/api')
@@ -125,16 +110,15 @@ def create_app(config_object=None):
         return {'error': 'Internal Server Error'}, 500
 
     app.logger.info("✅ Flask app created successfully")
-    
+
     return app
 
 
-def run_app():
-    """
-    Run the Flask application.
-    """
-    app = create_app()
+# ✅ Make sure `app` is defined at the module level
+app = create_app()
 
+
+def run_app():
     host = os.getenv('HOST', '0.0.0.0')
     port = int(os.getenv('PORT', 5000))
 
