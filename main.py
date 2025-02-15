@@ -73,7 +73,12 @@ def create_app(config_object=None):
 
     configure_logging(app)
 
-    CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+    CORS(app, resources={r"/api/*": 
+    {"origins":[ 
+    "http://localhost:5173",
+    "http://localhost:3000"
+    ]
+    }}, supports_credentials=True)
 
     try:
         openai.api_key = os.getenv('OPENAI_API_KEY')
