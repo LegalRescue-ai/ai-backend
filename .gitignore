@@ -1,4 +1,11 @@
-env
-pycache
-venv
-node_modules
+# Environment variables
+.env
+
+# Node.js dependencies
+node_modules/
+
+# Python cache
+__pycache__/
+
+# Virtual environment
+venv/
