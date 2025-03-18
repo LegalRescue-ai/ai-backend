@@ -52,7 +52,7 @@ def configure_logging(app):
 def validate_environment():
     load_dotenv()
 
-    required_vars = ['SECRET_KEY', 'OPENAI_API_KEY', 'FLASK_ENV']
+    required_vars = ['SECRET_KEY', 'OPENAI_API_KEY', 'FLASK_ENV', 'SUPABASE_URL', 'SUPABASE_KEY']
     missing_vars = [var for var in required_vars if not os.getenv(var)]
 
     if missing_vars:
@@ -86,6 +86,18 @@ def create_app(config_object=None):
         app.logger.info("✅ OpenAI API initialized successfully")
     except Exception as e:
         app.logger.error(f"❌ Failed to initialize OpenAI API: {str(e)}")
+        sys.exit(1)
+        
+    # Add Supabase initialization
+    try:
+        from supabase import create_client
+        supabase_url = os.getenv('SUPABASE_URL')
+        supabase_key = os.getenv('SUPABASE_KEY')
+        supabase_client = create_client(supabase_url, supabase_key)
+        app.config['SUPABASE_CLIENT'] = supabase_client
+        app.logger.info("✅ Supabase client initialized successfully")
+    except Exception as e:
+        app.logger.error(f"❌ Failed to initialize Supabase client: {str(e)}")
         sys.exit(1)
 
     try:

@@ -1,6 +1,7 @@
 from typing import Dict, Any
 import openai
 from datetime import datetime
+import json
 
 from app.utils.pii_remover import PIIRemover
 
@@ -80,24 +81,26 @@ class CaseAnalyzer:
                {self.LEGAL_CATEGORIES}
 
             2. Provide a confidence level (high/medium/low).
-            3. Extract key case details relevant for legal forms.
+            3. Generate a specific case title (maximum 70 characters) that describes key aspects WITHOUT any PII.
+            4. Extract key case details relevant for legal forms.
 
             Respond in JSON format:
             {{
                 "category": "Selected category",
                 "subcategory": "Selected subcategory",
                 "confidence": "high/medium/low",
+                "case_title": "Specific descriptive title without PII (max 70 characters)",
                 "key_details": "List of relevant case details"
             }}
 
             Case details: {cleaned_text}
             """
 
-            # Get GPT-4o classification
+            # Get classification
             response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": "You are a legal case classifier."},
+                    {"role": "system", "content": "You are a legal case classifier skilled at creating concise, descriptive case titles that NEVER contain personally identifiable information."},
                     {"role": "user", "content": prompt}
                 ],
                 response_format={"type": "json_object"}
@@ -132,13 +135,54 @@ class CaseAnalyzer:
             Dict containing the final case summary.
         """
         try:
-            category = initial_analysis.get("analysis", {}).get("category", "Unknown")
-            subcategory = initial_analysis.get("analysis", {}).get("subcategory", "Unknown")
-            key_details = initial_analysis.get("analysis", {}).get("key_details", "No details extracted.")
-
-            # Generate a dynamic case title
-            case_title = f"{category} - {subcategory} Case Review"
-
+            # Parse the analysis JSON if it's a string
+            if isinstance(initial_analysis.get("analysis"), str):
+                analysis_data = json.loads(initial_analysis.get("analysis", "{}"))
+            else:
+                analysis_data = initial_analysis.get("analysis", {})
+            
+            category = analysis_data.get("category", "Unknown")
+            subcategory = analysis_data.get("subcategory", "Unknown")
+            key_details = analysis_data.get("key_details", "No details extracted.")
+            
+            # Use the AI-generated title if available, otherwise generate a specific one
+            case_title = analysis_data.get("case_title")
+            if not case_title:
+                # Request a specific title based on form data
+                title_prompt = f"""Generate a specific, descriptive title (MAXIMUM 70 characters) for this {category} - {subcategory} case based on these details:
+                
+                Key details: {key_details}
+                Form data: {form_data}
+                
+                The title MUST NOT contain any personally identifiable information (PII) such as names, addresses, specific dates, or unique identifiers.
+                
+                Focus on the legal situation, not the individuals involved.
+                Examples of good titles:
+                - "Interstate Adoption with Biological Parent Consent"
+                - "Workplace Discrimination Based on Religious Practices"
+                - "Contested Foreclosure with Improper Notice Claims"
+                
+                YOUR RESPONSE MUST BE ONLY THE TITLE TEXT, MAXIMUM 70 CHARACTERS.
+                """
+                
+                title_response = self.client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {"role": "system", "content": "You generate concise, specific legal case titles without any PII, maximum 70 characters."},
+                        {"role": "user", "content": title_prompt}
+                    ]
+                )
+                
+                case_title = title_response.choices[0].message.content.strip('"').strip()
+                
+                # Ensure title is within 70 characters
+                if len(case_title) > 70:
+                    case_title = case_title[:67] + "..."
+            else:
+                # Ensure existing title is within 70 characters
+                if len(case_title) > 70:
+                    case_title = case_title[:67] + "..."
+            
             # Create a prompt that combines AI-generated insights and form responses
             prompt = f"""You are a professional legal summarizer assisting a {category} attorney specializing in {subcategory} cases in reviewing potential client leads.
 
@@ -181,8 +225,7 @@ Now, create a structured case summary:
                 messages=[
                     {"role": "system", "content": "You are a legal document summarizer."},
                     {"role": "user", "content": prompt}
-                ],
-               
+                ]
             )
 
             summary = response.choices[0].message.content
