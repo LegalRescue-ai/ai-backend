@@ -85,13 +85,36 @@ class CaseAnalyzer:
             4. Extract key case details relevant for legal forms.
 
             Respond in JSON format:
-            {{
-                "category": "Selected category",
-                "subcategory": "Selected subcategory",
-                "confidence": "high/medium/low",
-                "case_title": "Specific descriptive title without PII (max 70 characters)",
-                "key_details": "List of relevant case details"
-            }}
+                
+                
+           
+        
+          {
+ "case_title": "Specific descriptive title without PII (max 70 characters)",
+  "summary": {
+    "general_case_summary": [
+      "[Bullet point 1 summarizing core legal situation]",
+      "[Bullet point 2 summarizing core legal situation]",
+      "[Bullet point 3 summarizing core legal situation]",
+      "[Optional: Bullet point 4 summarizing core legal situation]"
+    ],
+    "key_aspects_of_the_case": [
+      "[Bullet point 1 listing key legal component]",
+      "[Bullet point 2 listing key legal component]",
+      "[Bullet point 3 listing key legal component]",
+      "[Bullet point 4 listing key legal component]",
+      "[Optional: Bullet point 5 listing key legal component]"
+    ],
+    "potential_merits_of_the_case": [
+      "[Bullet point 1 analyzing legal strategy and potential outcome]",
+      "[Bullet point 2 analyzing legal strategy and potential outcome]",
+      "[Bullet point 3 analyzing legal strategy and potential outcome]",
+      "[Bullet point 4 analyzing legal strategy and potential outcome]",
+      "[Optional: Bullet point 5 analyzing legal strategy and potential outcome]"
+    ]
+  }
+}
+
 
             Case details: {cleaned_text}
             """

@@ -85,8 +85,6 @@ def prefill_form():
             "status": "error",
             "message": str(e)
         }), 500
-
-
 @case_bp.route('/generate-summary', methods=['POST'])
 def generate_summary():
     """
@@ -98,12 +96,13 @@ def generate_summary():
         data = request.get_json()
         if not data or 'form_data' not in data:
             return jsonify({
-                "status": "error",
+                "status": "error", 
                 "message": "Form data is required"
             }), 400
 
         # Get initial analysis from session
         initial_analysis = data.get('initial_analysis')
+        caseId = data.get('caseId')
 
         if not initial_analysis:
             return jsonify({
@@ -125,64 +124,112 @@ def generate_summary():
         # Process the summary for database storage
         try:
             current_app.logger.info("Processing summary for database storage")
-            # Extract the JSON content from the summary string
-            summary_json_str = re.search(r'```json\n(.*?)\n```', summary_result['summary'], re.DOTALL)
-            if summary_json_str:
-                summary_data = json.loads(summary_json_str.group(1))
-                current_app.logger.info(f"Parsed summary JSON successfully")
+            
+            # Handle different possible formats of the summary result
+            summary_text = summary_result.get('summary', '')
+            
+            # Check if the summary is in JSON format inside a code block
+            json_block_pattern = r"```json\s*([\s\S]*?)\s*```"
+            json_match = re.search(json_block_pattern, summary_text, re.DOTALL)
+            
+            if json_match:
+                # Clean the JSON string by removing problematic control characters
+                json_text = json_match.group(1)
+                json_text = ''.join(ch for ch in json_text if ord(ch) >= 32 or ch in '\n\r\t')
                 
-                # Extract key aspects from HTML
-                key_aspects = extract_list_items(summary_data['summary'], 'Key aspects of the case')
-                key_aspects_str = ', '.join(key_aspects)  # Convert array to string
-                current_app.logger.info(f"Extracted key_aspects: {len(key_aspects)} items")
+                try:
+                    # Try to parse the entire JSON block
+                    summary_data = json.loads(json_text)
+                    current_app.logger.info("Successfully parsed summary JSON block")
+                except json.JSONDecodeError as e:
+                    current_app.logger.warning(f"JSON parse error: {str(e)}")
+                    
+                    # If parsing fails, extract title and summary directly with regex
+                    title_match = re.search(r'"title":\s*"([^"]*)"', json_text)
+                    title = title_match.group(1) if title_match else "Untitled Case"
+                    
+                    summary_match = re.search(r'"summary":\s*"([\s\S]*?)"\s*\n}', json_text)
+                    summary_html = ""
+                    if summary_match:
+                        # Clean up the escaping and normalize newlines
+                        summary_html = summary_match.group(1)\
+                            .replace('\\n', '\n')\
+                            .replace('\\"', '"')\
+                            .replace('\\t', '\t')
+                        current_app.logger.info("Extracted HTML content using regex")
+                    else:
+                        current_app.logger.error("Failed to extract HTML content")
+                        summary_html = summary_text  # Use the raw summary as fallback
+                    
+                    summary_data = {
+                        "title": title,
+                        "summary": summary_html
+                    }
+            else:
+                # If no JSON block found, use the raw summary
+                current_app.logger.warning("No JSON code block found, using raw summary")
+                summary_data = {
+                    "title": "Case Summary",  # Default title
+                    "summary": summary_text   # Use raw summary text
+                }
+            
+            # Extract list items from the HTML, handling potential capitalization differences
+            html_content = summary_data.get('summary', '')
+            
+            # Try different possible section titles for key aspects (handle capitalization)
+            key_aspects = extract_list_items(html_content, 'Key aspects of the case')
+            if not key_aspects:  # If not found, try alternative capitalization
+                key_aspects = extract_list_items(html_content, 'Key Aspects of the Case')
+            if not key_aspects:  # Try another variation
+                key_aspects = extract_list_items(html_content, 'Key Aspects')
                 
-                # Extract potential merits
-                potential_merits = extract_list_items(summary_data['summary'], 'Potential Merits of the Case')
-                potential_merits_str = ', '.join(potential_merits)  # Convert array to string
-                current_app.logger.info(f"Extracted potential_merits: {len(potential_merits)} items")
+            # Similarly for potential merits
+            potential_merits = extract_list_items(html_content, 'Potential Merits of the Case')
+            if not potential_merits:
+                potential_merits = extract_list_items(html_content, 'Potential merits of the case')
+            if not potential_merits:
+                potential_merits = extract_list_items(html_content, 'Potential Merits')
                 
-                # Extract critical factors
-                critical_factors = extract_list_items(summary_data['summary'], 'General Case Summary')
-                critical_factors_str = ', '.join(critical_factors)  # Convert array to string
-                current_app.logger.info(f"Extracted critical_factors: {len(critical_factors)} items")
+            # And for critical factors
+            critical_factors = extract_list_items(html_content, 'General Case Summary')
+            if not critical_factors:
+                critical_factors = extract_list_items(html_content, 'Case Summary')
                 
-                # Initialize database service
-                current_app.logger.info("Initializing database service")
-                db_service = DatabaseService()
-                
-                # Prepare case data for storage with correct data types
+            current_app.logger.info(f"Extracted key_aspects: {len(key_aspects)} items")
+            current_app.logger.info(f"Extracted potential_merits: {len(potential_merits)} items")
+            current_app.logger.info(f"Extracted critical_factors: {len(critical_factors)} items")
+            
+            # Initialize database service
+            current_app.logger.info("Initializing database service")
+            db_service = DatabaseService()  # This class now handles array formatting properly
+            
+            try:
+                current_app.logger.info("Storing actual case data")
                 case_data = {
                     "title": summary_data.get('title', 'Untitled Case'),
-                    "summary": summary_data['summary'],  # Full HTML summary
-                    "keyAspects": key_aspects_str,       # Store as text
-                    "potentialMerits": potential_merits_str,  # Store as varchar
-                    "criticalFactors": critical_factors_str,  # Store as varchar
-                    # Additional useful data
-                    "CaseId": data.get('case_id', 16),   # int8
+                    "summary": summary_data['summary'],
+                    "keyAspects": key_aspects,
+                    "potentialMerits": potential_merits,
+                    "criticalFactors": critical_factors,
+                    "CaseId": int(caseId),
                 }
                 
-                current_app.logger.info(f"Prepared case data for storage: {case_data}")
-                
-                # Store in Supabase
-                current_app.logger.info("Storing data in Supabase table 'AI case submission'")
                 stored_case = db_service.create_record('AI case submission', case_data)
                 
                 # Add the database ID to the response
-                summary_result['case_id'] = stored_case[0]['id'] if stored_case else None
+                summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
                 summary_result['stored'] = True
                 
                 current_app.logger.info(f"Case summary stored with ID: {summary_result.get('case_id')}")
+            except Exception as db_error:
+                current_app.logger.error(f"Database error: {str(db_error)}")
                 
-            else:
-                current_app.logger.error("Failed to parse summary JSON from response")
-                summary_result['stored'] = False
-                summary_result['storage_error'] = "Could not parse summary data"
-                
-        except Exception as db_error:
-            current_app.logger.error(f"Error storing case summary: {str(db_error)}")
-            # Still return the summary even if storage failed
+               
+            
+        except Exception as process_error:
+            current_app.logger.error(f"Error processing summary: {str(process_error)}")
             summary_result['stored'] = False
-            summary_result['storage_error'] = str(db_error)
+            summary_result['processing_error'] = str(process_error)
 
         return jsonify(summary_result), 200
 
@@ -193,10 +240,11 @@ def generate_summary():
             "message": str(e)
         }), 500
 
-
 def extract_list_items(html_content, section_title):
     """Extract list items from a specific section in the HTML content"""
-    pattern = f"<h3>{section_title}</h3>\\s*<ul>(.+?)</ul>"
+    # Escape any special regex characters in the section title
+    escaped_title = re.escape(section_title)
+    pattern = f"<h3>{escaped_title}</h3>\\s*<ul>(.+?)</ul>"
     section_match = re.search(pattern, html_content, re.DOTALL)
     
     if section_match:
@@ -216,7 +264,7 @@ def get_cases():
     """
     try:
         user_id = request.args.get('user_id')
-        query = {'CaseId': user_id} if user_id else None
+        query = {'CaseId': int(user_id)} if user_id else None
         
         db_service = DatabaseService()
         cases = db_service.get_records('AI case submission', query)
@@ -270,13 +318,15 @@ def test_db():
     """
     try:
         db_service = DatabaseService()
+        
+        # Create a minimal test record
         test_data = {
-            "title": "Test Case",
+            "title": ["Test Case"],
             "summary": "<h3>Test Summary</h3>",
-            "keyAspects": "Test aspect 1, Test aspect 2",
-            "potentialMerits": "Test merit 1, Test merit 2",
-            "criticalFactors": "Test factor 1, Test factor 2",
-            "CaseId": 99
+            "keyAspects": ["Test aspect 1"],  # Single item array
+            "potentialMerits": ["Test merit 1"],  # Single item array 
+            "criticalFactors": ["Test factor 1"],  # Single item array
+            "CaseId": 14
         }
         
         current_app.logger.info(f"Attempting to create test record in 'AI case submission'")

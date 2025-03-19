@@ -90,10 +90,10 @@ def create_app(config_object=None):
         
     # Add Supabase initialization
     try:
-        from supabase import create_client
+        from supabase import create_client, Client
         supabase_url = os.getenv('SUPABASE_URL')
         supabase_key = os.getenv('SUPABASE_KEY')
-        supabase_client = create_client(supabase_url, supabase_key)
+        supabase_client:Client = create_client(supabase_url, supabase_key)
         app.config['SUPABASE_CLIENT'] = supabase_client
         app.logger.info("✅ Supabase client initialized successfully")
     except Exception as e:
@@ -127,6 +127,7 @@ def create_app(config_object=None):
         return {'error': 'Internal Server Error'}, 500
 
     app.logger.info("✅ Flask app created successfully")
+    globals()['supabase_client'] = supabase_client
 
     return app
 
