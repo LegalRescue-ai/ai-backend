@@ -211,7 +211,7 @@ def generate_summary():
                     "keyAspects": key_aspects,
                     "potentialMerits": potential_merits,
                     "criticalFactors": critical_factors,
-                    "CaseId": int(caseId),
+                    "CaseId": caseId,
                 }
                 
                 stored_case = db_service.create_record('AI case submission', case_data)

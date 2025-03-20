@@ -138,7 +138,7 @@ app = create_app()
 
 def run_app():
     host = os.getenv('HOST', '0.0.0.0')
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 3001))
 
     app.logger.info(f"🚀 Starting Legal Case Management System")
     app.logger.info(f"🌍 Host: {host} | 🔢 Port: {port}")
