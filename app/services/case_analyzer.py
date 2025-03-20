@@ -194,8 +194,7 @@ Follow these guidelines:
 3. Each bullet point should be a complete, professional statement.
 4. Use formal legal terminology relevant to {category} cases.
 5. Focus only on legal aspects, requirements, and considerations.
-6. Use <ul> and <li> tags for bullet points.
-7. Ensure descriptions are abstract and applicable to similar cases.
+6. Ensure descriptions are abstract and applicable to similar cases.
 
 ### **Initial AI-Extracted Key Details:**
 {key_details}
@@ -206,19 +205,17 @@ Follow these guidelines:
 Now, create a structured case summary:
 {{
   "title": "{case_title}",
-  "summary": "HTML formatted summary with sections:
-              <h3>General Case Summary</h3>
-              <ul>
+  "summary": "summary with sections:
+              General Case Summary
                 [3-4 bullet points summarizing core legal situation]
-              </ul>
-              <h3>Key aspects of the case</h3>
-              <ul>
+              Key aspects of the case
                 [4-5 bullet points listing key legal components]
-              </ul>
-              <h3>Potential Merits of the Case</h3>
-              <ul>
+              Potential Merits of the Case
                 [4-5 bullet points analyzing legal strategies and potential outcomes]
-              </ul>"
+              Critical factors
+                [4-5 bullet points listing and analyzing critical factors of the case]
+            
+              "
 }}"""
 
             # Get GPT-4o summary

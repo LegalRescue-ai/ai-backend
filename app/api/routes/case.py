@@ -125,89 +125,106 @@ def generate_summary():
         try:
             current_app.logger.info("Processing summary for database storage")
             
-            # Handle different possible formats of the summary result
+            # Get the summary text from the result
             summary_text = summary_result.get('summary', '')
             
-            # Check if the summary is in JSON format inside a code block
-            json_block_pattern = r"```json\s*([\s\S]*?)\s*```"
-            json_match = re.search(json_block_pattern, summary_text, re.DOTALL)
-            
-            if json_match:
-                # Clean the JSON string by removing problematic control characters
-                json_text = json_match.group(1)
-                json_text = ''.join(ch for ch in json_text if ord(ch) >= 32 or ch in '\n\r\t')
-                
-                try:
-                    # Try to parse the entire JSON block
-                    summary_data = json.loads(json_text)
-                    current_app.logger.info("Successfully parsed summary JSON block")
-                except json.JSONDecodeError as e:
-                    current_app.logger.warning(f"JSON parse error: {str(e)}")
+            # Check if the summary is in JSON format
+            try:
+                # First, try to parse it directly as JSON
+                if isinstance(summary_text, str):
+                    summary_data = json.loads(summary_text)
+                    current_app.logger.info("Successfully parsed summary JSON")
+                else:
+                    summary_data = summary_text
                     
-                    # If parsing fails, extract title and summary directly with regex
-                    title_match = re.search(r'"title":\s*"([^"]*)"', json_text)
-                    title = title_match.group(1) if title_match else "Untitled Case"
+                # Extract title
+                title = summary_data.get('title', 'Untitled Case')
+                
+                # Extract the summary sections
+                summary_sections = summary_data.get('summary', {})
+                
+                # Extract the different sections
+                # Each section should be an array of strings
+                case_summary = summary_sections.get('General Case Summary', [])
+                key_aspects = summary_sections.get('Key aspects of the case', [])
+                
+                # Try alternative capitalization if not found
+                if not key_aspects:
+                    key_aspects = summary_sections.get('Key Aspects of the Case', [])
+                if not key_aspects:
+                    key_aspects = summary_sections.get('Key Aspects', [])
+                
+                potential_merits = summary_sections.get('Potential Merits of the Case', [])
+                if not potential_merits:
+                    potential_merits = summary_sections.get('Potential merits of the case', [])
+                if not potential_merits:
+                    potential_merits = summary_sections.get('Potential Merits', [])
+                
+                critical_factors = summary_sections.get('Critical factors', [])
+                if not critical_factors:
+                    critical_factors = summary_sections.get('Critical Factors', [])
+                
+                current_app.logger.info(f"Extracted case_summary: {len(case_summary)} items")
+                current_app.logger.info(f"Extracted key_aspects: {len(key_aspects)} items")
+                current_app.logger.info(f"Extracted potential_merits: {len(potential_merits)} items")
+                current_app.logger.info(f"Extracted critical_factors: {len(critical_factors)} items")
+                
+            except json.JSONDecodeError as e:
+                current_app.logger.warning(f"JSON parse error: {str(e)}")
+                
+                # If we couldn't parse the JSON, use regex as fallback
+                # This approach is kept from the original implementation as a fallback
+                json_block_pattern = r"```json\s*([\s\S]*?)\s*```"
+                json_match = re.search(json_block_pattern, summary_text, re.DOTALL)
+                
+                if json_match:
+                    # Clean the JSON string 
+                    json_text = json_match.group(1)
+                    json_text = ''.join(ch for ch in json_text if ord(ch) >= 32 or ch in '\n\r\t')
                     
-                    summary_match = re.search(r'"summary":\s*"([\s\S]*?)"\s*\n}', json_text)
-                    summary_html = ""
-                    if summary_match:
-                        # Clean up the escaping and normalize newlines
-                        summary_html = summary_match.group(1)\
-                            .replace('\\n', '\n')\
-                            .replace('\\"', '"')\
-                            .replace('\\t', '\t')
-                        current_app.logger.info("Extracted HTML content using regex")
-                    else:
-                        current_app.logger.error("Failed to extract HTML content")
-                        summary_html = summary_text  # Use the raw summary as fallback
-                    
-                    summary_data = {
-                        "title": title,
-                        "summary": summary_html
-                    }
-            else:
-                # If no JSON block found, use the raw summary
-                current_app.logger.warning("No JSON code block found, using raw summary")
-                summary_data = {
-                    "title": "Case Summary",  # Default title
-                    "summary": summary_text   # Use raw summary text
-                }
-            
-            # Extract list items from the HTML, handling potential capitalization differences
-            html_content = summary_data.get('summary', '')
-            
-            # Try different possible section titles for key aspects (handle capitalization)
-            key_aspects = extract_list_items(html_content, 'Key aspects of the case')
-            if not key_aspects:  # If not found, try alternative capitalization
-                key_aspects = extract_list_items(html_content, 'Key Aspects of the Case')
-            if not key_aspects:  # Try another variation
-                key_aspects = extract_list_items(html_content, 'Key Aspects')
-                
-            # Similarly for potential merits
-            potential_merits = extract_list_items(html_content, 'Potential Merits of the Case')
-            if not potential_merits:
-                potential_merits = extract_list_items(html_content, 'Potential merits of the case')
-            if not potential_merits:
-                potential_merits = extract_list_items(html_content, 'Potential Merits')
-                
-            # And for critical factors
-            critical_factors = extract_list_items(html_content, 'General Case Summary')
-            if not critical_factors:
-                critical_factors = extract_list_items(html_content, 'Case Summary')
-                
-            current_app.logger.info(f"Extracted key_aspects: {len(key_aspects)} items")
-            current_app.logger.info(f"Extracted potential_merits: {len(potential_merits)} items")
-            current_app.logger.info(f"Extracted critical_factors: {len(critical_factors)} items")
+                    try:
+                        # Try to parse the JSON block
+                        summary_data = json.loads(json_text)
+                        current_app.logger.info("Successfully parsed summary JSON block")
+                        
+                        # Extract title and summary as before
+                        title = summary_data.get('title', 'Untitled Case')
+                        summary_sections = summary_data.get('summary', {})
+                        
+                        # Extract the different sections
+                        case_summary = summary_sections.get('General Case Summary', [])
+                        key_aspects = summary_sections.get('Key aspects of the case', [])
+                        potential_merits = summary_sections.get('Potential Merits of the Case', [])
+                        critical_factors = summary_sections.get('Critical factors', [])
+                        
+                    except json.JSONDecodeError:
+                        # If still can't parse, use regex to extract each section
+                        current_app.logger.warning("Falling back to regex extraction")
+                        title = "Case Summary"  # Default title
+                        
+                        # Using empty arrays as default
+                        case_summary = []
+                        key_aspects = []
+                        potential_merits = []
+                        critical_factors = []
+                else:
+                    # If no JSON block found, use default values
+                    current_app.logger.warning("No JSON structure found, using defaults")
+                    title = "Case Summary"
+                    case_summary = []
+                    key_aspects = []
+                    potential_merits = []
+                    critical_factors = []
             
             # Initialize database service
             current_app.logger.info("Initializing database service")
-            db_service = DatabaseService()  # This class now handles array formatting properly
+            db_service = DatabaseService()
             
             try:
-                current_app.logger.info("Storing actual case data")
+                current_app.logger.info("Storing case data")
                 case_data = {
-                    "title": summary_data.get('title', 'Untitled Case'),
-                    "summary": summary_data['summary'],
+                    "title": title,
+                    "summary": case_summary,
                     "keyAspects": key_aspects,
                     "potentialMerits": potential_merits,
                     "criticalFactors": critical_factors,
@@ -223,8 +240,8 @@ def generate_summary():
                 current_app.logger.info(f"Case summary stored with ID: {summary_result.get('case_id')}")
             except Exception as db_error:
                 current_app.logger.error(f"Database error: {str(db_error)}")
-                
-               
+                summary_result['stored'] = False
+                summary_result['db_error'] = str(db_error)
             
         except Exception as process_error:
             current_app.logger.error(f"Error processing summary: {str(process_error)}")
@@ -239,7 +256,6 @@ def generate_summary():
             "status": "error",
             "message": str(e)
         }), 500
-
 def extract_list_items(html_content, section_title):
     """Extract list items from a specific section in the HTML content"""
     # Escape any special regex characters in the section title
