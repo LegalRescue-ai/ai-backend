@@ -231,7 +231,7 @@ def generate_summary():
                     "CaseId": caseId,
                 }
                 
-                stored_case = db_service.create_record('AI case submission', case_data)
+                stored_case = db_service.create_record('AI_case_submission', case_data)
                 
                 # Add the database ID to the response
                 summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
