@@ -192,7 +192,7 @@ def generate_summary():
                         summary_sections = summary_data.get('summary', {})
                         
                         # Extract the different sections
-                        case_summary = summary_sections.get('General Case Summary', [])
+                        case_summary = summary_sections.get('General Case Summary', "")
                         key_aspects = summary_sections.get('Key aspects of the case', [])
                         potential_merits = summary_sections.get('Potential Merits of the Case', [])
                         critical_factors = summary_sections.get('Critical factors', [])
@@ -203,7 +203,7 @@ def generate_summary():
                         title = "Case Summary"  # Default title
                         
                         # Using empty arrays as default
-                        case_summary = []
+                        case_summary = ""
                         key_aspects = []
                         potential_merits = []
                         critical_factors = []
@@ -211,7 +211,7 @@ def generate_summary():
                     # If no JSON block found, use default values
                     current_app.logger.warning("No JSON structure found, using defaults")
                     title = "Case Summary"
-                    case_summary = []
+                    case_summary = ""
                     key_aspects = []
                     potential_merits = []
                     critical_factors = []

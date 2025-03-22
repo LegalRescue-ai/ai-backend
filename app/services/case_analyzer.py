@@ -196,6 +196,7 @@ Follow these guidelines:
 5. Focus only on legal aspects, requirements, and considerations.
 6. Ensure descriptions are abstract and applicable to similar cases.
 
+
 ### **Initial AI-Extracted Key Details:**
 {key_details}
 
@@ -207,7 +208,7 @@ Now, create a structured case summary:
   "title": "{case_title}",
   "summary": "summary with sections:
               General Case Summary
-                [3-4 bullet points summarizing core legal situation]
+                concise paragraph (3-4 sentences) summarizing core legal situation
               Key aspects of the case
                 [4-5 bullet points listing key legal components]
               Potential Merits of the Case
