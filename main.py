@@ -76,7 +76,8 @@ def create_app(config_object=None):
     CORS(app, resources={r"/api/*": 
     {"origins":[ 
     "http://localhost:5173",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://main.dpfd8ph4b67cm.amplifyapp.com"
     ]
     }}, supports_credentials=True)
 
