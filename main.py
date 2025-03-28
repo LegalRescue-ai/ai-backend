@@ -77,7 +77,7 @@ def create_app(config_object=None):
     {"origins":[ 
     "http://localhost:5173",
     "http://localhost:3000",
-    "https://main.dpfd8ph4b67cm.amplifyapp.com"
+    "https://main.dpfd8ph4b67cm.amplifyapp.com",
     ]
     }}, supports_credentials=True)
 
