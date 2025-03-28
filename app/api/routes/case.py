@@ -22,15 +22,88 @@ def analyze_case():
                 "message": "Case text is required"
             }), 400
 
+        case_text = data['case_text'].strip()
+        
+        # Validate the input text length and content
+        if not case_text:
+            return jsonify({
+                "status": "error",
+                "message": "Case text cannot be empty"
+            }), 400
+            
+        # Check for common greetings only
+        common_greetings = ["hello", "hi", "hey", "greetings", "good morning", "good afternoon", "good evening"]
+        if case_text.lower() in common_greetings:
+            return jsonify({
+                "status": "error",
+                "message": "Please provide details about your case instead of just a greeting."
+            }), 400
+            
+        # Check for minimum word count
+        word_count = len(re.findall(r'\w+', case_text))
+        if word_count < 10:
+            return jsonify({
+                "status": "error",
+                "message": "Please provide more details about your case. We need at least 10 words to perform a meaningful analysis."
+            }), 400
+
+        # Check for gibberish/random text patterns
+        # Simple check for repeating characters or lack of spaces
+        if any(c * 5 in case_text for c in 'abcdefghijklmnopqrstuvwxyz') or ' ' not in case_text:
+            return jsonify({
+                "status": "error",
+                "message": "Your input appears to contain gibberish or random text. Please provide a clear description of your legal case."
+            }), 400
+            
+        # Calculate the ratio of unique words to total words (very low ratio might indicate gibberish)
+        words = re.findall(r'\w+', case_text.lower())
+        unique_word_ratio = len(set(words)) / len(words) if words else 0
+        
+        # Extremely high unique word ratio might indicate random strings
+        if unique_word_ratio > 0.9 and len(words) > 15:
+            return jsonify({
+                "status": "error",
+                "message": "Your input appears to contain unusually random text. Please provide a clear description of your legal case."
+            }), 400
+            
         # Initialize analyzer
         analyzer = CaseAnalyzer(api_key=current_app.config['OPENAI_API_KEY'])
-        print(analyzer)
+        current_app.logger.info(f"Analyzing case with {word_count} words")
         
         # Perform initial analysis
         analysis = analyzer.initial_analysis(data['case_text'])
         
+        # Check if the analysis result contains confidence information
+        try:
+            analysis_data = json.loads(analysis.get('analysis', '{}'))
+            
+            # Add a gibberish detection flag
+            gibberish_detected = False
+            
+            # Simple heuristics to detect gibberish in the original text
+            if unique_word_ratio > 0.85 and len(words) > 20:
+                gibberish_detected = True
+                
+            # Add the gibberish detection flag to the analysis
+            analysis_data['gibberish_detected'] = gibberish_detected
+            
+            # Update the analysis
+            analysis['analysis'] = json.dumps(analysis_data)
+            
+            # If we have extremely low confidence, reject the analysis
+            if analysis_data.get('confidence') == 'low' or (
+                isinstance(analysis_data.get('confidence'), (int, float)) and 
+                float(analysis_data.get('confidence')) < 0.3
+            ):
+                return jsonify({
+                    "status": "error",
+                    "message": "We're having trouble understanding your case description. Please provide more clear and specific details about your legal situation."
+                }), 400
+                
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            current_app.logger.warning(f"Error processing analysis confidence: {e}")
         
-        # ✅ Store analysis in Flask's session
+        # Store analysis in Flask's session
         session['initial_analysis'] = analysis  # Use session instead of request.session
 
         return jsonify(analysis), 200
