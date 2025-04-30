@@ -1,0 +1,7098 @@
+{
+  "1-1": {
+    "subcategoryId": 1,
+    "title": "Form for Adoptions",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "radio",
+        "name": "maritalStatus",
+        "title": "What is your marital status?",
+        "options": [
+          "Single",
+          "Married",
+          "Legally separated",
+          "Divorced",
+          "Widowed",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToChild",
+        "title": "What is your relationship to the child/children?",
+        "options": [
+          "I am the mother of the child/children",
+          "I am the father of the child/children",
+          "I am the grandparent of the child/children",
+          "I want to adopt the child/children",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "custodyStatus",
+        "title": "What is the current custody status of the child/children?",
+        "options": [
+          "In my custody or shared custody with my spouse",
+          "In the custody of the birth parent(s), other than my spouse",
+          "In state custody",
+          "Not yet born",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "biologicalMotherPosition",
+        "title": "What is the biological mother’s position regarding the adoption?",
+        "options": [
+          "Consents to the adoption",
+          "Objects to the adoption",
+          "Cannot be located",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "biologicalFatherPosition",
+        "title": "What is the biological father’s position regarding the adoption?",
+        "options": [
+          "Consents to the adoption",
+          "Objects to the adoption",
+          "Cannot be located",
+          "Is unknown",
+          "Other"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "childAge",
+        "title": "How old is the child/are the children?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "1-2": {
+    "title": "Form for Child Custody & Visitation",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "number",
+        "name": "childAge",
+        "title": "How old is your child/are your children?"
+      },
+      {
+        "type": "radio",
+        "name": "relationshipStatus",
+        "title": "What is the current status of your relationship with the other parent?",
+        "options": [
+          "We live together but are not married",
+          "We do not live together and were never married",
+          "We are married and live together",
+          "We are separated but have not filed for divorce",
+          "We are separated, and a divorce case has been filed",
+          "We are divorced, and both live alone",
+          "We are divorced, and I am remarried",
+          "We are divorced, and my ex-spouse is remarried",
+          "We are divorced, and both of us are remarried",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "custodyArrangement",
+        "title": "What is the current custody arrangement for the child/children?",
+        "options": [
+          "They are in my custody",
+          "They are in my former spouse’s/other parent’s custody",
+          "We share joint custody",
+          "They are in state custody",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "visitationArrangement",
+        "title": "What is the current visitation arrangement?",
+        "options": [
+          "Unsupervised visits",
+          "Supervised visits",
+          "Visits are limited in duration",
+          "Visits are limited in frequency (per week, month, or year)",
+          "No visitation",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "otherParentOccupation",
+        "title": "What is the other parent’s occupation?"
+      },
+      {
+        "type": "number",
+        "name": "childSupportAmount",
+        "title": "How much child support is currently being paid each month?($) (if applicable)"
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToChild",
+        "title": "What is your relationship to the child/children?",
+        "options": [
+          "Father",
+          "Mother",
+          "Grandparent",
+          "Stepparent",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherParentIncome",
+        "title": "What is the other parent’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "numberOfChildren",
+        "title": "How many children are involved?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "1-3": {
+    "title": "Form for Child Support",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "number",
+        "name": "childAge",
+        "title": "How old is your child/are your children?"
+      },
+      {
+        "type": "radio",
+        "name": "relationshipStatus",
+        "title": "What is the current status of your relationship with the other parent?",
+        "options": [
+          "We live together but are not married",
+          "We do not live together and were never married",
+          "We are married and live together",
+          "We are separated but have not filed for divorce",
+          "We are separated, and a divorce case has been filed",
+          "We are divorced, and both live alone",
+          "We are divorced, and I am remarried",
+          "We are divorced, and my ex-spouse is remarried",
+          "We are divorced, and both of us are remarried",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "custodyArrangement",
+        "title": "What is the current custody arrangement for the child/children?",
+        "options": [
+          "They are in my custody",
+          "They are in my former spouse’s/other parent’s custody",
+          "We share joint custody",
+          "They are in state custody",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "visitationArrangement",
+        "title": "What is the current visitation arrangement?",
+        "options": [
+          "Unsupervised visits",
+          "Supervised visits",
+          "Visits are limited in duration",
+          "Visits are limited in frequency (per week, month, or year)",
+          "No visitation",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "otherParentOccupation",
+        "title": "What is the other parent’s occupation?"
+      },
+      {
+        "type": "text",
+        "name": "childSupportAmount",
+        "title": "How much child support is currently being paid each month? (if applicable)"
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToChild",
+        "title": "What is your relationship to the child/children?",
+        "options": [
+          "Father",
+          "Mother",
+          "Grandparent",
+          "Stepparent",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherParentIncome",
+        "title": "What is the other parent’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "numberOfChildren",
+        "title": "How many children are involved?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "1-4": {
+    "title": "Form for Divorce",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "number",
+        "name": "childAge",
+        "title": "How old is your child/are your children (if any)?"
+      },
+      {
+        "type": "radio",
+        "name": "relationshipStatus",
+        "title": "What is the current status of your relationship?",
+        "options": [
+          "We are living together but not married",
+          "We are not living together and never have been married",
+          "We are married and living together",
+          "We are separated but have not yet filed for divorce",
+          "We are separated, and a divorce case has been filed",
+          "We are divorced, and both living alone",
+          "We are divorced, and I am now married to someone else",
+          "We are divorced, and my ex-spouse is now married to someone else",
+          "We are divorced, and we both are now married to others",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "spouseOccupation",
+        "title": "What is your spouse’s occupation?"
+      },
+      {
+        "type": "date",
+        "name": "marriageDate",
+        "title": "What is your date of marriage? (mm/dd/yyyy)"
+      },
+      {
+        "type": "date",
+        "name": "separationDate",
+        "title": "What is your date of separation? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "majorAssets",
+        "title": "What are your major assets and their approximate values? (e.g., Home: $, Vehicle(s): $, etc.)"
+      },
+      {
+        "type": "text",
+        "name": "majorDebts",
+        "title": "What are your major debts and their approximate values? (e.g., Credit card: $, Mortgage: $, etc.)"
+      },
+      {
+        "type": "radio",
+        "name": "mediationConsideration",
+        "title": "Would you consider mediation with an experienced family lawyer?",
+        "options": [
+          "Yes, both of us would agree to mediation",
+          "Yes, I would agree, but I’m unsure about my spouse",
+          "Yes, I would agree, but my spouse will not",
+          "No",
+          "I’m not sure what mediation is"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "spouseIncome",
+        "title": "What is your spouse’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "numberOfChildren",
+        "title": "How many children are involved (if any)?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "1-5": {
+    "title": "Form for Guardianship",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "radio",
+        "name": "maritalStatus",
+        "title": "What is your marital status?",
+        "options": [
+          "Single",
+          "Married",
+          "Legally separated",
+          "Divorced",
+          "Widowed",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "guardianshipFor",
+        "title": "Who are you a guardian for or seeking guardianship of?",
+        "options": [
+          "A child",
+          "A parent",
+          "An incapacitated person",
+          "The estate of another",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "1-6": {
+    "title": "Form for Paternity",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "radio",
+        "name": "maritalStatus",
+        "title": "What is your marital status?",
+        "options": [
+          "Single",
+          "Married",
+          "Legally separated",
+          "Divorced",
+          "Widowed",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "number",
+        "name": "childAge",
+        "title": "How old is your child/are your children?"
+      },
+      {
+        "type": "text",
+        "name": "otherParentOccupation",
+        "title": "What is the other parent’s occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "paternityTestConducted",
+        "title": "Has a paternity test been conducted?",
+        "options": [
+          "Yes, on this date: (mm/dd/yyyy)",
+          "No, but one is scheduled on this date: (mm/dd/yyyy)",
+          "No",
+          "I’m not sure"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "childSupportDemand",
+        "title": "Has a demand for child support been made?",
+        "options": [
+          "Yes, on this date: (mm/dd/yyyy)",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherParentIncome",
+        "title": "What is the other parent’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "numberOfChildren",
+        "title": "How many children are involved?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "1-7": {
+    "title": "Form for Separations",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "number",
+        "name": "childAge",
+        "title": "How old is your child/are your children (if any)?"
+      },
+      {
+        "type": "text",
+        "name": "otherParentOccupation",
+        "title": "What is the other parent’s or spouse’s occupation?"
+      },
+      {
+        "type": "date",
+        "name": "marriageDate",
+        "title": "What is your date of marriage? (mm/dd/yyyy)"
+      },
+      {
+        "type": "date",
+        "name": "separationDate",
+        "title": "What is your date of separation? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "majorAssets",
+        "title": "What are your major assets and their approximate values? (e.g., Home: $, Vehicle(s): $, etc.)"
+      },
+      {
+        "type": "text",
+        "name": "majorDebts",
+        "title": "What are your major debts and their approximate values? (e.g., Credit card: $, Mortgage: $, etc.)"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "spouseIncome",
+        "title": "What is your spouse’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "numberOfChildren",
+        "title": "How many children are involved (if any)?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "1-8": {
+    "title": "Form for Spousal Support or Alimony",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "relationshipStatus",
+        "title": "What is the current status of your relationship?",
+        "options": [
+          "We are living together but not married",
+          "We are not living together and never have been married",
+          "We are married and living together",
+          "We are separated but have not yet filed for divorce",
+          "We are separated, and a divorce case has been filed",
+          "We are divorced, and both living alone",
+          "We are divorced, and I am now married to someone else",
+          "We are divorced, and my ex-spouse is now married to someone else",
+          "We are divorced, and we both are now married to others",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "otherParentOccupation",
+        "title": "What is the other parent’s or spouse’s occupation?"
+      },
+      {
+        "type": "date",
+        "name": "marriageDate",
+        "title": "What is your date of marriage? (mm/dd/yyyy)"
+      },
+      {
+        "type": "date",
+        "name": "separationDate",
+        "title": "What is your date of separation? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceType",
+        "title": "What type of legal assistance are you seeking for spousal support or alimony?",
+        "options": [
+          "Establish alimony/spousal support",
+          "Collect unpaid alimony/spousal support",
+          "Increase the amount of alimony/spousal support",
+          "Decrease the amount of alimony/spousal support",
+          "Terminate alimony/spousal support",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "recentCourtAction",
+        "title": "What is the most recent court action regarding spousal support?",
+        "options": [
+          "Spousal support was awarded on this date: (mm/dd/yyyy)",
+          "There is no spousal support award by the court"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "currentSpousalSupportAmount",
+        "title": "What is the current amount of spousal support being paid each month?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "spouseIncome",
+        "title": "What is your spouse’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "2-1": {
+    "title": "Form for Disabilities",
+    "elements": [
+      {
+        "type": "date",
+        "name": "hireDate",
+        "title": "What was your date of hire? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation or job title?"
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "Are you still employed by the company?",
+        "options": [
+          "Yes",
+          "No, my last day of work was on: (mm/dd/yyyy)",
+          "Employment has not yet started"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToEmployer",
+        "title": "What is your relationship to the employer?",
+        "options": [
+          "Employee",
+          "Former employee",
+          "Job applicant",
+          "Independent contractor",
+          "Employer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerOrganization",
+        "title": "How is the employer organized?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Franchise",
+          "Privately held corporation",
+          "Public corporation",
+          "Nonprofit",
+          "Professional organization (law, accounting, architecture, etc.)",
+          "Government agency",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerIndustry",
+        "title": "What is the industry the employer operates in?",
+        "options": [
+          "High technology",
+          "Retail",
+          "Professional services (law, accounting, etc.)",
+          "Construction",
+          "Education",
+          "Government",
+          "Manufacturing",
+          "Transportation",
+          "Healthcare",
+          "Restaurant",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerSize",
+        "title": "How many employees does the employer have?",
+        "options": [
+          "1–4",
+          "5–50",
+          "51–100",
+          "101+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employmentAgreement",
+        "title": "What type of employment agreement do you have?",
+        "options": [
+          "At-will employment (can be terminated by either party)",
+          "Written contract for a specified period of time",
+          "Oral agreement for a specified period of time",
+          "Union contract",
+          "No contract",
+          "I am unsure",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "disability",
+        "title": "What is your disability?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "2-2": {
+    "title": "Form for Employment Contracts",
+    "elements": [
+      {
+        "type": "date",
+        "name": "hireDate",
+        "title": "What was your date of hire? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation or job title?"
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "Are you still employed by the company?",
+        "options": [
+          "Yes",
+          "No, my last day of work was on: (mm/dd/yyyy)",
+          "Employment has not yet started"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToEmployer",
+        "title": "What is your relationship to the employer?",
+        "options": [
+          "Employee",
+          "Former employee",
+          "Job applicant",
+          "Independent contractor",
+          "Employer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerOrganization",
+        "title": "How is the employer organized?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Franchise",
+          "Privately held corporation",
+          "Public corporation",
+          "Nonprofit",
+          "Professional organization (law, accounting, architecture, etc.)",
+          "Government agency",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerIndustry",
+        "title": "What is the industry the employer operates in?",
+        "options": [
+          "High technology",
+          "Retail",
+          "Professional services (law, accounting, etc.)",
+          "Construction",
+          "Education",
+          "Government",
+          "Manufacturing",
+          "Transportation",
+          "Healthcare",
+          "Restaurant",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerSize",
+        "title": "How many employees does the employer have?",
+        "options": [
+          "1–4",
+          "5–50",
+          "51–100",
+          "101+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceType",
+        "title": "What type of legal assistance do you need regarding the contract?",
+        "options": [
+          "Review an employment contract provided by the employer",
+          "Draft an employment contract for your business",
+          "Draft an employee handbook",
+          "File a lawsuit for breach of contract",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "2-3": {
+    "title": "Form for Employment Discrimination",
+    "elements": [
+      {
+        "type": "date",
+        "name": "hireDate",
+        "title": "What was your date of hire? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation or job title?"
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "Are you still employed by the company?",
+        "options": [
+          "Yes",
+          "No, my last day of work was on: (mm/dd/yyyy)",
+          "Employment has not yet started"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToEmployer",
+        "title": "What is your relationship to the employer?",
+        "options": [
+          "Employee",
+          "Former employee",
+          "Job applicant",
+          "Independent contractor",
+          "Employer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerOrganization",
+        "title": "How is the employer organized?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Franchise",
+          "Privately held corporation",
+          "Public corporation",
+          "Nonprofit",
+          "Professional organization (law, accounting, architecture, etc.)",
+          "Government agency",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerIndustry",
+        "title": "What is the industry the employer operates in?",
+        "options": [
+          "High technology",
+          "Retail",
+          "Professional services (law, accounting, etc.)",
+          "Construction",
+          "Education",
+          "Government",
+          "Manufacturing",
+          "Transportation",
+          "Healthcare",
+          "Restaurant",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerSize",
+        "title": "How many employees does the employer have?",
+        "options": [
+          "1–4",
+          "5–50",
+          "51–100",
+          "101+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employmentAgreement",
+        "title": "What type of employment agreement do you have?",
+        "options": [
+          "At-will employment (can be terminated by either party)",
+          "Written contract for a specified period of time",
+          "Oral agreement for a specified period of time",
+          "Union contract",
+          "No contract",
+          "I am unsure",
+          "Other"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "discriminationDate",
+        "title": "On what date or during what time period did the alleged discrimination occur?"
+      },
+      {
+        "type": "radio",
+        "name": "formalComplaint",
+        "title": "Have you filed a formal complaint?",
+        "options": [
+          "Yes, with the EEOC (Equal Employment Opportunity Commission) on this date: (mm/dd/yyyy)",
+          "Yes, with a state employment agency on this date: (mm/dd/yyyy)",
+          "No formal complaint was filed"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "discriminationBasis",
+        "title": "What is the basis of the alleged discrimination?",
+        "options": [
+          "Age (current age: __)",
+          "Disability (specific condition: __)",
+          "Gender",
+          "National origin (specific origin: __)",
+          "Race (specific race: __)",
+          "Religion (specific religion: __)",
+          "Sexual orientation",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "discriminationStage",
+        "title": "At what stage of employment did the discrimination occur?",
+        "options": [
+          "Hiring",
+          "Termination",
+          "Layoffs",
+          "Compensation",
+          "Promotions/Transfers",
+          "Job duties",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "witnessesOrEvidence",
+        "title": "Are there witnesses or evidence to support your claim?",
+        "options": [
+          "Yes (please describe: __)",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "2-4": {
+    "title": "Form for Pensions and Benefits",
+    "elements": [
+      {
+        "type": "date",
+        "name": "hireDate",
+        "title": "What was your date of hire? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation or job title?"
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "Are you still employed by the company?",
+        "options": [
+          "Yes",
+          "No, my last day of work was on: (mm/dd/yyyy)",
+          "Employment has not yet started"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToEmployer",
+        "title": "What is your relationship to the employer?",
+        "options": [
+          "Employee",
+          "Former employee",
+          "Job applicant",
+          "Independent contractor",
+          "Employer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerOrganization",
+        "title": "How is the employer organized?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Franchise",
+          "Privately held corporation",
+          "Public corporation",
+          "Nonprofit",
+          "Professional organization (law, accounting, architecture, etc.)",
+          "Government agency",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerIndustry",
+        "title": "What is the industry the employer operates in?",
+        "options": [
+          "High technology",
+          "Retail",
+          "Professional services (law, accounting, etc.)",
+          "Construction",
+          "Education",
+          "Government",
+          "Manufacturing",
+          "Transportation",
+          "Healthcare",
+          "Restaurant",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerSize",
+        "title": "How many employees does the employer have?",
+        "options": [
+          "1–4",
+          "5–50",
+          "51–100",
+          "101+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employmentAgreement",
+        "title": "What type of employment agreement do you have?",
+        "options": [
+          "At-will employment (can be terminated by either party)",
+          "Written contract for a specified period of time",
+          "Oral agreement for a specified period of time",
+          "Union contract",
+          "No contract",
+          "I am unsure",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "2-5": {
+    "title": "Form for Sexual Harassment",
+    "elements": [
+      {
+        "type": "date",
+        "name": "hireDate",
+        "title": "What was your date of hire? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation or job title?"
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "Are you still employed by the company?",
+        "options": [
+          "Yes",
+          "No, my last day of work was on: (mm/dd/yyyy)",
+          "Employment has not yet started"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToEmployer",
+        "title": "What is your relationship to the employer?",
+        "options": [
+          "Employee",
+          "Former employee",
+          "Job applicant",
+          "Independent contractor",
+          "Employer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerOrganization",
+        "title": "How is the employer organized?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Franchise",
+          "Privately held corporation",
+          "Public corporation",
+          "Nonprofit",
+          "Professional organization (law, accounting, architecture, etc.)",
+          "Government agency",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerIndustry",
+        "title": "What is the industry the employer operates in?",
+        "options": [
+          "High technology",
+          "Retail",
+          "Professional services (law, accounting, etc.)",
+          "Construction",
+          "Education",
+          "Government",
+          "Manufacturing",
+          "Transportation",
+          "Healthcare",
+          "Restaurant",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerSize",
+        "title": "How many employees does the employer have?",
+        "options": [
+          "1–4",
+          "5–50",
+          "51–100",
+          "101+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employmentAgreement",
+        "title": "What type of employment agreement do you have?",
+        "options": [
+          "At-will employment (can be terminated by either party)",
+          "Written contract for a specified period of time",
+          "Oral agreement for a specified period of time",
+          "Union contract",
+          "No contract",
+          "I am unsure",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "harassmentType",
+        "title": "What type of sexual harassment are you alleging?",
+        "options": [
+          "Hostile work environment",
+          "Unwanted sexual advances",
+          "Inappropriate touching or groping",
+          "Lewd or sexual comments",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "harassmentReported",
+        "title": "Have you reported the sexual harassment to a supervisor or HR department?",
+        "options": [
+          "Yes, on these dates:",
+          "No",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "2-6": {
+    "title": "Form for Wages and Overtime Pay",
+    "elements": [
+      {
+        "type": "date",
+        "name": "hireDate",
+        "title": "What was your date of hire? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation or job title?"
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "Are you still employed by the company?",
+        "options": [
+          "Yes",
+          "No, my last day of work was on: (mm/dd/yyyy)",
+          "Employment has not yet started"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToEmployer",
+        "title": "What is your relationship to the employer?",
+        "options": [
+          "Employee",
+          "Former employee",
+          "Job applicant",
+          "Independent contractor",
+          "Employer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerOrganization",
+        "title": "How is the employer organized?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Franchise",
+          "Privately held corporation",
+          "Public corporation",
+          "Nonprofit",
+          "Professional organization (law, accounting, architecture, etc.)",
+          "Government agency",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerIndustry",
+        "title": "What is the industry the employer operates in?",
+        "options": [
+          "High technology",
+          "Retail",
+          "Professional services (law, accounting, etc.)",
+          "Construction",
+          "Education",
+          "Government",
+          "Manufacturing",
+          "Transportation",
+          "Healthcare",
+          "Restaurant",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerSize",
+        "title": "How many employees does the employer have?",
+        "options": [
+          "1–4",
+          "5–50",
+          "51–100",
+          "101+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employmentAgreement",
+        "title": "What type of employment agreement do you have?",
+        "options": [
+          "At-will employment (can be terminated by either party)",
+          "Written contract for a specified period of time",
+          "Oral agreement for a specified period of time",
+          "Union contract",
+          "No contract",
+          "I am unsure",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "unpaidAmount",
+        "title": "Approximately how much money is owed in unpaid salary or overtime?"
+      },
+      {
+        "type": "radio",
+        "name": "overtimePaid",
+        "title": "Are you paid overtime for working over 40 hours per week?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t work over 40 hours per week"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "noOvertimeReason",
+        "title": "If not, why are you not receiving overtime?",
+        "options": [
+          "Paid straight time",
+          "Salaried position",
+          "Paid commissions",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "2-7": {
+    "title": "Form for Workplace Disputes",
+    "elements": [
+      {
+        "type": "date",
+        "name": "hireDate",
+        "title": "What was your date of hire? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation or job title?"
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "Are you still employed by the company?",
+        "options": [
+          "Yes",
+          "No, my last day of work was on: (mm/dd/yyyy)",
+          "Employment has not yet started"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToEmployer",
+        "title": "What is your relationship to the employer?",
+        "options": [
+          "Employee",
+          "Former employee",
+          "Job applicant",
+          "Independent contractor",
+          "Employer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerOrganization",
+        "title": "How is the employer organized?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Franchise",
+          "Privately held corporation",
+          "Public corporation",
+          "Nonprofit",
+          "Professional organization (law, accounting, architecture, etc.)",
+          "Government agency",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerIndustry",
+        "title": "What is the industry the employer operates in?",
+        "options": [
+          "High technology",
+          "Retail",
+          "Professional services (law, accounting, etc.)",
+          "Construction",
+          "Education",
+          "Government",
+          "Manufacturing",
+          "Transportation",
+          "Healthcare",
+          "Restaurant",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerSize",
+        "title": "How many employees does the employer have?",
+        "options": [
+          "1–4",
+          "5–50",
+          "51–100",
+          "101+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employmentAgreement",
+        "title": "What type of employment agreement do you have?",
+        "options": [
+          "At-will employment (can be terminated by either party)",
+          "Written contract for a specified period of time",
+          "Oral agreement for a specified period of time",
+          "Union contract",
+          "No contract",
+          "I am unsure",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "specificDispute",
+        "title": "What specific dispute are you facing in the workplace?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "2-8": {
+    "title": "Form for Wrongful Termination",
+    "elements": [
+      {
+        "type": "date",
+        "name": "hireDate",
+        "title": "What was your date of hire? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation or job title?"
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "Are you still employed by the company?",
+        "options": [
+          "Yes",
+          "No, my last day of work was on: (mm/dd/yyyy)",
+          "Employment has not yet started"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToEmployer",
+        "title": "What is your relationship to the employer?",
+        "options": [
+          "Employee",
+          "Former employee",
+          "Job applicant",
+          "Independent contractor",
+          "Employer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerOrganization",
+        "title": "How is the employer organized?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Franchise",
+          "Privately held corporation",
+          "Public corporation",
+          "Nonprofit",
+          "Professional organization (law, accounting, architecture, etc.)",
+          "Government agency",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerIndustry",
+        "title": "What is the industry the employer operates in?",
+        "options": [
+          "High technology",
+          "Retail",
+          "Professional services (law, accounting, etc.)",
+          "Construction",
+          "Education",
+          "Government",
+          "Manufacturing",
+          "Transportation",
+          "Healthcare",
+          "Restaurant",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employerSize",
+        "title": "How many employees does the employer have?",
+        "options": [
+          "1–4",
+          "5–50",
+          "51–100",
+          "101+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employmentAgreement",
+        "title": "What type of employment agreement did you have?",
+        "options": [
+          "At-will employment (can be terminated by either party)",
+          "Written contract for a specified period of time",
+          "Oral agreement for a specified period of time",
+          "Union contract",
+          "No contract",
+          "I am unsure",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "formalComplaint",
+        "title": "Have you filed a formal complaint?",
+        "options": [
+          "Yes, with the EEOC (Equal Employment Opportunity Commission) on this date: (mm/dd/yyyy)",
+          "Yes, with a state employment agency on this date: (mm/dd/yyyy)",
+          "No formal complaint was filed"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "terminationReason",
+        "title": "How did you leave the company?",
+        "options": [
+          "Was terminated (fired)",
+          "Was laid off due to workforce reduction",
+          "Voluntarily resigned",
+          "Was forced to resign",
+          "Retired",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "wrongfulTerminationReason",
+        "title": "Why do you believe the termination was wrongful?",
+        "options": [
+          "It was based on discrimination (e.g., race, religion, gender, age, etc.)",
+          "It was retaliatory for reporting unsafe conditions or misconduct",
+          "It violated the terms of an employment contract",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-1": {
+    "title": "Form for General Criminal Defense",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "reasonForLawyer",
+        "title": "Why are you seeking a criminal defense lawyer?",
+        "options": [
+          "I have been arrested or charged with committing a crime",
+          "I may be a suspect in a crime",
+          "My friend or relative has been arrested or charged",
+          "I want to appeal a criminal conviction (already sentenced)",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "specificCrime",
+        "title": "What specific crime(s) are you accused of?"
+      },
+      {
+        "type": "date",
+        "name": "arrestDate",
+        "title": "When were you arrested? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "nextCourtAppearance",
+        "title": "When is your next court appearance?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No date set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "courtNameLocation",
+        "title": "What is the name and location of the court?"
+      },
+      {
+        "type": "radio",
+        "name": "courtAppearancePurpose",
+        "title": "What is the purpose of your next court appearance?",
+        "options": [
+          "No court date set",
+          "First appearance or arraignment",
+          "Negotiations before trial",
+          "Motion",
+          "Trial",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "priorArrests",
+        "title": "Number of prior arrests:"
+      },
+      {
+        "type": "text",
+        "name": "priorMisdemeanors",
+        "title": "Number of prior misdemeanor convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorFelonies",
+        "title": "Number of prior felony convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorJuvenileConvictions",
+        "title": "Number of prior juvenile convictions:"
+      },
+      {
+        "type": "radio",
+        "name": "custodyStatus",
+        "title": "What is your current custody status?",
+        "options": [
+          "In custody (jail or prison)",
+          "Out of custody"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bailSet",
+        "title": "Has bail been set?",
+        "options": [
+          "Yes, at the amount of: $",
+          "No bail has been set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "onProbation",
+        "title": "Are you currently on probation?",
+        "options": [
+          "No",
+          "Yes. Terms of probation:",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Gender:"
+      },
+      {
+        "type": "text",
+        "name": "accusedCitizenship",
+        "title": "Citizenship or residency status:"
+      },
+      {
+        "type": "text",
+        "name": "accusedRace",
+        "title": "Race (if relevant to case):"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-2": {
+    "title": "Form for Environmental Violations",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "reasonForLawyer",
+        "title": "Why are you seeking a criminal defense lawyer?",
+        "options": [
+          "I have been arrested or charged with committing a crime",
+          "I may be a suspect in a crime",
+          "My friend or relative has been arrested or charged",
+          "I want to appeal a criminal conviction (already sentenced)",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "specificCrime",
+        "title": "What specific crime(s) are you accused of?"
+      },
+      {
+        "type": "date",
+        "name": "arrestDate",
+        "title": "When were you arrested? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "nextCourtAppearance",
+        "title": "When is your next court appearance?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No date set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "courtNameLocation",
+        "title": "What is the name and location of the court?"
+      },
+      {
+        "type": "radio",
+        "name": "courtAppearancePurpose",
+        "title": "What is the purpose of your next court appearance?",
+        "options": [
+          "No court date set",
+          "First appearance or arraignment",
+          "Negotiations before trial",
+          "Motion",
+          "Trial",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "priorArrests",
+        "title": "Number of prior arrests:"
+      },
+      {
+        "type": "text",
+        "name": "priorMisdemeanors",
+        "title": "Number of prior misdemeanor convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorFelonies",
+        "title": "Number of prior felony convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorJuvenileConvictions",
+        "title": "Number of prior juvenile convictions:"
+      },
+      {
+        "type": "radio",
+        "name": "custodyStatus",
+        "title": "What is your current custody status?",
+        "options": [
+          "In custody (jail or prison)",
+          "Out of custody"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bailSet",
+        "title": "Has bail been set?",
+        "options": [
+          "Yes, at the amount of: $",
+          "No bail has been set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Gender:"
+      },
+      {
+        "type": "text",
+        "name": "accusedCitizenship",
+        "title": "Citizenship or residency status:"
+      },
+      {
+        "type": "text",
+        "name": "accusedRace",
+        "title": "Race (if relevant to case):"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-3": {
+    "title": "Form for Drug Crimes",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "reasonForLawyer",
+        "title": "Why are you seeking a criminal defense lawyer?",
+        "options": [
+          "I have been arrested or charged with committing a crime",
+          "I may be a suspect in a crime",
+          "My friend or relative has been arrested or charged",
+          "I want to appeal a criminal conviction (already sentenced)",
+          "Other"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "arrestDate",
+        "title": "When were you arrested? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "nextCourtAppearance",
+        "title": "When is your next court appearance?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No date set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "courtNameLocation",
+        "title": "What is the name and location of the court?"
+      },
+      {
+        "type": "radio",
+        "name": "courtAppearancePurpose",
+        "title": "What is the purpose of your next court appearance?",
+        "options": [
+          "No court date set",
+          "First appearance or arraignment",
+          "Negotiations before trial",
+          "Motion",
+          "Trial",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "priorArrests",
+        "title": "Number of prior arrests:"
+      },
+      {
+        "type": "text",
+        "name": "priorMisdemeanors",
+        "title": "Number of prior misdemeanor convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorFelonies",
+        "title": "Number of prior felony convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorJuvenileConvictions",
+        "title": "Number of prior juvenile convictions:"
+      },
+      {
+        "type": "radio",
+        "name": "drugCrimeType",
+        "title": "What type of drug crime are you accused of?",
+        "options": [
+          "Drug possession",
+          "Drug trafficking or selling",
+          "Drug manufacturing",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "drugType",
+        "title": "What type of drugs are allegedly involved?",
+        "options": [
+          "Marijuana",
+          "Cocaine",
+          "Crack cocaine",
+          "Methamphetamine",
+          "Ecstasy",
+          "Heroin",
+          "Steroids",
+          "Prescription drugs",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "drugAmount",
+        "title": "How much of the drug(s) did law enforcement discover?"
+      },
+      {
+        "type": "radio",
+        "name": "custodyStatus",
+        "title": "What is your current custody status?",
+        "options": [
+          "In custody (jail or prison)",
+          "Out of custody"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bailSet",
+        "title": "Has bail been set?",
+        "options": [
+          "Yes, at the amount of: $",
+          "No bail has been set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "onProbation",
+        "title": "Are you currently on probation?",
+        "options": [
+          "No",
+          "Yes. Terms of probation:",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Gender:"
+      },
+      {
+        "type": "text",
+        "name": "accusedCitizenship",
+        "title": "Citizenship or residency status:"
+      },
+      {
+        "type": "text",
+        "name": "accusedRace",
+        "title": "Race (if relevant to case):"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-4": {
+    "title": "Form for Drunk Driving/DUI/DWI",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "reasonForLawyer",
+        "title": "Why are you seeking a criminal defense lawyer?",
+        "options": [
+          "I have been arrested or charged with committing a crime",
+          "I may be a suspect in a crime",
+          "My friend or relative has been arrested or charged",
+          "I want to appeal a criminal conviction (already sentenced)",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "specificDUI",
+        "title": "What specific DUI/DWI offense are you accused of?"
+      },
+      {
+        "type": "date",
+        "name": "arrestDate",
+        "title": "When were you arrested? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "nextCourtAppearance",
+        "title": "When is your next court appearance?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No date set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "courtNameLocation",
+        "title": "What is the name and location of the court?"
+      },
+      {
+        "type": "radio",
+        "name": "courtAppearancePurpose",
+        "title": "What is the purpose of your next court appearance?",
+        "options": [
+          "No court date set",
+          "First appearance or arraignment",
+          "Negotiations before trial",
+          "Motion",
+          "Trial",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "stopReason",
+        "title": "What did the police officer say was the reason for stopping you?",
+        "options": [
+          "Speeding",
+          "Reckless driving",
+          "Equipment issue (e.g., broken taillight)",
+          "Sobriety checkpoint",
+          "Accident involvement",
+          "No reason given",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "sobrietyTests",
+        "title": "What type of sobriety tests were conducted?",
+        "options": [
+          "Field sobriety test (walking a line, balancing, etc.)",
+          "Breathalyzer test at the scene",
+          "Blood, breath, or urine test at the police station",
+          "No test given",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "BACLevel",
+        "title": "What was your blood alcohol content (BAC) level according to the test?",
+        "options": [
+          "0.07 or less",
+          "0.08 to 0.09",
+          "0.10 to 0.15",
+          "0.16 to 0.20",
+          "0.21 or more",
+          "No test given",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "witnesses",
+        "title": "Were there witnesses to your arrest?",
+        "options": [
+          "Yes, in my vehicle",
+          "Yes, at the scene or in another vehicle",
+          "No witnesses",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "priorDUI",
+        "title": "How many times have you been previously convicted of a DUI/DWI offense?"
+      },
+      {
+        "type": "radio",
+        "name": "custodyStatus",
+        "title": "What is your current custody status?",
+        "options": [
+          "In custody (jail or prison)",
+          "Out of custody"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bailSet",
+        "title": "Has bail been set?",
+        "options": [
+          "Yes, at the amount of: $",
+          "No bail has been set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "onProbation",
+        "title": "Are you currently on probation?",
+        "options": [
+          "No",
+          "Yes. Terms of probation:",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Gender:"
+      },
+      {
+        "type": "text",
+        "name": "accusedCitizenship",
+        "title": "Citizenship or residency status:"
+      },
+      {
+        "type": "text",
+        "name": "accusedRace",
+        "title": "Race (if relevant to case):"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-5": {
+    "title": "Form for Felonies",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "reasonForLawyer",
+        "title": "Why are you seeking a criminal defense lawyer?",
+        "options": [
+          "I have been arrested or charged with committing a crime",
+          "I may be a suspect in a crime",
+          "My friend or relative has been arrested or charged",
+          "I want to appeal a criminal conviction (already sentenced)",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "specificFelony",
+        "title": "What specific felony crimes are you accused of?"
+      },
+      {
+        "type": "date",
+        "name": "arrestDate",
+        "title": "When were you arrested? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "nextCourtAppearance",
+        "title": "When is your next court appearance?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No date set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "courtNameLocation",
+        "title": "What is the name and location of the court?"
+      },
+      {
+        "type": "radio",
+        "name": "courtAppearancePurpose",
+        "title": "What is the purpose of your next court appearance?",
+        "options": [
+          "No court date set",
+          "First appearance or arraignment",
+          "Negotiations before trial",
+          "Motion",
+          "Trial",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "priorArrests",
+        "title": "Number of prior arrests:"
+      },
+      {
+        "type": "text",
+        "name": "priorMisdemeanors",
+        "title": "Number of prior misdemeanor convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorFelonies",
+        "title": "Number of prior felony convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorJuvenileConvictions",
+        "title": "Number of prior juvenile convictions:"
+      },
+      {
+        "type": "radio",
+        "name": "custodyStatus",
+        "title": "What is your current custody status?",
+        "options": [
+          "In custody (jail or prison)",
+          "Out of custody"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bailSet",
+        "title": "Has bail been set?",
+        "options": [
+          "Yes, at the amount of: $",
+          "No bail has been set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "onProbation",
+        "title": "Are you currently on probation?",
+        "options": [
+          "No",
+          "Yes. Terms of probation:",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Gender:"
+      },
+      {
+        "type": "text",
+        "name": "accusedCitizenship",
+        "title": "Citizenship or residency status:"
+      },
+      {
+        "type": "text",
+        "name": "accusedRace",
+        "title": "Race (if relevant to case):"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-6": {
+    "title": "Form for Misdemeanors",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "reasonForLawyer",
+        "title": "Why are you seeking a criminal defense lawyer?",
+        "options": [
+          "I have been arrested or charged with committing a crime",
+          "I may be a suspect in a crime",
+          "My friend or relative has been arrested or charged",
+          "I want to appeal a criminal conviction (already sentenced)",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "specificMisdemeanor",
+        "title": "What specific misdemeanor crimes are you accused of?"
+      },
+      {
+        "type": "date",
+        "name": "arrestDate",
+        "title": "When were you arrested? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "nextCourtAppearance",
+        "title": "When is your next court appearance?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No date set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "courtNameLocation",
+        "title": "What is the name and location of the court?"
+      },
+      {
+        "type": "radio",
+        "name": "courtAppearancePurpose",
+        "title": "What is the purpose of your next court appearance?",
+        "options": [
+          "No court date set",
+          "First appearance or arraignment",
+          "Negotiations before trial",
+          "Motion",
+          "Trial",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "priorArrests",
+        "title": "Number of prior arrests:"
+      },
+      {
+        "type": "text",
+        "name": "priorMisdemeanors",
+        "title": "Number of prior misdemeanor convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorFelonies",
+        "title": "Number of prior felony convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorJuvenileConvictions",
+        "title": "Number of prior juvenile convictions:"
+      },
+      {
+        "type": "radio",
+        "name": "custodyStatus",
+        "title": "What is your current custody status?",
+        "options": [
+          "In custody (jail or prison)",
+          "Out of custody"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bailSet",
+        "title": "Has bail been set?",
+        "options": [
+          "Yes, at the amount of: $",
+          "No bail has been set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "onProbation",
+        "title": "Are you currently on probation?",
+        "options": [
+          "No",
+          "Yes. Terms of probation:",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Gender:"
+      },
+      {
+        "type": "text",
+        "name": "accusedCitizenship",
+        "title": "Citizenship or residency status:"
+      },
+      {
+        "type": "text",
+        "name": "accusedRace",
+        "title": "Race (if relevant to case):"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-7": {
+    "title": "Form for Speeding and Moving Violations",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "nextCourtAppearance",
+        "title": "When is your next court appearance?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No date set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "courtNameLocation",
+        "title": "What is the name and location of the court?"
+      },
+      {
+        "type": "radio",
+        "name": "violationType",
+        "title": "What violation were you ticketed for?",
+        "options": [
+          "Speeding",
+          "Reckless driving",
+          "Running a red light",
+          "Illegal turn",
+          "Causing an accident",
+          "Driving with a suspended license",
+          "No proof of insurance",
+          "Other"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "ticketDate",
+        "title": "When did you receive the traffic ticket? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Gender:"
+      },
+      {
+        "type": "text",
+        "name": "accusedCitizenship",
+        "title": "Citizenship or residency status:"
+      },
+      {
+        "type": "text",
+        "name": "accusedRace",
+        "title": "Race (if relevant to case):"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-8": {
+    "title": "Form for White Collar Crime",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "reasonForLawyer",
+        "title": "Why are you seeking a criminal defense lawyer?",
+        "options": [
+          "I have been arrested or charged with committing a crime",
+          "I may be a suspect in a crime",
+          "My friend or relative has been arrested or charged",
+          "I want to appeal a criminal conviction (already sentenced)",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "specificCrime",
+        "title": "What specific crimes are you accused of?"
+      },
+      {
+        "type": "date",
+        "name": "arrestDate",
+        "title": "When were you arrested? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "nextCourtAppearance",
+        "title": "When is your next court appearance?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No date set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "courtNameLocation",
+        "title": "What is the name and location of the court?"
+      },
+      {
+        "type": "radio",
+        "name": "courtAppearancePurpose",
+        "title": "What is the purpose of your next court appearance?",
+        "options": [
+          "No court date set",
+          "First appearance or arraignment",
+          "Negotiations before trial",
+          "Motion",
+          "Trial",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "priorArrests",
+        "title": "Number of prior arrests:"
+      },
+      {
+        "type": "text",
+        "name": "priorMisdemeanors",
+        "title": "Number of prior misdemeanor convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorFelonies",
+        "title": "Number of prior felony convictions:"
+      },
+      {
+        "type": "text",
+        "name": "priorJuvenileConvictions",
+        "title": "Number of prior juvenile convictions:"
+      },
+      {
+        "type": "radio",
+        "name": "custodyStatus",
+        "title": "What is your current custody status?",
+        "options": [
+          "In custody (jail or prison)",
+          "Out of custody"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bailSet",
+        "title": "Has bail been set?",
+        "options": [
+          "Yes, at the amount of: $",
+          "No bail has been set",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Gender:"
+      },
+      {
+        "type": "text",
+        "name": "accusedCitizenship",
+        "title": "Citizenship or residency status:"
+      },
+      {
+        "type": "text",
+        "name": "accusedRace",
+        "title": "Race (if relevant to case):"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you planning to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "3-9": {
+    "title": "Form for Tax Evasion",
+    "elements": [
+      {
+        "type": "text",
+        "name": "backTaxesAmount",
+        "title": "What does the government claim you owe in back taxes as an amount?:"
+      },
+      {
+        "type": "radio",
+        "name": "taxYears",
+        "title": "For which of the following tax years does the government allege that you filed incomplete or inaccurate tax statements?",
+        "options": [
+          "Tax years:",
+          "No claimed incomplete or inaccurate tax statements",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistance",
+        "title": "I need legal assistance to negotiate with the IRS to get (select all that apply):",
+        "options": [
+          "An offer in compromise",
+          "An installment payment agreement",
+          "Tax penalties removed",
+          "Tax liens and levies stopped",
+          "The criminal investigation stopped",
+          "No negotiations with the IRS"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "accusedAge",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "accusedGender",
+        "title": "Sex:"
+      },
+      {
+        "type": "text",
+        "name": "accusedOccupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "text",
+        "name": "accusedMaritalStatus",
+        "title": "Marital status:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "4-1": {
+    "title": "Form for Commercial Real Estate",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInTransaction",
+        "title": "What is your role in this transaction or dispute?",
+        "options": [
+          "Buyer",
+          "Seller",
+          "Owner",
+          "Landlord",
+          "Tenant",
+          "Agent",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "propertyValue",
+        "title": "What is the current market value of the property? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "4-2": {
+    "title": "Form for Condominiums and Cooperatives",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInMatter",
+        "title": "What is your role in this matter?",
+        "options": [
+          "Owner of a condominium or cooperative",
+          "Member of a condominium board",
+          "Buyer of a condominium or cooperative",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "propertyValue",
+        "title": "What is the current market value of the property? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "4-3": {
+    "title": "Form for Construction Disputes",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "projectType",
+        "title": "What type of construction project is involved?",
+        "options": [
+          "Private/residential property project",
+          "Commercial development project",
+          "Public construction project",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "roleInDispute",
+        "title": "What is your role in the dispute?",
+        "options": [
+          "Property owner",
+          "Contractor",
+          "Subcontractor",
+          "Material supplier",
+          "Lender/investor",
+          "Injured person",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "disputeWith",
+        "title": "Who is the dispute with?",
+        "options": [
+          "Landowner",
+          "Contractor",
+          "Subcontractor",
+          "Material supplier",
+          "Lender/investor",
+          "No dispute",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "projectCost",
+        "title": "What is the estimated cost of the construction project? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "4-4": {
+    "title": "Form for Foreclosures",
+    "elements": [
+      {
+        "type": "text",
+        "name": "propertyValue",
+        "title": "What is the current market value of the property? ($)"
+      },
+      {
+        "type": "text",
+        "name": "amountOwed",
+        "title": "What is the approximate amount owed on the property? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "missedPayments",
+        "title": "How many months of missed mortgage payments are there?",
+        "options": [
+          "1–3 months",
+          "4–6 months",
+          "More than 6 months",
+          "No missed payments",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "foreclosureLawsuitFiled",
+        "title": "Was a foreclosure lawsuit filed?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "foreclosureJudgmentEntered",
+        "title": "Was a foreclosure judgment entered?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "4-5": {
+    "title": "Form for Mortgages",
+    "elements": [
+      {
+        "type": "text",
+        "name": "propertyValue",
+        "title": "What is the current market value of the property? ($)"
+      },
+      {
+        "type": "text",
+        "name": "amountOwed",
+        "title": "What is the approximate amount owed on the property? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "4-6": {
+    "title": "Form for Purchase and Sale of Residence",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInTransaction",
+        "title": "What is your role in this transaction?",
+        "options": [
+          "Buyer",
+          "Seller",
+          "Owner",
+          "Landlord",
+          "Tenant",
+          "Agent",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "propertyValue",
+        "title": "What is the current market value of the property? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "saleStatus",
+        "title": "What is the status of the sale?",
+        "options": [
+          "Agreement not yet reached",
+          "Oral agreement reached, but written contract not finalized",
+          "Written contract signed, but sale still pending",
+          "Written contract signed, sale closed (buyer paid, title transferred)"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "attorneyAssistance",
+        "title": "How do you need the attorney's assistance?",
+        "options": [
+          "General advice on protecting my interests",
+          "Acting as my agent in the transaction",
+          "Assistance with remaining stages of the transaction",
+          "Filing a lawsuit against the other party",
+          "Defending against a lawsuit filed by the other party",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "brokerIssues",
+        "title": "Are there issues with the broker, agent, or realtor?",
+        "options": [
+          "Failed to inspect property",
+          "Failed to disclose problems",
+          "Conflict of interest (e.g., undisclosed client)",
+          "Failed to disclose commissions",
+          "No issues with the broker, agent, or realtor",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "sellerIssues",
+        "title": "Are there issues with the seller?",
+        "options": [
+          "Refuses to proceed with closing",
+          "Delaying closing unjustifiably",
+          "Failed to convey marketable title (title defects)",
+          "Failed to disclose property condition",
+          "Built property defectively",
+          "Did not repair property damage",
+          "No issues with the seller",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "buyerIssues",
+        "title": "Are there issues with the buyer?",
+        "options": [
+          "Refuses reasonable financing",
+          "Refuses to proceed with closing",
+          "Delaying closing unjustifiably",
+          "Failed to record title transfer",
+          "Did not pay transaction costs",
+          "No issues with the buyer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "4-7": {
+    "title": "Form for Title and Boundary Disputes",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInDispute",
+        "title": "What is your role in this dispute?",
+        "options": [
+          "Owner of the property with a title or boundary issue",
+          "Contesting title or boundary on another person’s property",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "5-1": {
+    "title": "Form for Breach of Contract",
+    "elements": [
+      {
+        "type": "date",
+        "name": "contractDate",
+        "title": "When was the contract entered into? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "contractType",
+        "title": "What type of contract was it?",
+        "options": [
+          "Written (I have a copy)",
+          "Written (I do not have a copy)",
+          "Oral",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "contractValue",
+        "title": "What is the approximate value of the contract? ($)"
+      },
+      {
+        "type": "text",
+        "name": "breachDate",
+        "title": "When was the contract breached? (Date or time period)"
+      },
+      {
+        "type": "text",
+        "name": "lossValue",
+        "title": "What is the approximate value of the loss due to the breach? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "collectionLikelihood",
+        "title": "How likely is it that you will collect money from the other party if you win?",
+        "options": [
+          "Very good",
+          "Good",
+          "Possible",
+          "Unlikely",
+          "Not applicable"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "5-2": {
+    "title": "Form for Corporate Tax",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "legalAssistanceReason",
+        "title": "Your organization needs legal assistance in a tax matter for what reason? (select all that apply):",
+        "options": [
+          "Consultation / advice",
+          "Tax preparation",
+          "Audit",
+          "IRS hearing or trial",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "businessType",
+        "title": "Your organization is what kind of business?:",
+        "options": [
+          "Privately held",
+          "Publicly traded",
+          "Nonprofit",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "taxElection",
+        "title": "Your organization’s tax election is:",
+        "options": [
+          "S Corporation",
+          "C Corporation",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "5-3": {
+    "title": "Form for Business Disputes",
+    "elements": [
+      {
+        "type": "date",
+        "name": "contractDate",
+        "title": "When was the contract involved in this dispute entered into? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "contractType",
+        "title": "What type of contract was it?",
+        "options": [
+          "Written (I have a copy)",
+          "Written (I do not have a copy)",
+          "Oral",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "contractValue",
+        "title": "What is the approximate value of the contract? ($)"
+      },
+      {
+        "type": "text",
+        "name": "breachDate",
+        "title": "When was the contract breached? (Date or time period)"
+      },
+      {
+        "type": "text",
+        "name": "lossValue",
+        "title": "What is the approximate value of the loss due to the dispute? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "contractRelated",
+        "title": "Is there a contract related to the business dispute?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "5-4": {
+    "title": "Form for Buying and Selling a Business",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInTransaction",
+        "title": "What is your role in this transaction?",
+        "options": [
+          "Buyer of a business",
+          "Seller of a business",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "businessPrice",
+        "title": "What is the approximate purchase or selling price of the business? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "5-5": {
+    "title": "Form for Contract Drafting and Review",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "contractSubject",
+        "title": "What is the subject matter of the contract?",
+        "options": [
+          "Independent contractor or employee agreement",
+          "Purchase or sale of goods",
+          "Manufacturing of goods",
+          "Hiring of a business or person to perform a service",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherParty",
+        "title": "Who is the other party in the contract?",
+        "options": [
+          "Individual",
+          "Partnership",
+          "Business or corporation",
+          "Trust or estate",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "contractValue",
+        "title": "What is the approximate value of the contract? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "5-6": {
+    "title": "Form for Corporations, LLCs, Partnerships, etc.",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "legalAssistanceType",
+        "title": "What type of legal assistance are you seeking?",
+        "options": [
+          "Form a business organization",
+          "Dissolve a business organization",
+          "Continue running my business organization",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "businessOrganizationType",
+        "title": "What type of business organization is involved?",
+        "options": [
+          "Partnership",
+          "Corporation",
+          "S Corporation",
+          "LLC (Limited Liability Company)",
+          "LLP (Limited Liability Partnership)",
+          "Nonprofit",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "5-7": {
+    "title": "Form for Entertainment Law",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInMatter",
+        "title": "What is your role in this matter?",
+        "options": [
+          "Artist (musician, actor, painter, writer, etc.)",
+          "Owner of an entertainment company",
+          "Promoter",
+          "Producer",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "6-1": {
+    "title": "Form for Citizenship",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "immigrationStatus",
+        "title": "What is the current status of the person with the immigration matter?",
+        "options": [
+          "Outside the United States",
+          "In the United States on a visa",
+          "In the United States without proper documentation",
+          "In deportation/removal proceedings",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hearingScheduled",
+        "title": "Is there a hearing scheduled?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No hearing scheduled"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "eligibilityReason",
+        "title": "Why is the person eligible for U.S. citizenship?",
+        "options": [
+          "Lived in the U.S. as a lawful permanent resident for at least 5 years",
+          "Physically present in the U.S. for at least half of the last 5 years",
+          "Has not been outside the U.S. for over a year during the past 5 years",
+          "Lived in the state where applying for at least 3 months",
+          "Demonstrates good moral character (e.g., no criminal record, paid taxes, registered for the draft)",
+          "Can speak, read, and write in English",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "translatorNeeded",
+        "title": "Does the individual need a translator or language assistance?",
+        "options": [
+          "Yes. Language:",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "age",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "sex",
+        "title": "Sex:"
+      },
+      {
+        "type": "text",
+        "name": "educationLevel",
+        "title": "Education level:"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "text",
+        "name": "maritalStatus",
+        "title": "Marital status:"
+      },
+      {
+        "type": "text",
+        "name": "countryOfOrigin",
+        "title": "Country of origin:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "6-2": {
+    "title": "Form for Deportation",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "immigrationStatus",
+        "title": "What is the current status of the person facing deportation?",
+        "options": [
+          "Outside the United States",
+          "In the United States on a visa",
+          "In the United States without proper documentation",
+          "In deportation/removal proceedings",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hearingScheduled",
+        "title": "Is there a hearing scheduled?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No hearing scheduled"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "deportationReason",
+        "title": "Why is the person facing deportation?",
+        "options": [
+          "Visa has expired",
+          "In the United States illegally",
+          "Convicted of a crime",
+          "Failure to pay taxes",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "translatorNeeded",
+        "title": "Does the individual need a translator or language assistance?",
+        "options": [
+          "Yes. Language:",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "age",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "sex",
+        "title": "Sex:"
+      },
+      {
+        "type": "text",
+        "name": "educationLevel",
+        "title": "Education level:"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "text",
+        "name": "maritalStatus",
+        "title": "Marital status:"
+      },
+      {
+        "type": "text",
+        "name": "countryOfOrigin",
+        "title": "Country of origin:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "6-3": {
+    "title": "Form for Permanent Visas or Green Cards",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "immigrationStatus",
+        "title": "What is the current status of the person seeking a green card?",
+        "options": [
+          "Outside the United States",
+          "In the United States on a visa",
+          "In the United States without proper documentation",
+          "In deportation/removal proceedings",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hearingScheduled",
+        "title": "Is there a hearing scheduled?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No hearing scheduled"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "visaType",
+        "title": "What type of permanent visa/green card is being sought?",
+        "options": [
+          "Marriage",
+          "Immediate relative",
+          "Refugee or political asylum",
+          "Employment",
+          "Long-term resident",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "translatorNeeded",
+        "title": "Does the individual need a translator or language assistance?",
+        "options": [
+          "Yes. Language:",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "age",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "sex",
+        "title": "Sex:"
+      },
+      {
+        "type": "text",
+        "name": "educationLevel",
+        "title": "Education level:"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "text",
+        "name": "maritalStatus",
+        "title": "Marital status:"
+      },
+      {
+        "type": "text",
+        "name": "countryOfOrigin",
+        "title": "Country of origin:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "6-4": {
+    "title": "Form for Temporary Visas",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "immigrationStatus",
+        "title": "What is the current status of the person seeking a temporary visa?",
+        "options": [
+          "Outside the United States",
+          "In the United States on a visa",
+          "In the United States without proper documentation",
+          "In deportation/removal proceedings",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hearingScheduled",
+        "title": "Is there a hearing scheduled?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No hearing scheduled"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "visaType",
+        "title": "What type of temporary visa is being sought?",
+        "options": [
+          "Work",
+          "School/education",
+          "Tourism",
+          "Business",
+          "Fiancee",
+          "Visiting family members",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "translatorNeeded",
+        "title": "Does the individual need a translator or language assistance?",
+        "options": [
+          "Yes. Language:",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "age",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "sex",
+        "title": "Sex:"
+      },
+      {
+        "type": "text",
+        "name": "educationLevel",
+        "title": "Education level:"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "text",
+        "name": "maritalStatus",
+        "title": "Marital status:"
+      },
+      {
+        "type": "text",
+        "name": "countryOfOrigin",
+        "title": "Country of origin:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "7-1": {
+    "title": "Form for Automobile Accidents",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceType",
+        "title": "What type of legal assistance are you seeking?",
+        "options": [
+          "File a claim for an injury",
+          "Defend against a claim made by someone else"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "injuryDate",
+        "title": "When did the injury occur? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "injuryLocation",
+        "title": "Where did the injury occur?"
+      },
+      {
+        "type": "radio",
+        "name": "injuryTypes",
+        "title": "What are the nature and types of injuries sustained?",
+        "options": [
+          "Lower back pain",
+          "Upper back pain",
+          "Shoulder pain",
+          "Neck pain",
+          "Headaches",
+          "Nausea",
+          "Difficulty sleeping",
+          "Anxiety",
+          "Cuts and bruises",
+          "Broken bones",
+          "Loss of feeling in part of the body",
+          "Difficulty breathing",
+          "Impaired vision",
+          "Memory loss",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "ownInsuranceCoverage",
+        "title": "Does the injured party believe their insurance will cover this injury?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherPartyInsuranceCoverage",
+        "title": "Does the injured party believe the other party's insurance will cover this injury?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "witnesses",
+        "title": "Are there witnesses to the injury, and are their names known?",
+        "options": [
+          "Yes. Number of witnesses:",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "medicalTreatmentStatus",
+        "title": "What is the status of medical treatment?",
+        "options": [
+          "No treatment yet",
+          "Still receiving treatment",
+          "Stopped treatment but needs to restart",
+          "Treatment completed",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "medicalPractitioners",
+        "title": "Which medical practitioners have been consulted, if any?",
+        "options": [
+          "Medical doctor",
+          "Surgeon",
+          "Chiropractor",
+          "Acupuncturist",
+          "Physical therapist",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "medicalCosts",
+        "title": "What are the approximate medical costs incurred to date? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "missedWork",
+        "title": "Has the injured party missed work due to the injury?",
+        "options": [
+          "No work missed",
+          "Number of days missed:",
+          "Number of months missed:",
+          "Injured person will return to work on this date: (mm/dd/yyyy)",
+          "Injured person is still receiving treatment and unsure when they will return to work",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "lostIncome",
+        "title": "What is the amount of lost work income to date? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "claimStatus",
+        "title": "What is the current status of the claim?",
+        "options": [
+          "No action taken yet",
+          "Demand for compensation made",
+          "Lawsuit filed",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "injuredPartyRole",
+        "title": "At the time of the accident, what was the injured party’s role?",
+        "options": [
+          "Driver of an automobile",
+          "Passenger of an automobile",
+          "Pedestrian"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "vehiclesInvolved",
+        "title": "How many vehicles were involved in the accident?",
+        "options": [
+          "One",
+          "Two",
+          "Three",
+          "Four or more"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "policeReportFiled",
+        "title": "Did the police arrive at the accident scene and file a report?",
+        "options": [
+          "Yes",
+          "No",
+          "I think so",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "faultDetermination",
+        "title": "If a police report was filed, who was found at fault for the accident?",
+        "options": [
+          "Me",
+          "Driver of the car I was in",
+          "Other driver",
+          "No conclusion",
+          "I don’t know",
+          "No report filed",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "vehicleDamage",
+        "title": "What damage did the injured party’s vehicle sustain?",
+        "options": [
+          "No damage",
+          "Minor scratches or bumps",
+          "Major structural damage",
+          "Vehicle is totaled/unlikely to be repaired",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "priorInjury",
+        "title": "Was there a prior injury to the same part of the body?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is the injured party’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "7-2": {
+    "title": "Form for Dangerous Property or Buildings",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceType",
+        "title": "What type of legal assistance are you seeking?",
+        "options": [
+          "File a claim for an injury",
+          "Defend against a claim for injury made by someone else"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "injuryDate",
+        "title": "When did the injury occur? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "injuryLocation",
+        "title": "Where did the injury occur?"
+      },
+      {
+        "type": "radio",
+        "name": "injuryTypes",
+        "title": "What are the nature and types of injuries sustained?",
+        "options": [
+          "Lower back pain",
+          "Upper back pain",
+          "Shoulder pain",
+          "Neck pain",
+          "Headaches",
+          "Nausea",
+          "Difficulty sleeping",
+          "Anxiety",
+          "Cuts and bruises",
+          "Broken bones",
+          "Loss of feeling in part of the body",
+          "Difficulty breathing",
+          "Impaired vision",
+          "Memory loss",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "ownInsuranceCoverage",
+        "title": "Does the injured party believe their insurance will cover this injury?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherPartyInsuranceCoverage",
+        "title": "Does the injured party believe the other party's insurance will cover this injury?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "witnesses",
+        "title": "Are there witnesses to the injury, and are their names known?",
+        "options": [
+          "Yes. Number of witnesses:",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "medicalTreatmentStatus",
+        "title": "What is the status of medical treatment?",
+        "options": [
+          "No treatment yet",
+          "Still receiving treatment",
+          "Stopped treatment but needs to restart",
+          "Treatment completed",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "medicalPractitioners",
+        "title": "Which medical practitioners have been consulted, if any?",
+        "options": [
+          "Medical doctor",
+          "Surgeon",
+          "Chiropractor",
+          "Acupuncturist",
+          "Physical therapist",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "medicalCosts",
+        "title": "What are the approximate medical costs incurred to date? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "missedWork",
+        "title": "Has the injured party missed work due to the injury?",
+        "options": [
+          "No work missed",
+          "Number of days missed:",
+          "Number of months missed:",
+          "Injured person will return to work on this date: (mm/dd/yyyy)",
+          "Injured person is still receiving treatment and unsure when they will return to work",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "lostIncome",
+        "title": "What is the amount of lost work income to date? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "claimStatus",
+        "title": "What is the current status of the claim?",
+        "options": [
+          "No action taken yet",
+          "Demand for compensation made",
+          "Lawsuit filed",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is the injured party’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "7-3": {
+    "title": "Form for Defective Products",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "claimStatus",
+        "title": "What is the current status of the claim?",
+        "options": [
+          "No action taken yet",
+          "Demand for compensation made",
+          "Lawsuit filed",
+          "Other"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "purchaseDate",
+        "title": "When was the product purchased? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "purchasedFrom",
+        "title": "Who was the product purchased from?",
+        "options": [
+          "A business",
+          "An individual",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "productCost",
+        "title": "What was the cost of the product? ($)"
+      },
+      {
+        "type": "date",
+        "name": "defectiveDate",
+        "title": "When was the product determined to be defective or caused injury? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "injuriesCaused",
+        "title": "What injuries did the product cause, if any?",
+        "options": [
+          "No injuries",
+          "Cuts and bruises",
+          "Broken bones",
+          "Headaches",
+          "Nausea",
+          "Difficulty sleeping",
+          "Anxiety",
+          "Difficulty breathing",
+          "Impaired vision",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "defectiveProductType",
+        "title": "What type of defective product caused the injury or needs replacement?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "7-4": {
+    "title": "Form for Medical Malpractice",
+    "elements": [
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "date",
+        "name": "injuryDate",
+        "title": "When did the injury occur? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "ownInsuranceCoverage",
+        "title": "Does the injured party believe their insurance will cover this injury?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherPartyInsuranceCoverage",
+        "title": "Does the injured party believe the other party's insurance will cover this injury?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "medicalTreatmentStatus",
+        "title": "What is the status of medical treatment?",
+        "options": [
+          "No treatment yet",
+          "Still receiving treatment",
+          "Stopped treatment but needs to restart",
+          "Treatment completed",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "medicalCosts",
+        "title": "What are the approximate medical costs incurred to date? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "missedWork",
+        "title": "Has the injured party missed work due to the injury?",
+        "options": [
+          "No work missed",
+          "Number of days missed:",
+          "Number of months missed:",
+          "Injured person will return to work on this date: (mm/dd/yyyy)",
+          "Injured person is still receiving treatment and unsure when they will return to work",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "lostIncome",
+        "title": "What is the amount of lost work income to date? ($)"
+      },
+      {
+        "type": "date",
+        "name": "malpracticeDiscoveryDate",
+        "title": "When was the medical malpractice discovered? (mm/dd/yyyy or time period)"
+      },
+      {
+        "type": "radio",
+        "name": "malpracticeConsequences",
+        "title": "What were the consequences of the medical malpractice?",
+        "options": [
+          "No injury",
+          "Minor injury",
+          "Disfigurement or cosmetic injury",
+          "Short-term loss of physical ability",
+          "Long-term or permanent loss of physical ability",
+          "Possibility of future harm",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "providerResponse",
+        "title": "How did the healthcare provider respond to the issue?",
+        "options": [
+          "Provided a partial or full refund",
+          "Directed additional treatment",
+          "Denied wrongdoing",
+          "I did not complain",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "healthcareOrganizationType",
+        "title": "What type of healthcare organization was involved?",
+        "options": [
+          "Solo practitioner",
+          "Medical group",
+          "Hospital",
+          "HMO/Group benefit",
+          "Free clinic",
+          "Government facility",
+          "Other",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "patientAge",
+        "title": "What is the patient’s age?"
+      },
+      {
+        "type": "radio",
+        "name": "priorInjury",
+        "title": "Was there a prior injury to the same part of the body?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is the gross annual income of the injured party?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "7-5": {
+    "title": "Form for Personal Injury (General)",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceType",
+        "title": "What type of legal assistance are you seeking?",
+        "options": [
+          "File a claim for an injury",
+          "Defend against a claim for injury made by someone else"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "injuryDate",
+        "title": "When did the injury occur? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "injuryLocation",
+        "title": "Where did the injury occur?"
+      },
+      {
+        "type": "radio",
+        "name": "injuryTypes",
+        "title": "What are the nature and types of injuries sustained?",
+        "options": [
+          "Lower back pain",
+          "Upper back pain",
+          "Shoulder pain",
+          "Neck pain",
+          "Headaches",
+          "Nausea",
+          "Difficulty sleeping",
+          "Anxiety",
+          "Cuts and bruises",
+          "Broken bones",
+          "Loss of feeling in part of the body",
+          "Difficulty breathing",
+          "Impaired vision",
+          "Memory loss",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "ownInsuranceCoverage",
+        "title": "Does the injured party believe their insurance will cover this injury?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherPartyInsuranceCoverage",
+        "title": "Does the injured party believe the other party's insurance will cover this injury?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "witnesses",
+        "title": "Are there witnesses to the injury, and are their names known?",
+        "options": [
+          "Yes. Number of witnesses:",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "medicalTreatmentStatus",
+        "title": "What is the status of medical treatment?",
+        "options": [
+          "No treatment yet",
+          "Still receiving treatment",
+          "Stopped treatment but needs to restart",
+          "Treatment completed",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "medicalPractitioners",
+        "title": "Which medical practitioners have been consulted, if any?",
+        "options": [
+          "Medical doctor",
+          "Surgeon",
+          "Chiropractor",
+          "Acupuncturist",
+          "Physical therapist",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "medicalCosts",
+        "title": "What are the approximate medical costs incurred to date? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "missedWork",
+        "title": "Has the injured party missed work due to the injury?",
+        "options": [
+          "No work missed",
+          "Number of days missed:",
+          "Number of months missed:",
+          "Injured person will return to work on this date: (mm/dd/yyyy)",
+          "Injured person is still receiving treatment and unsure when they will return to work",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "lostIncome",
+        "title": "What is the amount of lost work income to date? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "claimStatus",
+        "title": "What is the current status of the claim?",
+        "options": [
+          "No action taken yet",
+          "Demand for compensation made",
+          "Lawsuit filed",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "priorInjury",
+        "title": "Was there a prior injury to the same part of the body?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is the injured party’s gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "8-1": {
+    "title": "Form for Contested Wills or Probate",
+    "elements": [
+      {
+        "type": "text",
+        "name": "estateValue",
+        "title": "What is the estimated value of the estate? ($)"
+      },
+      {
+        "type": "date",
+        "name": "deceasedDeathDate",
+        "title": "When did the deceased pass away? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "relationshipToDeceased",
+        "title": "What is your relationship to the deceased?",
+        "options": [
+          "Spouse",
+          "Child",
+          "Parent",
+          "Sibling (brother, sister)",
+          "Grandchild",
+          "Beneficiary named in the will",
+          "Personal representative named in the will",
+          "A creditor",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "deceasedResidenceState",
+        "title": "At the time of death, in which state was the deceased a resident?"
+      },
+      {
+        "type": "radio",
+        "name": "willExists",
+        "title": "Did the deceased execute/create a will?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "willExecutionDate",
+        "title": "When was the most recent will executed/created? (Date or approximate time period)"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceType",
+        "title": "What type of legal assistance are you seeking?",
+        "options": [
+          "Challenge the will",
+          "Protect my interests in the estate",
+          "Manage, distribute, or settle the estate or trust",
+          "Make a claim as a creditor",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "legalActionsTaken",
+        "title": "What legal actions have already been taken?",
+        "options": [
+          "No legal actions have been taken",
+          "Will filed with the Court",
+          "Court proceedings started without a will",
+          "Someone is contesting the will filed with the Court",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "courtDateSet",
+        "title": "Is there a court date set?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No court date"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "8-2": {
+    "title": "Form for Drafting Wills and Trusts",
+    "elements": [
+      {
+        "type": "text",
+        "name": "estateValue",
+        "title": "What is the estimated value of your estate? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceType",
+        "title": "What type of legal assistance are you seeking?",
+        "options": [
+          "Draft a will",
+          "Draft a trust",
+          "Plan my entire estate",
+          "I am not sure",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "previousWillOrTrust",
+        "title": "Have you had a will or trust drafted previously?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "beneficiaries",
+        "title": "Who will most likely be the beneficiaries of the will or trust?",
+        "options": [
+          "Children",
+          "Spouse/Partner",
+          "Parents",
+          "Sibling (brother, sister)",
+          "Grandchildren",
+          "Friends",
+          "Charities",
+          "Myself",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "8-3": {
+    "title": "Form for Estate Administration",
+    "elements": [
+      {
+        "type": "text",
+        "name": "estateValue",
+        "title": "What is the estimated value of the estate? ($)"
+      },
+      {
+        "type": "date",
+        "name": "deceasedDeathDate",
+        "title": "When did the deceased pass away? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "roleInEstate",
+        "title": "What is your role in the estate?",
+        "options": [
+          "Executor of the estate",
+          "Beneficiary of the estate",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "assetsToAdminister",
+        "title": "What types of assets need to be administered?",
+        "options": [
+          "Home",
+          "Bank accounts",
+          "Stocks or bonds",
+          "Trust fund",
+          "Investment property",
+          "Business",
+          "Retirement account",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "8-4": {
+    "title": "Form for Estate Planning",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "maritalStatus",
+        "title": "What is your marital status?",
+        "options": [
+          "Single",
+          "Married",
+          "Legally Separated",
+          "Divorced",
+          "Widowed",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "estateValue",
+        "title": "What is the estimated value of your estate? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "previousWillOrTrust",
+        "title": "Have you had a will or trust drafted previously?",
+        "options": [
+          "Yes. Date: (mm/dd/yyyy)",
+          "No",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "employmentStatus",
+        "title": "What is your employment status?",
+        "options": [
+          "Employed by another",
+          "Self-employed",
+          "Unemployed",
+          "Retired",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "assetsIncluded",
+        "title": "What assets are included in your estate?",
+        "options": [
+          "Home",
+          "Bank accounts",
+          "Stocks or bonds",
+          "Investment property",
+          "Business",
+          "Retirement account",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "numberOfChildren",
+        "title": "How many children do you have?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "9-1": {
+    "title": "Form for Collections",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInMatter",
+        "title": "What is your role in the matter?",
+        "options": [
+          "Individual",
+          "Business",
+          "Collection agency",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "amountCollected",
+        "title": "What is the amount being collected? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "actionsTaken",
+        "title": "What actions have been taken against the person who owes the debt?",
+        "options": [
+          "Nothing yet",
+          "Request for payment",
+          "Lawsuit filed",
+          "Judgment entered",
+          "Wages garnished",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "seekingToDo",
+        "title": "What are you seeking to do?",
+        "options": [
+          "Collect a debt owed to me",
+          "Defend against a collection action",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "debtType",
+        "title": "What type of goods or services does the debt relate to?"
+      },
+      {
+        "type": "date",
+        "name": "debtIncurredDate",
+        "title": "When was the debt incurred? (Date or time period)"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "9-2": {
+    "title": "Form for Consumer Bankruptcy",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "maritalStatus",
+        "title": "What is your marital status?",
+        "options": [
+          "Single",
+          "Married",
+          "Legally Separated",
+          "Divorced",
+          "Widowed",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "bankruptcyReason",
+        "title": "Why do you want to file for personal bankruptcy?",
+        "options": [
+          "I can’t pay any of my debts currently due",
+          "I can’t pay some of my debts currently due",
+          "I won’t be able to pay my debts in the future",
+          "I’m unsure if bankruptcy is right for me",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bankruptcyGoal",
+        "title": "If you file for personal bankruptcy, what is your goal?",
+        "options": [
+          "Discharge all debts",
+          "Repay debts over time through a payment plan",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "creditCardDebt",
+        "title": "Credit Card $:"
+      },
+      {
+        "type": "text",
+        "name": "mortgageDebt",
+        "title": "Mortgage $:"
+      },
+      {
+        "type": "text",
+        "name": "vehicleLoanDebt",
+        "title": "Vehicle Loan(s) $:"
+      },
+      {
+        "type": "text",
+        "name": "personalLoanDebt",
+        "title": "Personal Loan $:"
+      },
+      {
+        "type": "text",
+        "name": "medicalBillsDebt",
+        "title": "Medical Bills $:"
+      },
+      {
+        "type": "text",
+        "name": "landlordDebt",
+        "title": "Landlord $:"
+      },
+      {
+        "type": "text",
+        "name": "irsDebt",
+        "title": "IRS $:"
+      },
+      {
+        "type": "text",
+        "name": "otherDebt",
+        "title": "Other:"
+      },
+      {
+        "type": "text",
+        "name": "homeValue",
+        "title": "Home $:"
+      },
+      {
+        "type": "text",
+        "name": "vehicleValue",
+        "title": "Vehicle(s) $:"
+      },
+      {
+        "type": "text",
+        "name": "investmentPropertyValue",
+        "title": "Investment/Vacation Property $:"
+      },
+      {
+        "type": "text",
+        "name": "stocksBondsValue",
+        "title": "Stocks/Bonds $:"
+      },
+      {
+        "type": "text",
+        "name": "cashValue",
+        "title": "Cash $:"
+      },
+      {
+        "type": "text",
+        "name": "otherAssets",
+        "title": "Other:"
+      },
+      {
+        "type": "radio",
+        "name": "previousBankruptcy",
+        "title": "Have you filed for personal bankruptcy before?",
+        "options": [
+          "No",
+          "Yes, Chapter 7 (liquidation) in this year:",
+          "Yes, Chapter 13 (reorganization) in this year:"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "bankruptcyLocation",
+        "title": "Is the location where you plan to file bankruptcy the place you’ve lived the longest over the past six months?",
+        "options": [
+          "Yes",
+          "No. (If no, please explain):"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "householdSize",
+        "title": "How many people are in your household?",
+        "options": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6 or more"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "creditCounseling",
+        "title": "Have you received individual or group counseling from an approved nonprofit budget and credit counseling agency in the last 180 days?",
+        "options": [
+          "Yes",
+          "No",
+          "I don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "averageMonthlyIncome",
+        "title": "What is your average monthly income over the past six months? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "9-3": {
+    "title": "Form for Consumer Credit",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "legalIssue",
+        "title": "What is your legal issue related to consumer credit?",
+        "options": [
+          "Bank or Credit Union",
+          "Credit Card(s)",
+          "Repossession",
+          "Credit Reporting Agency",
+          "Collection Agency",
+          "Debts (considering bankruptcy)",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "9-4": {
+    "title": "Form for Income Tax",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "taxIssue",
+        "title": "What is the specific income tax issue you need legal assistance with?",
+        "options": [
+          "Consultation/Advice",
+          "Tax preparation",
+          "Audit",
+          "IRS hearing or trial",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "backTaxesAmount",
+        "title": "How much back taxes are claimed, and from which tax years?"
+      },
+      {
+        "type": "radio",
+        "name": "connectWithAttorney",
+        "title": "Would you like to connect with an attorney certified to handle tax issues?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "number",
+        "name": "age",
+        "title": "Age:"
+      },
+      {
+        "type": "text",
+        "name": "sex",
+        "title": "Sex:"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "Occupation:"
+      },
+      {
+        "type": "text",
+        "name": "maritalStatus",
+        "title": "Marital status:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "9-5": {
+    "title": "Form for Property Tax",
+    "elements": [
+      {
+        "type": "text",
+        "name": "propertyValue",
+        "title": "What is the property subject to this property tax currently valued at?"
+      },
+      {
+        "type": "text",
+        "name": "propertyPurchaseYear",
+        "title": "What year was the property purchased in?"
+      },
+      {
+        "type": "text",
+        "name": "backTaxesAmount",
+        "title": "What do they claim you owe in amount of back property taxes and from what tax years?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "9-6": {
+    "title": "Form for Repossessions",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInRepossession",
+        "title": "You are the:",
+        "options": [
+          "Owner of property that is subject to repossession",
+          "Collector seeking to repossess property",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "propertyType",
+        "title": "The property that is subject to repossession is:",
+        "options": [
+          "A vehicle",
+          "An appliance (stove, refrigerator, etc.)",
+          "Furniture",
+          "Other"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "purchaseDate",
+        "title": "When was the date that the property was purchased?"
+      },
+      {
+        "type": "text",
+        "name": "amountOwed",
+        "title": "What is the amount of money owed on the property?"
+      },
+      {
+        "type": "date",
+        "name": "lastPaymentDate",
+        "title": "Date of last payment on the property:"
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "9-7": {
+    "title": "Form for Creditors’ or Debtors’ Rights",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-1": {
+    "title": "Form for Education and Schools",
+    "elements": [
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "text",
+        "name": "schoolOrGradeLevel",
+        "title": "What school or grade level is involved in your case?"
+      },
+      {
+        "type": "number",
+        "name": "studentAge",
+        "title": "What is the age of the student?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-2": {
+    "title": "Form for Social Security – Disability",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "date",
+        "name": "stopWorkDate",
+        "title": "When did you stop working due to your disability? (mm/dd/yyyy)"
+      },
+      {
+        "type": "date",
+        "name": "lastDoctorVisitDate",
+        "title": "When did you last see a doctor about your disability? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "diagnosedCondition",
+        "title": "What condition did your doctor diagnose, if any?"
+      },
+      {
+        "type": "radio",
+        "name": "filedForBenefits",
+        "title": "Have you already filed for Social Security benefits?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "deniedBenefits",
+        "title": "If yes, were you denied benefits?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hasSocialSecurityAttorney",
+        "title": "Do you currently have a Social Security attorney?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "expectedWorkDuration",
+        "title": "How long do you expect to be out of work?",
+        "options": [
+          "Still working",
+          "0–6 months",
+          "7–12 months",
+          "More than 12 months"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-3": {
+    "title": "Form for Social Security – Retirement",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "filedForBenefits",
+        "title": "Have you already filed for Social Security retirement benefits?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "deniedBenefits",
+        "title": "If yes, were you denied benefits?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hasSocialSecurityAttorney",
+        "title": "Do you currently have a Social Security attorney?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-4": {
+    "title": "Form for Social Security – Dependent Benefits",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "radio",
+        "name": "filedForBenefits",
+        "title": "Have you already filed for Social Security retirement benefits?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "deniedBenefits",
+        "title": "If yes, were you denied benefits?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hasSocialSecurityAttorney",
+        "title": "Do you currently have a Social Security attorney?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-5": {
+    "title": "Form for Social Security – Survivor Benefits",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "radio",
+        "name": "filedForBenefits",
+        "title": "Have you already filed for benefits?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "deniedBenefits",
+        "title": "If yes, were you denied benefits?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hasSocialSecurityAttorney",
+        "title": "Do you currently have a Social Security attorney?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-6": {
+    "title": "Form for Veterans Benefits",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "radio",
+        "name": "maritalStatus",
+        "title": "What is your marital status?",
+        "options": [
+          "Single",
+          "Married",
+          "Legally Separated",
+          "Divorced",
+          "Widowed",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "branchOfService",
+        "title": "Which branch of the armed forces did you serve in?",
+        "options": [
+          "Army",
+          "Navy",
+          "Air Force",
+          "Marines",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "datesOfService",
+        "title": "What were your dates of service?"
+      },
+      {
+        "type": "date",
+        "name": "claimFiledDate",
+        "title": "When was your Veterans Benefits claim filed? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "denialDate",
+        "title": "If your claim was denied, when did the Board of Veterans' Appeals issue the denial?",
+        "options": [
+          "Date: (mm/dd/yyyy)",
+          "No decision has been made yet",
+          "No claim was submitted",
+          "I don’t know",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "disabilityOrInjury",
+        "title": "What is your disability or injury?"
+      },
+      {
+        "type": "date",
+        "name": "disabilityOrInjuryDate",
+        "title": "When did your disability or injury occur? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-7": {
+    "title": "Form for General Administrative Law",
+    "elements": [
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "legalMatterInvolves",
+        "title": "My legal matter involves (select all that apply):",
+        "options": [
+          "Social security",
+          "VA benefits",
+          "Other government assistance",
+          "Animals (dogs, cats, etc.)",
+          "Driver's license",
+          "Unemployment benefits",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-8": {
+    "title": "Form for Environmental Law",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "roleInMatter",
+        "title": "You are:",
+        "options": [
+          "A person who is aware of an environmental violation",
+          "A person or company that is being investigated for an environmental violation",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "environmentalLawExpertise",
+        "title": "I need a lawyer with expertise in these areas of environmental law (select all that apply):",
+        "options": [
+          "Clean water act",
+          "Clean air act",
+          "Insecticide and pesticide use",
+          "Endangered species act",
+          "Wetlands",
+          "Toxic dumping",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-9": {
+    "title": "Form for Liquor Licenses",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "legalHelpNeeded",
+        "title": "My business needs legal help to:",
+        "options": [
+          "Get a liquor license",
+          "Contest the revocation of a liquor license",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "10-10": {
+    "title": "Form for Constitutional Law",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "11-1": {
+    "title": "Form for Attorney Malpractice",
+    "elements": [
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceReason",
+        "title": "Why are you seeking legal assistance?",
+        "options": [
+          "The lawyer I hired committed malpractice",
+          "I am a lawyer accused of malpractice"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "hireLawyerDate",
+        "title": "When did you hire the lawyer? (mm/dd/yyyy)"
+      },
+      {
+        "type": "text",
+        "name": "malpracticeDate",
+        "title": "When did the alleged malpractice occur? (Date or time period)"
+      },
+      {
+        "type": "radio",
+        "name": "malpracticeInvolves",
+        "title": "What does the malpractice involve?",
+        "options": [
+          "Failure to file a lawsuit on time",
+          "Failure to return the client’s money",
+          "Failure to achieve the promised case results",
+          "Lack of understanding of the law related to the case",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "11-2": {
+    "title": "Form for Defective Products",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "claimStatus",
+        "title": "What is the current status of the claim?",
+        "options": [
+          "No action taken yet",
+          "Demand for compensation made",
+          "Lawsuit filed",
+          "Other"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "purchaseDate",
+        "title": "When was the product purchased? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "purchasedFrom",
+        "title": "From whom was the product purchased?",
+        "options": [
+          "A business",
+          "An individual",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "productCost",
+        "title": "How much did the product cost? ($)"
+      },
+      {
+        "type": "date",
+        "name": "defectiveDate",
+        "title": "When was the product determined to be defective or caused injury? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "injuriesCaused",
+        "title": "What injuries, if any, were caused by the product?",
+        "options": [
+          "No injuries",
+          "Cuts and bruises",
+          "Broken bones",
+          "Headaches",
+          "Nausea",
+          "Difficulty sleeping",
+          "Anxiety",
+          "Difficulty breathing",
+          "Impaired vision",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "defectiveProductType",
+        "title": "What type of defective product caused the injury or needs to be replaced?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "11-3": {
+    "title": "Form for Warranties",
+    "elements": [
+      {
+        "type": "number",
+        "name": "age",
+        "title": "What is your age?"
+      },
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "claimStatus",
+        "title": "What is the current status of the claim?",
+        "options": [
+          "No action taken yet",
+          "Demand for compensation made",
+          "Lawsuit filed",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "warrantyType",
+        "title": "What type of warranty applies to the product or service?"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "11-4": {
+    "title": "Form for Consumer Protection and Fraud",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "fraudEntity",
+        "title": "What kind of entity committed consumer fraud against you?",
+        "options": [
+          "An individual",
+          "A business",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "fraudCaseInvolves",
+        "title": "My consumer protection / fraud case involves (select all that apply):",
+        "options": [
+          "The sale of consumer goods",
+          "The performance of services",
+          "Inaccurate credit reporting",
+          "ID theft",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "12-1": {
+    "title": "Form for Copyright",
+    "elements": [
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceReason",
+        "title": "Why are you seeking legal assistance?",
+        "options": [
+          "To obtain a copyright",
+          "To enforce a copyright against an infringer",
+          "To defend against a claim of copyright infringement",
+          "To resolve a dispute about copyright ownership",
+          "To license or assign a copyright",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "copyrightSubjectMatter",
+        "title": "What is the subject matter of the copyrighted work or material?",
+        "options": [
+          "Literary",
+          "Dramatic",
+          "Music with lyrics",
+          "Instrumental music",
+          "Movie or audiovisual",
+          "Pictorial, graphic, or sculpture",
+          "Architectural",
+          "Computer software",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "disputeWith",
+        "title": "Who is the dispute with (if applicable)?",
+        "options": [
+          "No dispute",
+          "Co-authors",
+          "My employee",
+          "The original author",
+          "An author whose work derives from mine",
+          "Someone to whom I licensed a copyright",
+          "Someone copying my work",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "otherPartyRole",
+        "title": "What is the other party’s role?",
+        "options": [
+          "No other party involved",
+          "Individual",
+          "Private business owner/sole proprietor",
+          "Partnership",
+          "Franchise",
+          "Corporation",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "disputeInvolves",
+        "title": "What does the dispute involve (if applicable)?",
+        "options": [
+          "No dispute",
+          "Copies of the work",
+          "Derivative work",
+          "Performance rights",
+          "Display rights",
+          "Distribution or sales",
+          "Licensing terms or violations",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "12-2": {
+    "title": "Form for Patents",
+    "elements": [
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceReason",
+        "title": "Why are you seeking legal assistance?",
+        "options": [
+          "To obtain a patent",
+          "To avoid potential patent infringement",
+          "To sue for patent infringement",
+          "To defend against a claim of patent infringement",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "patentFor",
+        "title": "What is the patent for?",
+        "options": [
+          "A product or machine",
+          "A process",
+          "Computer software",
+          "A living organism or plant",
+          "An ornamental design",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "inventionStage",
+        "title": "What stage is the invention currently in?",
+        "options": [
+          "Still in development and not fully functional",
+          "Final design form (prototype or detailed plans)",
+          "Already produced and/or sold in the market since this date: (mm/dd/yyyy)",
+          "Described in a printed publication on this date: (mm/dd/yyyy)",
+          "Other"
+        ]
+      },
+      {
+        "type": "date",
+        "name": "inventionCompletionDate",
+        "title": "When was the invention completed or expected to be completed? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "12-3": {
+    "title": "Form for Trademarks",
+    "elements": [
+      {
+        "type": "text",
+        "name": "occupation",
+        "title": "What is your occupation?"
+      },
+      {
+        "type": "radio",
+        "name": "legalAssistanceReason",
+        "title": "Why are you seeking legal assistance?",
+        "options": [
+          "To apply for a trademark or service mark",
+          "To defend against a claim of trademark infringement",
+          "To prevent someone from infringing on my trademark",
+          "To license my trademark to someone else",
+          "To obtain a license to use someone else’s trademark",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "goodsOrServices",
+        "title": "What types of goods or services does the trademark apply to?"
+      },
+      {
+        "type": "radio",
+        "name": "trademarkStatus",
+        "title": "What is the status of the trademark registration?",
+        "options": [
+          "Not yet begun",
+          "Federally registered on this date: (mm/dd/yyyy)",
+          "Registration process started but incomplete",
+          "Application denied by the federal government on this date: (mm/dd/yyyy)"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "trademarkUsage",
+        "title": "How is the trademark used in commerce?",
+        "options": [
+          "In the open market since this date: (mm/dd/yyyy)",
+          "Not yet used in the open market",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "advertisementScope",
+        "title": "What is the scope of your advertisements, distribution, or sales?",
+        "options": [
+          "Local (city/county)",
+          "Statewide",
+          "Multi-state",
+          "Nationwide",
+          "U.S. and overseas",
+          "International only",
+          "Not applicable"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "annualIncome",
+        "title": "What is your gross annual income?",
+        "options": [
+          "$25,000 or less",
+          "$25,001–$50,000",
+          "$50,001–$75,000",
+          "$75,001–$100,000",
+          "$100,001–$125,000",
+          "$125,000+"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  },
+  "13-1": {
+    "title": "Form for General Landlord and Tenant Issues",
+    "elements": [
+      {
+        "type": "radio",
+        "name": "role",
+        "title": "What is your role in this matter?",
+        "options": [
+          "Landlord",
+          "Tenant",
+          "Owner",
+          "Buyer",
+          "Seller",
+          "Agent",
+          "Other"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "tenantMoveInDate",
+        "title": "When did the tenant move into the property? (mm/dd/yyyy)"
+      },
+      {
+        "type": "radio",
+        "name": "rentalAgreementType",
+        "title": "What type of rental agreement exists?",
+        "options": [
+          "Written contract with a month-to-month term",
+          "Written contract with a yearly term",
+          "Oral agreement",
+          "Other",
+          "Not sure"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "tenantStatus",
+        "title": "What is the tenant's current status?",
+        "options": [
+          "Living at the property",
+          "Not living at the property",
+          "Don’t know"
+        ]
+      },
+      {
+        "type": "text",
+        "name": "monthlyRent",
+        "title": "What is the monthly rent? ($)"
+      },
+      {
+        "type": "radio",
+        "name": "caseStatus",
+        "title": "What is the current status of your case?",
+        "options": [
+          "A lawsuit has been filed. Date: (mm/dd/yyyy)",
+          "Notices to vacate have been mailed or posted. Date: (mm/dd/yyyy)",
+          "Demands have been made",
+          "No action has been taken"
+        ]
+      },
+      {
+        "type": "checkbox",
+        "name": "caseIssues",
+        "title": "What are the issues in your case?",
+        "options": [
+          "Unpaid rent",
+          "Unsatisfactory conditions (e.g., excessive noise, no heat)",
+          "Failed maintenance (e.g., broken appliances)",
+          "Infestation (e.g., rodents, insects)",
+          "Dangerous conditions (e.g., gas leaks, unsafe activities)",
+          "Unjustified eviction",
+          "Breach of a lease provision",
+          "Other"
+        ]
+      },
+      {
+        "type": "radio",
+        "name": "hireAttorneyTiming",
+        "title": "When are you looking to hire an attorney?",
+        "options": [
+          "Immediately",
+          "This week",
+          "This month",
+          "This year",
+          "Just exploring options/looking for information"
+        ]
+      }
+    ]
+  }
+}
