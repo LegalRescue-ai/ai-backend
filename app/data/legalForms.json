@@ -3263,7 +3263,7 @@
         ]
       },
       {
-        "type": "radio",
+        "type": "checkbox",
         "name": "legalAssistance",
         "title": "I need legal assistance to negotiate with the IRS to get (select all that apply):",
         "options": [
@@ -3729,7 +3729,7 @@
     "title": "Form for Corporate Tax",
     "elements": [
       {
-        "type": "radio",
+        "type": "checkbox",
         "name": "legalAssistanceReason",
         "title": "Your organization needs legal assistance in a tax matter for what reason? (select all that apply):",
         "options": [
@@ -6349,7 +6349,7 @@
         "title": "What is your occupation?"
       },
       {
-        "type": "radio",
+        "type": "checkbox",
         "name": "legalMatterInvolves",
         "title": "My legal matter involves (select all that apply):",
         "options": [
@@ -6403,7 +6403,7 @@
         ]
       },
       {
-        "type": "radio",
+        "type": "checkbox",
         "name": "environmentalLawExpertise",
         "title": "I need a lawyer with expertise in these areas of environmental law (select all that apply):",
         "options": [
@@ -6708,7 +6708,7 @@
         ]
       },
       {
-        "type": "radio",
+        "type": "checkbox",
         "name": "fraudCaseInvolves",
         "title": "My consumer protection / fraud case involves (select all that apply):",
         "options": [
