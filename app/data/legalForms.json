@@ -74,9 +74,19 @@
         ]
       },
       {
-        "type": "number",
-        "name": "childAge",
-        "title": "How old is the child/are the children?"
+        "type": "matrixdynamic",
+        "name": "childrenAges",
+        "title": "How old is the child/are the children?",
+        "addRowText": "Add another child",
+        "columns": [
+          {
+            "name": "age",
+            "title": "Child Age",
+            "cellType": "number"
+          }
+        ],
+        "rowCount": 1,
+        "minRowCount": 1
       },
       {
         "type": "radio",
@@ -119,9 +129,19 @@
         "title": "What is your occupation?"
       },
       {
-        "type": "number",
-        "name": "childAge",
-        "title": "How old is your child/are your children?"
+        "type": "matrixdynamic",
+        "name": "childrenAges",
+        "title": "How old is the child/are the children?",
+        "addRowText": "Add another child",
+        "columns": [
+          {
+            "name": "age",
+            "title": "Child Age",
+            "cellType": "number"
+          }
+        ],
+        "rowCount": 1,
+        "minRowCount": 1
       },
       {
         "type": "radio",
@@ -257,9 +277,19 @@
         "title": "What is your occupation?"
       },
       {
-        "type": "number",
-        "name": "childAge",
-        "title": "How old is your child/are your children?"
+        "type": "matrixdynamic",
+        "name": "childrenAges",
+        "title": "How old is the child/are the children?",
+        "addRowText": "Add another child",
+        "columns": [
+          {
+            "name": "age",
+            "title": "Child Age",
+            "cellType": "number"
+          }
+        ],
+        "rowCount": 1,
+        "minRowCount": 1
       },
       {
         "type": "radio",
@@ -395,9 +425,19 @@
         "title": "What is your occupation?"
       },
       {
-        "type": "number",
-        "name": "childAge",
-        "title": "How old is your child/are your children (if any)?"
+        "type": "matrixdynamic",
+        "name": "childrenAges",
+        "title": "How old is the child/are the children?",
+        "addRowText": "Add another child",
+        "columns": [
+          {
+            "name": "age",
+            "title": "Child Age",
+            "cellType": "number"
+          }
+        ],
+        "rowCount": 1,
+        "minRowCount": 1
       },
       {
         "type": "radio",
@@ -601,9 +641,19 @@
         "title": "What is your occupation?"
       },
       {
-        "type": "number",
-        "name": "childAge",
-        "title": "How old is your child/are your children?"
+        "type": "matrixdynamic",
+        "name": "childrenAges",
+        "title": "How old is the child/are the children?",
+        "addRowText": "Add another child",
+        "columns": [
+          {
+            "name": "age",
+            "title": "Child Age",
+            "cellType": "number"
+          }
+        ],
+        "rowCount": 1,
+        "minRowCount": 1
       },
       {
         "type": "text",
@@ -700,9 +750,19 @@
         "title": "What is your occupation?"
       },
       {
-        "type": "number",
-        "name": "childAge",
-        "title": "How old is your child/are your children (if any)?"
+        "type": "matrixdynamic",
+        "name": "childrenAges",
+        "title": "How old is the child/are the children?",
+        "addRowText": "Add another child",
+        "columns": [
+          {
+            "name": "age",
+            "title": "Child Age",
+            "cellType": "number"
+          }
+        ],
+        "rowCount": 1,
+        "minRowCount": 1
       },
       {
         "type": "text",
