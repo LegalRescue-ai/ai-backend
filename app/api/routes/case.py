@@ -301,10 +301,10 @@ def generate_summary():
                     "keyAspects": key_aspects,
                     "potentialMerits": potential_merits,
                     "criticalFactors": critical_factors,
-                    "CaseId": caseId,
+                    "case_submission_id": caseId,
                 }
                 
-                stored_case = db_service.create_record('AI_case_submission', case_data)
+                stored_case = db_service.create_record('ai_case_submissions', case_data)
                 
                 # Add the database ID to the response
                 summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None

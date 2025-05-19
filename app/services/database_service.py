@@ -1,90 +1,138 @@
-# app/services/database_service.py
 import os
 import logging
 import json
 import traceback
-from supabase import create_client, Client
+import boto3
+from botocore.exceptions import NoCredentialsError, BotoCoreError, ClientError
+from decimal import Decimal
+from typing import Dict, List, Optional, Any
 
 logger = logging.getLogger(__name__)
 
 class DatabaseService:
     def __init__(self):
-        """Initialize the database service with direct Supabase connection"""
+        """Initialize the database service with DynamoDB connection"""
         try:
             # Get credentials from environment variables
-            supabase_url = os.getenv('SUPABASE_URL')
-            supabase_key = os.getenv('SUPABASE_KEY')
+            region = os.getenv('AWS_REGION', 'us-east-1')
+            access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+            secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
             
-            if not supabase_url or not supabase_key:
-                raise ValueError("Missing Supabase credentials in environment variables")
+            # Configure boto3 session
+            session_config = {
+                'region_name': region
+            }
             
-            # Create a direct connection to Supabase
-            self.client = create_client(supabase_url, supabase_key)
-            logger.info("✅ Database service initialized with direct Supabase connection")
+            if access_key_id and secret_access_key:
+                session_config['aws_access_key_id'] = access_key_id
+                session_config['aws_secret_access_key'] = secret_access_key
+            
+            # Create DynamoDB resource and client
+            self.session = boto3.Session(**session_config)
+            self.dynamodb = self.session.resource('dynamodb')
+            self.client = self.session.client('dynamodb')
+            
+            logger.info("✅ Database service initialized with DynamoDB connection")
         except Exception as e:
-            error_msg = f"Failed to initialize Supabase client: {str(e)}"
+            error_msg = f"Failed to initialize DynamoDB client: {str(e)}"
             logger.error(error_msg)
             logger.error(traceback.format_exc())
             raise ValueError(error_msg)
     
-    def get_records(self, table_name, query=None):
-        """Get records from a table with optional query"""
+    def get_records(self, table_name: str, query: Optional[Dict] = None, index_name: Optional[str] = None) -> List[Dict]:
+        """
+        Get records from a table with optional query
+        
+        Args:
+            table_name: Name of the DynamoDB table
+            query: Dict with 'key_condition' and/or 'filter_expression' for query, or 'filter_expression' for scan
+            index_name: Name of GSI to query (optional)
+        
+        Examples:
+            # Scan all records
+            service.get_records('users')
+            
+            # Query with key condition (requires partition key)
+            service.get_records('users', {'key_condition': 'id = :id', 'expression_values': {':id': 'user123'}})
+            
+            # Scan with filter
+            service.get_records('users', {'filter_expression': 'age > :age', 'expression_values': {':age': 25}})
+        """
         try:
             logger.info(f"Getting records from table: {table_name}")
-            db_query = self.client.table(table_name).select("*")
+            table = self.dynamodb.Table(table_name)
             
-            # Apply filters if provided
-            if query and isinstance(query, dict):
-                for key, value in query.items():
-                    db_query = db_query.eq(key, value)
+            if query and 'key_condition' in query:
+                # Use Query operation (more efficient when you have a partition key)
+                kwargs = {
+                    'KeyConditionExpression': query['key_condition']
+                }
+                
+                if 'expression_values' in query:
+                    kwargs['ExpressionAttributeValues'] = query['expression_values']
+                
+                if 'expression_names' in query:
+                    kwargs['ExpressionAttributeNames'] = query['expression_names']
+                
+                if 'filter_expression' in query:
+                    kwargs['FilterExpression'] = query['filter_expression']
+                
+                if index_name:
+                    kwargs['IndexName'] = index_name
+                
+                logger.info(f"Executing query on table '{table_name}' with key condition")
+                response = table.query(**kwargs)
+            else:
+                # Use Scan operation
+                kwargs = {}
+                
+                if query and 'filter_expression' in query:
+                    kwargs['FilterExpression'] = query['filter_expression']
+                    
+                    if 'expression_values' in query:
+                        kwargs['ExpressionAttributeValues'] = query['expression_values']
+                    
+                    if 'expression_names' in query:
+                        kwargs['ExpressionAttributeNames'] = query['expression_names']
+                
+                if index_name:
+                    kwargs['IndexName'] = index_name
+                
+                logger.info(f"Executing scan on table '{table_name}'")
+                response = table.scan(**kwargs)
             
-            logger.info(f"Executing query on table '{table_name}'")
-            response = db_query.execute()
-            logger.info(f"Query returned {len(response.data)} records")
-            return response.data
+            # Convert Decimal types back to float/int for JSON serialization
+            items = self._deserialize_decimals(response['Items'])
+            logger.info(f"Query returned {len(items)} records")
+            return items
+            
         except Exception as e:
             logger.error(f"Failed to fetch records from {table_name}: {str(e)}")
             logger.error(traceback.format_exc())
             raise
     
-    def create_record(self, table_name, data):
+    def create_record(self, table_name: str, data: Dict[str, Any]) -> Dict[str, Any]:
         """Create a new record in the specified table"""
         try:
             logger.info(f"Creating record in table '{table_name}'")
             
             # Log data being inserted, but limit size for large payloads
-            data_str = json.dumps(data)
+            data_str = json.dumps(data, default=str)
             if len(data_str) > 1000:
                 logger.info(f"Data to insert: {data_str[:1000]}... (truncated)")
             else:
                 logger.info(f"Data to insert: {data_str}")
             
-            # Convert Python lists to PostgreSQL array format
-           
+            # Convert float values to Decimal for DynamoDB
+            prepared_data = self._serialize_for_dynamodb(data)
             
-            # Try with unquoted table name
-            response = self.client.table(table_name).insert(data).execute()
+            table = self.dynamodb.Table(table_name)
+            response = table.put_item(Item=prepared_data)
             
-            # Check for errors
-            if hasattr(response, 'error') and response.error:
-                error_details = str(response.error)
-                logger.error(f"Error from Supabase: {error_details}")
-                
-                # Log additional response details if available
-                if hasattr(response, 'data'):
-                    logger.error(f"Response data: {response.data}")
-                if hasattr(response, 'status_code'):
-                    logger.error(f"Status code: {response.status_code}")
-                
-                raise Exception(f"Supabase error: {error_details}")
-            
-            # Check for empty data response
-            if not response.data:
-                logger.warning("No data returned from Supabase insert operation")
-                return [{'id': 'unknown'}]
-            
-            logger.info(f"Record created successfully with ID: {response.data[0]['id'] if response.data else 'unknown'}")
-            return response.data
+            # DynamoDB put_item doesn't return the created item by default
+            # Return the original data as confirmation
+            logger.info(f"Record created successfully")
+            return data
             
         except Exception as e:
             error_type = type(e).__name__
@@ -97,89 +145,255 @@ class DatabaseService:
             # Re-raise with more details
             raise Exception(f"Database error ({error_type}): {error_msg}")
     
-    def update_record(self, table_name, record_id, data):
-        """Update a record by ID"""
-        try:
-            logger.info(f"Updating record {record_id} in table '{table_name}'")
-            
-            # Convert Python lists to PostgreSQL array format
-            clean_data = self._prepare_data_for_postgres(data)
-            
-            response = self.client.table(table_name).update(clean_data).eq('id', record_id).execute()
-            logger.info(f"Record updated successfully")
-            return response.data
-        except Exception as e:
-            logger.error(f"Failed to update record {record_id} in {table_name}: {str(e)}")
-            logger.error(traceback.format_exc())
-            raise
-    
-    def delete_record(self, table_name, record_id):
-        """Delete a record by ID"""
-        try:
-            logger.info(f"Deleting record {record_id} from table '{table_name}'")
-            
-            response = self.client.table(table_name).delete().eq('id', record_id).execute()
-            logger.info(f"Record deleted successfully")
-            return response.data
-        except Exception as e:
-            logger.error(f"Failed to delete record {record_id} from {table_name}: {str(e)}")
-            logger.error(traceback.format_exc())
-            raise
-    
-    def _prepare_data_for_postgres(self, data):
+    def update_record(self, table_name: str, key: Dict[str, Any], data: Dict[str, Any], 
+                     condition_expression: Optional[str] = None) -> Dict[str, Any]:
         """
-        Prepare data for PostgreSQL by ensuring arrays are properly formatted
-        for PostgreSQL's array format.
+        Update a record by primary key
         
-        PostgreSQL expects arrays in the format: '{item1,item2,item3}'
+        Args:
+            table_name: Name of the table
+            key: Primary key of the record (e.g., {'id': 'value'} or {'pk': 'value', 'sk': 'value'})
+            data: Fields to update
+            condition_expression: Optional condition that must be satisfied for the update
         """
-        if not isinstance(data, dict):
-            return data
-        
-        clean_data = {}
-        for key, value in data.items():
-            if isinstance(value, list):
-                # For varchar[] columns, convert Python list to Postgres array format
-                # We need to convert the values to strings and then format as Postgres array
-                pg_array_values = []
-                for item in value:
-                    # Escape single quotes and replace with two single quotes (PostgreSQL syntax)
-                    if item is None:
-                        pg_array_values.append("NULL")
-                    else:
-                        item_str = str(item).replace("'", "''")
-                        pg_array_values.append(f"'{item_str}'")
+        try:
+            logger.info(f"Updating record with key {key} in table '{table_name}'")
+            
+            # Prepare data for DynamoDB
+            prepared_data = self._serialize_for_dynamodb(data)
+            
+            # Build update expression
+            update_expression = "SET "
+            expression_attribute_values = {}
+            expression_attribute_names = {}
+            
+            for i, (field, value) in enumerate(prepared_data.items()):
+                if i > 0:
+                    update_expression += ", "
                 
-                # Format as PostgreSQL array literal: '{value1,value2,value3}'
-                clean_data[key] = "{" + ",".join(pg_array_values) + "}"
-            else:
-                clean_data[key] = value
-        
-        return clean_data
+                # Use attribute names to handle reserved keywords
+                attr_name = f"#attr{i}"
+                attr_value = f":val{i}"
+                
+                update_expression += f"{attr_name} = {attr_value}"
+                expression_attribute_names[attr_name] = field
+                expression_attribute_values[attr_value] = value
+            
+            table = self.dynamodb.Table(table_name)
+            
+            kwargs = {
+                'Key': key,
+                'UpdateExpression': update_expression,
+                'ExpressionAttributeNames': expression_attribute_names,
+                'ExpressionAttributeValues': expression_attribute_values,
+                'ReturnValues': 'ALL_NEW'
+            }
+            
+            if condition_expression:
+                kwargs['ConditionExpression'] = condition_expression
+            
+            response = table.update_item(**kwargs)
+            updated_item = self._deserialize_decimals(response['Attributes'])
+            
+            logger.info(f"Record updated successfully")
+            return updated_item
+            
+        except Exception as e:
+            logger.error(f"Failed to update record {key} in {table_name}: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise
     
-    def test_connection(self):
-        """Test the Supabase connection with a simple query"""
+    def delete_record(self, table_name: str, key: Dict[str, Any], 
+                     condition_expression: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Delete a record by primary key
+        
+        Args:
+            table_name: Name of the table
+            key: Primary key of the record
+            condition_expression: Optional condition that must be satisfied for the delete
+        """
         try:
-            # Try a simple query that should work even if table doesn't exist
-            # We'll use a LIMIT 1 to minimize data transfer
-            response = self.client.from_("_test_connection").select("*").limit(1).execute()
+            logger.info(f"Deleting record with key {key} from table '{table_name}'")
+            
+            table = self.dynamodb.Table(table_name)
+            
+            kwargs = {
+                'Key': key,
+                'ReturnValues': 'ALL_OLD'
+            }
+            
+            if condition_expression:
+                kwargs['ConditionExpression'] = condition_expression
+            
+            response = table.delete_item(**kwargs)
+            
+            if 'Attributes' in response:
+                deleted_item = self._deserialize_decimals(response['Attributes'])
+                logger.info(f"Record deleted successfully")
+                return deleted_item
+            else:
+                logger.info(f"Record deleted (no return value)")
+                return {}
+                
+        except Exception as e:
+            logger.error(f"Failed to delete record {key} from {table_name}: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise
+    
+    def get_record_by_key(self, table_name: str, key: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Get a single record by its primary key"""
+        try:
+            logger.info(f"Getting record with key {key} from table '{table_name}'")
+            
+            table = self.dynamodb.Table(table_name)
+            response = table.get_item(Key=key)
+            
+            if 'Item' in response:
+                item = self._deserialize_decimals(response['Item'])
+                logger.info(f"Record found")
+                return item
+            else:
+                logger.info(f"Record not found")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Failed to get record {key} from {table_name}: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise
+    
+    def _serialize_for_dynamodb(self, data: Any) -> Any:
+        """Convert data types for DynamoDB (e.g., float to Decimal)"""
+        if isinstance(data, dict):
+            return {k: self._serialize_for_dynamodb(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._serialize_for_dynamodb(item) for item in data]
+        elif isinstance(data, float):
+            return Decimal(str(data))
+        else:
+            return data
+    
+    def _deserialize_decimals(self, data: Any) -> Any:
+        """Convert Decimal types back to float for JSON serialization"""
+        if isinstance(data, dict):
+            return {k: self._deserialize_decimals(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._deserialize_decimals(item) for item in data]
+        elif isinstance(data, Decimal):
+            return float(data)
+        else:
+            return data
+    
+    def test_connection(self) -> Dict[str, Any]:
+        """Test the DynamoDB connection by listing tables"""
+        try:
+            # Try to list tables to test connection
+            response = self.client.list_tables(Limit=1)
+            
             return {
                 "connected": True,
-                "message": "Successfully connected to Supabase"
+                "message": f"Successfully connected to DynamoDB in region {self.client.meta.region_name}",
+                "table_count": len(response.get('TableNames', []))
             }
-        except Exception as e:
-            # Check if the error is just about the table not existing (which is fine)
-            error_str = str(e)
-            if "relation" in error_str and "does not exist" in error_str:
-                return {
-                    "connected": True,
-                    "message": "Connected to Supabase successfully (test table doesn't exist, but connection works)"
-                }
-            
-            error_msg = f"Failed to connect to Supabase: {error_str}"
+        except NoCredentialsError:
+            error_msg = "AWS credentials not found"
+            logger.error(error_msg)
+            return {
+                "connected": False,
+                "message": error_msg
+            }
+        except ClientError as e:
+            error_code = e.response['Error']['Code']
+            error_msg = f"AWS error ({error_code}): {e.response['Error']['Message']}"
             logger.error(error_msg)
             logger.error(traceback.format_exc())
             return {
                 "connected": False,
                 "message": error_msg
+            }
+        except Exception as e:
+            error_msg = f"Failed to connect to DynamoDB: {str(e)}"
+            logger.error(error_msg)
+            logger.error(traceback.format_exc())
+            return {
+                "connected": False,
+                "message": error_msg
+            }
+
+# Utility functions for common DynamoDB operations
+class DynamoDBQueryBuilder:
+    """Helper class to build DynamoDB query expressions"""
+    
+    @staticmethod
+    def key_condition(partition_key: str, partition_value: Any, sort_key: Optional[str] = None, 
+                     sort_value: Optional[Any] = None, sort_operator: str = "=") -> Dict:
+        """
+        Build a key condition expression for DynamoDB Query
+        
+        Args:
+            partition_key: Name of the partition key attribute
+            partition_value: Value of the partition key
+            sort_key: Name of the sort key attribute (optional)
+            sort_value: Value of the sort key (optional)
+            sort_operator: Comparison operator for sort key (=, <, >, <=, >=, BETWEEN, begins_with)
+        """
+        condition = f"{partition_key} = :pk_val"
+        values = {":pk_val": partition_value}
+        
+        if sort_key and sort_value is not None:
+            if sort_operator == "BETWEEN":
+                condition += f" AND {sort_key} BETWEEN :sk_val1 AND :sk_val2"
+                if isinstance(sort_value, (list, tuple)) and len(sort_value) == 2:
+                    values[":sk_val1"] = sort_value[0]
+                    values[":sk_val2"] = sort_value[1]
+                else:
+                    raise ValueError("BETWEEN operator requires a list/tuple of two values")
+            elif sort_operator == "begins_with":
+                condition += f" AND begins_with({sort_key}, :sk_val)"
+                values[":sk_val"] = sort_value
+            else:
+                condition += f" AND {sort_key} {sort_operator} :sk_val"
+                values[":sk_val"] = sort_value
+        
+        return {
+            "key_condition": condition,
+            "expression_values": values
+        }
+    
+    @staticmethod
+    def filter_expression(field: str, value: Any, operator: str = "=") -> Dict:
+        """
+        Build a filter expression for DynamoDB Scan/Query
+        
+        Args:
+            field: Name of the attribute to filter on
+            value: Value to compare against
+            operator: Comparison operator (=, <>, <, >, <=, >=, BETWEEN, IN, contains, etc.)
+        """
+        if operator == "BETWEEN":
+            if isinstance(value, (list, tuple)) and len(value) == 2:
+                return {
+                    "filter_expression": f"{field} BETWEEN :val1 AND :val2",
+                    "expression_values": {":val1": value[0], ":val2": value[1]}
+                }
+            else:
+                raise ValueError("BETWEEN operator requires a list/tuple of two values")
+        elif operator == "IN":
+            if isinstance(value, (list, tuple)):
+                placeholders = [f":val{i}" for i in range(len(value))]
+                return {
+                    "filter_expression": f"{field} IN ({', '.join(placeholders)})",
+                    "expression_values": {f":val{i}": v for i, v in enumerate(value)}
+                }
+            else:
+                raise ValueError("IN operator requires a list/tuple of values")
+        elif operator == "contains":
+            return {
+                "filter_expression": f"contains({field}, :val)",
+                "expression_values": {":val": value}
+            }
+        else:
+            return {
+                "filter_expression": f"{field} {operator} :val",
+                "expression_values": {":val": value}
             }
