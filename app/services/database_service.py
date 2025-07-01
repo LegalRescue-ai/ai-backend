@@ -6,6 +6,7 @@ import boto3
 from botocore.exceptions import NoCredentialsError, BotoCoreError, ClientError
 from decimal import Decimal
 from typing import Dict, List, Optional, Any
+from flask import current_app
 
 logger = logging.getLogger(__name__)
 
@@ -32,11 +33,11 @@ class DatabaseService:
             self.dynamodb = self.session.resource('dynamodb')
             self.client = self.session.client('dynamodb')
             
-            logger.info("✅ Database service initialized with DynamoDB connection")
+            current_app.logger.info("✅ Database service initialized with DynamoDB connection")
         except Exception as e:
             error_msg = f"Failed to initialize DynamoDB client: {str(e)}"
-            logger.error(error_msg)
-            logger.error(traceback.format_exc())
+            current_app.logger.error(error_msg)
+            current_app.logger.error(traceback.format_exc())
             raise ValueError(error_msg)
     
     def get_records(self, table_name: str, query: Optional[Dict] = None, index_name: Optional[str] = None) -> List[Dict]:
@@ -59,7 +60,7 @@ class DatabaseService:
             service.get_records('users', {'filter_expression': 'age > :age', 'expression_values': {':age': 25}})
         """
         try:
-            logger.info(f"Getting records from table: {table_name}")
+            current_app.logger.info(f"Getting records from table: {table_name}")
             table = self.dynamodb.Table(table_name)
             
             if query and 'key_condition' in query:
@@ -80,7 +81,6 @@ class DatabaseService:
                 if index_name:
                     kwargs['IndexName'] = index_name
                 
-                logger.info(f"Executing query on table '{table_name}' with key condition")
                 response = table.query(**kwargs)
             else:
                 # Use Scan operation
@@ -98,30 +98,21 @@ class DatabaseService:
                 if index_name:
                     kwargs['IndexName'] = index_name
                 
-                logger.info(f"Executing scan on table '{table_name}'")
                 response = table.scan(**kwargs)
             
             # Convert Decimal types back to float/int for JSON serialization
             items = self._deserialize_decimals(response['Items'])
-            logger.info(f"Query returned {len(items)} records")
             return items
             
         except Exception as e:
-            logger.error(f"Failed to fetch records from {table_name}: {str(e)}")
-            logger.error(traceback.format_exc())
+            current_app.logger.error(f"Failed to fetch records from {table_name}: {str(e)}")
+            current_app.logger.error(traceback.format_exc())
             raise
     
     def create_record(self, table_name: str, data: Dict[str, Any]) -> Dict[str, Any]:
         """Create a new record in the specified table"""
         try:
-            logger.info(f"Creating record in table '{table_name}'")
-            
-            # Log data being inserted, but limit size for large payloads
-            data_str = json.dumps(data, default=str)
-            if len(data_str) > 1000:
-                logger.info(f"Data to insert: {data_str[:1000]}... (truncated)")
-            else:
-                logger.info(f"Data to insert: {data_str}")
+            current_app.logger.info(f"Creating record in table '{table_name}'")
             
             # Convert float values to Decimal for DynamoDB
             prepared_data = self._serialize_for_dynamodb(data)
@@ -131,7 +122,6 @@ class DatabaseService:
             
             # DynamoDB put_item doesn't return the created item by default
             # Return the original data as confirmation
-            logger.info(f"Record created successfully")
             return data
             
         except Exception as e:
@@ -139,8 +129,8 @@ class DatabaseService:
             error_msg = str(e)
             error_traceback = traceback.format_exc()
             
-            logger.error(f"Failed to create record in {table_name}: {error_type}: {error_msg}")
-            logger.error(f"Traceback: {error_traceback}")
+            current_app.logger.error(f"Failed to create record in {table_name}: {error_type}: {error_msg}")
+            current_app.logger.error(f"Traceback: {error_traceback}")
             
             # Re-raise with more details
             raise Exception(f"Database error ({error_type}): {error_msg}")
@@ -157,7 +147,7 @@ class DatabaseService:
             condition_expression: Optional condition that must be satisfied for the update
         """
         try:
-            logger.info(f"Updating record with key {key} in table '{table_name}'")
+            current_app.logger.info(f"Updating record with key {key} in table '{table_name}'")
             
             # Prepare data for DynamoDB
             prepared_data = self._serialize_for_dynamodb(data)
@@ -195,12 +185,11 @@ class DatabaseService:
             response = table.update_item(**kwargs)
             updated_item = self._deserialize_decimals(response['Attributes'])
             
-            logger.info(f"Record updated successfully")
             return updated_item
             
         except Exception as e:
-            logger.error(f"Failed to update record {key} in {table_name}: {str(e)}")
-            logger.error(traceback.format_exc())
+            current_app.logger.error(f"Failed to update record {key} in {table_name}: {str(e)}")
+            current_app.logger.error(traceback.format_exc())
             raise
     
     def delete_record(self, table_name: str, key: Dict[str, Any], 
@@ -214,7 +203,7 @@ class DatabaseService:
             condition_expression: Optional condition that must be satisfied for the delete
         """
         try:
-            logger.info(f"Deleting record with key {key} from table '{table_name}'")
+            current_app.logger.info(f"Deleting record with key {key} from table '{table_name}'")
             
             table = self.dynamodb.Table(table_name)
             
@@ -230,36 +219,32 @@ class DatabaseService:
             
             if 'Attributes' in response:
                 deleted_item = self._deserialize_decimals(response['Attributes'])
-                logger.info(f"Record deleted successfully")
                 return deleted_item
             else:
-                logger.info(f"Record deleted (no return value)")
                 return {}
                 
         except Exception as e:
-            logger.error(f"Failed to delete record {key} from {table_name}: {str(e)}")
-            logger.error(traceback.format_exc())
+            current_app.logger.error(f"Failed to delete record {key} from {table_name}: {str(e)}")
+            current_app.logger.error(traceback.format_exc())
             raise
     
     def get_record_by_key(self, table_name: str, key: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Get a single record by its primary key"""
         try:
-            logger.info(f"Getting record with key {key} from table '{table_name}'")
+            current_app.logger.info(f"Getting record with key {key} from table '{table_name}'")
             
             table = self.dynamodb.Table(table_name)
             response = table.get_item(Key=key)
             
             if 'Item' in response:
                 item = self._deserialize_decimals(response['Item'])
-                logger.info(f"Record found")
                 return item
             else:
-                logger.info(f"Record not found")
                 return None
                 
         except Exception as e:
-            logger.error(f"Failed to get record {key} from {table_name}: {str(e)}")
-            logger.error(traceback.format_exc())
+            current_app.logger.error(f"Failed to get record {key} from {table_name}: {str(e)}")
+            current_app.logger.error(traceback.format_exc())
             raise
     
     def _serialize_for_dynamodb(self, data: Any) -> Any:
@@ -297,7 +282,7 @@ class DatabaseService:
             }
         except NoCredentialsError:
             error_msg = "AWS credentials not found"
-            logger.error(error_msg)
+            current_app.logger.error(error_msg)
             return {
                 "connected": False,
                 "message": error_msg
@@ -305,16 +290,16 @@ class DatabaseService:
         except ClientError as e:
             error_code = e.response['Error']['Code']
             error_msg = f"AWS error ({error_code}): {e.response['Error']['Message']}"
-            logger.error(error_msg)
-            logger.error(traceback.format_exc())
+            current_app.logger.error(error_msg)
+            current_app.logger.error(traceback.format_exc())
             return {
                 "connected": False,
                 "message": error_msg
             }
         except Exception as e:
             error_msg = f"Failed to connect to DynamoDB: {str(e)}"
-            logger.error(error_msg)
-            logger.error(traceback.format_exc())
+            current_app.logger.error(error_msg)
+            current_app.logger.error(traceback.format_exc())
             return {
                 "connected": False,
                 "message": error_msg

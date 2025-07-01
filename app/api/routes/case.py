@@ -303,16 +303,21 @@ def generate_summary():
                     "criticalFactors": critical_factors,
                     "case_submission_id": caseId,
                 }
-                
+                current_app.logger.info(f"Case data to store: {case_data}")  # Log the data being stored
                 stored_case = db_service.create_record('ai_case_submissions', case_data)
-                
                 # Add the database ID to the response
-                summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
+                if isinstance(stored_case, dict):
+                    summary_result['case_id'] = stored_case.get('id')
+                elif isinstance(stored_case, list) and stored_case and isinstance(stored_case[0], dict):
+                    summary_result['case_id'] = stored_case[0].get('id')
+                else:
+                    summary_result['case_id'] = None
                 summary_result['stored'] = True
-                
                 current_app.logger.info(f"Case summary stored with ID: {summary_result.get('case_id')}")
             except Exception as db_error:
+                import traceback
                 current_app.logger.error(f"Database error: {str(db_error)}")
+                current_app.logger.error(traceback.format_exc())  # Log the full traceback
                 summary_result['stored'] = False
                 summary_result['db_error'] = str(db_error)
             
