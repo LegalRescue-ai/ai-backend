@@ -364,6 +364,3 @@ All endpoints use JSON format for data exchange with comprehensive error handlin
 - **Validation Systems:** Multi-layer data validation and consistency checking
 - **Error Prevention:** Proactive identification and correction of data issues
 - **Manual Review:** Automatic flagging of low-confidence classifications
-
-
-LegalRescue.ai Backend redefines legal case management by leveraging intelligent automation and AI-powered insights — driving greater efficiency, precision, and scalability for today’s legal workflows.
