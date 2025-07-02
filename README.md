@@ -1,4 +1,4 @@
-# LegalRescue.ai Backend
+# LegalRescue.ai AI Backend
 ---
 
 ## Table of Contents
@@ -15,7 +15,7 @@
 
 ## Overview
 
-The LegalRescue.ai Backend powers seamless legal support through AI-driven case analysis, automatic categorization, intelligent form prefilling, and generation of structured legal summaries — streamlining the path from user input to actionable legal documentation.
+The LegalRescue.ai AI Backend powers seamless legal support through AI-driven case analysis, automatic categorization, intelligent form prefilling, and generation of structured legal summaries — streamlining the path from user input to actionable legal documentation.
 
 **Technology Foundation:**
 - OpenAI GPT-4o for advanced legal text analysis
@@ -279,8 +279,8 @@ legalrescue-backend/
 
 **1. Repository Setup**
 ```bash
-git clone https://github.com/your-org/legalrescue-backend.git
-cd legalrescue-backend
+git clone https://github.com/LegalRescue-ai/ai-backend.git
+cd ai-backend
 ```
 
 **2. Environment Configuration**
