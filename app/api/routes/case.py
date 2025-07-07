@@ -4,6 +4,8 @@ from app.services.form_prefill import FormPrefillerService
 from app.services.database_service import DatabaseService
 import json
 import re
+import uuid
+import traceback
 
 case_bp = Blueprint('case', __name__)
 
@@ -11,21 +13,31 @@ case_bp = Blueprint('case', __name__)
 @case_bp.route('/analyze', methods=['POST'])
 def analyze_case():
     """
-    Initial case analysis endpoint
+    Initial case analysis endpoint with enhanced debugging
     Accepts raw case text and returns suggested category/subcategory
     """
     try:
+        # Generate request ID for tracking
+        request_id = str(uuid.uuid4())[:8]
+        current_app.logger.info(f"🔍 [{request_id}] NEW CASE ANALYSIS REQUEST")
+        
         data = request.get_json()
+        current_app.logger.info(f"📊 [{request_id}] Request data keys: {list(data.keys()) if data else 'None'}")
+        
         if not data or 'case_text' not in data:
+            current_app.logger.error(f"❌ [{request_id}] Missing case_text in request")
             return jsonify({
                 "status": "error",
                 "message": "Case text is required"
             }), 400
 
         case_text = data['case_text'].strip()
+        current_app.logger.info(f"📝 [{request_id}] Case text length: {len(case_text)} chars")
+        current_app.logger.info(f"📝 [{request_id}] First 100 chars: '{case_text[:100]}...'")
         
-        # Validate the input text length and content
+        # Basic validation
         if not case_text:
+            current_app.logger.error(f"❌ [{request_id}] Empty case text")
             return jsonify({
                 "status": "error",
                 "message": "Case text cannot be empty"
@@ -34,6 +46,7 @@ def analyze_case():
         # Check for common greetings only
         common_greetings = ["hello", "hi", "hey", "greetings", "good morning", "good afternoon", "good evening"]
         if case_text.lower() in common_greetings:
+            current_app.logger.error(f"❌ [{request_id}] Greeting detected: {case_text}")
             return jsonify({
                 "status": "error",
                 "message": "Please provide details about your case instead of just a greeting."
@@ -41,78 +54,114 @@ def analyze_case():
             
         # Check for minimum word count
         word_count = len(re.findall(r'\w+', case_text))
+        current_app.logger.info(f"📊 [{request_id}] Word count: {word_count}")
+        
         if word_count < 10:
+            current_app.logger.error(f"❌ [{request_id}] Insufficient word count: {word_count}")
             return jsonify({
                 "status": "error",
                 "message": "Please provide more details about your case. We need at least 10 words to perform a meaningful analysis."
             }), 400
 
-        # Check for gibberish/random text patterns
-        # Simple check for repeating characters or lack of spaces
-        if any(c * 5 in case_text for c in 'abcdefghijklmnopqrstuvwxyz') or ' ' not in case_text:
+        # IMPROVED GIBBERISH DETECTION (much less aggressive)
+        current_app.logger.info(f"🔍 [{request_id}] Running gibberish detection...")
+        
+        # Check for excessive repeating characters (much more relaxed)
+        repeating_chars = any(c * 10 in case_text for c in 'abcdefghijklmnopqrstuvwxyz')  # Changed from 5 to 10
+        current_app.logger.info(f"📊 [{request_id}] Repeating chars (10+) check: {repeating_chars}")
+        
+        # Check for lack of spaces (but allow some flexibility)
+        no_spaces = ' ' not in case_text and len(case_text) > 30  # Only flag if very long AND no spaces
+        current_app.logger.info(f"📊 [{request_id}] No spaces check: {no_spaces}")
+        
+        if repeating_chars or no_spaces:
+            current_app.logger.warning(f"⚠️ [{request_id}] Basic gibberish detected - repeating: {repeating_chars}, no_spaces: {no_spaces}")
             return jsonify({
                 "status": "error",
                 "message": "Your input appears to contain gibberish or random text. Please provide a clear description of your legal case."
             }), 400
             
-        # Calculate the ratio of unique words to total words (very low ratio might indicate gibberish)
+        # Calculate unique word ratio (much more permissive)
         words = re.findall(r'\w+', case_text.lower())
         unique_word_ratio = len(set(words)) / len(words) if words else 0
+        current_app.logger.info(f"📊 [{request_id}] Unique word ratio: {unique_word_ratio:.3f} ({len(set(words))}/{len(words)})")
         
-        # Extremely high unique word ratio might indicate random strings
-        if unique_word_ratio > 0.9 and len(words) > 15:
+        # Much more permissive thresholds - only catch truly random text
+        extremely_high_ratio = unique_word_ratio > 0.98 and len(words) > 40  # Very high bar
+        current_app.logger.info(f"📊 [{request_id}] Extremely high ratio check: {extremely_high_ratio}")
+        
+        if extremely_high_ratio:
+            current_app.logger.warning(f"⚠️ [{request_id}] Extreme unique word ratio detected: {unique_word_ratio:.3f}")
             return jsonify({
                 "status": "error",
                 "message": "Your input appears to contain unusually random text. Please provide a clear description of your legal case."
             }), 400
             
+        current_app.logger.info(f"✅ [{request_id}] Gibberish detection passed")
+        
         # Initialize analyzer
+        current_app.logger.info(f"🤖 [{request_id}] Initializing CaseAnalyzer...")
         analyzer = CaseAnalyzer(api_key=current_app.config['OPENAI_API_KEY'])
-        current_app.logger.info(f"Analyzing case with {word_count} words")
+        current_app.logger.info(f"📊 [{request_id}] Analyzing case with {word_count} words")
         
         # Perform initial analysis
+        current_app.logger.info(f"🔬 [{request_id}] Starting OpenAI analysis...")
         analysis = analyzer.initial_analysis(data['case_text'])
+        current_app.logger.info(f"📊 [{request_id}] Analysis result status: {analysis.get('status')}")
         
         # Check if the analysis result contains confidence information
         try:
             analysis_data = json.loads(analysis.get('analysis', '{}'))
+            current_app.logger.info(f"📊 [{request_id}] Analysis data keys: {list(analysis_data.keys())}")
             
-            # Add a gibberish detection flag
+            # Add gibberish detection flag (very permissive now)
             gibberish_detected = False
             
-            # Simple heuristics to detect gibberish in the original text
-            if unique_word_ratio > 0.85 and len(words) > 20:
+            # Only flag as gibberish if EXTREMELY high unique word ratio
+            if unique_word_ratio > 0.99 and len(words) > 50:  # Only truly random text
+                current_app.logger.warning(f"⚠️ [{request_id}] Setting gibberish_detected=True due to extreme ratio: {unique_word_ratio:.3f}")
                 gibberish_detected = True
                 
             # Add the gibberish detection flag to the analysis
             analysis_data['gibberish_detected'] = gibberish_detected
+            current_app.logger.info(f"📊 [{request_id}] Final gibberish_detected: {gibberish_detected}")
             
             # Update the analysis
             analysis['analysis'] = json.dumps(analysis_data)
             
-            # If we have extremely low confidence, reject the analysis
-            if analysis_data.get('confidence') == 'low' or (
-                isinstance(analysis_data.get('confidence'), (int, float)) and 
-                float(analysis_data.get('confidence')) < 0.3
-            ):
+            # Much less aggressive confidence check
+            confidence = analysis_data.get('confidence')
+            current_app.logger.info(f"📊 [{request_id}] Confidence: {confidence}")
+            
+            # Only reject if confidence is extremely low or explicitly marked as low
+            confidence_too_low = (
+                confidence == 'low' or 
+                (isinstance(confidence, (int, float)) and float(confidence) < 0.15)  # Very low threshold
+            )
+            
+            if confidence_too_low:
+                current_app.logger.warning(f"⚠️ [{request_id}] Rejecting due to very low confidence: {confidence}")
                 return jsonify({
                     "status": "error",
                     "message": "We're having trouble understanding your case description. Please provide more clear and specific details about your legal situation."
                 }), 400
                 
         except (json.JSONDecodeError, KeyError, TypeError) as e:
-            current_app.logger.warning(f"Error processing analysis confidence: {e}")
+            current_app.logger.warning(f"⚠️ [{request_id}] Error processing analysis confidence: {e}")
         
         # Store analysis in Flask's session
-        session['initial_analysis'] = analysis  # Use session instead of request.session
+        session['initial_analysis'] = analysis
+        current_app.logger.info(f"✅ [{request_id}] Analysis completed successfully")
 
         return jsonify(analysis), 200
 
     except Exception as e:
-        current_app.logger.error(f"Error analyzing case: {e}")
+        error_id = str(uuid.uuid4())[:8]
+        current_app.logger.error(f"🚨 [{error_id}] EXCEPTION in analyze_case: {str(e)}")
+        current_app.logger.error(f"🚨 [{error_id}] Traceback: {traceback.format_exc()}")
         return jsonify({
             "status": "error",
-            "message": str(e)
+            "message": f"Internal server error [{error_id}]: {str(e)}"
         }), 500
 
 
@@ -158,6 +207,8 @@ def prefill_form():
             "status": "error",
             "message": str(e)
         }), 500
+
+
 @case_bp.route('/generate-summary', methods=['POST'])
 def generate_summary():
     """
@@ -329,6 +380,8 @@ def generate_summary():
             "status": "error",
             "message": str(e)
         }), 500
+
+
 def extract_list_items(html_content, section_title):
     """Extract list items from a specific section in the HTML content"""
     # Escape any special regex characters in the section title

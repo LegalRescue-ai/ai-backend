@@ -2,9 +2,11 @@ from typing import Dict, Any, List
 import openai
 import json
 import os
+import html
+import unicodedata
 
 class FormPrefillerService:
-    """Service for pre-filling legal forms based on case analysis"""
+    """Service for pre-filling legal forms based on case analysis - ENCODING SAFE"""
 
     def __init__(self, api_key: str):
         self.client = openai.OpenAI(api_key=api_key)
@@ -133,19 +135,95 @@ class FormPrefillerService:
             # Landlord/Tenant Law (category 13)
             "General Landlord and Tenant Issues": "1"
         }
+
+    # ENCODING SAFETY FUNCTIONS
+    def _safe_encode_text(self, text: str) -> str:
+        """Safely encode text for form display"""
+        if not text:
+            return ""
+        
+        try:
+            # Normalize Unicode characters
+            text = unicodedata.normalize('NFKC', text)
+            
+            # Replace problematic Unicode characters
+            text = text.replace('\u00a0', ' ')    # Non-breaking space
+            text = text.replace('\u2013', '-')    # En dash
+            text = text.replace('\u2014', '--')   # Em dash
+            text = text.replace('\u2018', "'")    # Left single quote
+            text = text.replace('\u2019', "'")    # Right single quote
+            text = text.replace('\u201c', '"')    # Left double quote
+            text = text.replace('\u201d', '"')    # Right double quote
+            text = text.replace('â€"', '-')       # Broken encoding em-dash
+            text = text.replace('â€™', "'")       # Broken encoding apostrophe
+            text = text.replace('â€œ', '"')       # Broken encoding left quote
+            text = text.replace('â€\x9d', '"')    # Broken encoding right quote
+            
+            # Ensure valid UTF-8
+            encoded = text.encode('utf-8', errors='ignore').decode('utf-8')
+            
+            # HTML escape for safe form display
+            return html.escape(encoded, quote=False)
+            
+        except Exception as e:
+            print(f"Text encoding error: {e}")
+            # Fallback: keep only ASCII characters
+            return ''.join(char for char in text if ord(char) < 128)
+
+    def _safe_json_dumps(self, data: Any, **kwargs) -> str:
+        """Safely serialize JSON for form display"""
+        try:
+            # Force ASCII encoding to prevent form display issues
+            return json.dumps(data, ensure_ascii=True, **kwargs)
+        except (TypeError, ValueError) as e:
+            print(f"JSON serialization error: {e}")
+            # Fallback: convert to string representation
+            return json.dumps(str(data), ensure_ascii=True)
+
+    def _clean_form_data(self, data: Any) -> Any:
+        """Recursively clean all text data for safe form display"""
+        if isinstance(data, dict):
+            return {key: self._clean_form_data(value) for key, value in data.items()}
+        elif isinstance(data, list):
+            return [self._clean_form_data(item) for item in data]
+        elif isinstance(data, str):
+            return self._safe_encode_text(data)
+        else:
+            return data
+
+    def _normalize_option_text(self, text: str) -> str:
+        """Normalize option text for comparison"""
+        if not text:
+            return ""
+        
+        # Clean and normalize
+        cleaned = self._safe_encode_text(text)
+        
+        # Additional normalizations for option matching
+        cleaned = cleaned.replace('–', '-')    # En dash to hyphen
+        cleaned = cleaned.replace('—', '--')   # Em dash to double hyphen
+        cleaned = cleaned.strip()
+        
+        return cleaned
     
     def _load_forms_data(self, forms_path: str) -> Dict[str, Any]:
-        """Load forms data from JSON file"""
+        """Load forms data from JSON file with encoding safety"""
         try:
-            with open(forms_path, 'r') as file:
-                return json.load(file)
+            with open(forms_path, 'r', encoding='utf-8') as file:
+                data = json.load(file)
+                # Clean all loaded form data
+                return self._clean_form_data(data)
         except Exception as e:
             print(f"Error loading forms data: {str(e)}")
             return {}
     
     def get_form_template(self, category: str, subcategory: str) -> Dict[str, Any]:
-        """Get form template for specific category and subcategory"""
+        """Get form template for specific category and subcategory - encoding safe"""
         try:
+            # Clean input parameters
+            category = self._safe_encode_text(category)
+            subcategory = self._safe_encode_text(subcategory)
+            
             # First, try to map the text categories to numeric IDs
             numeric_category = self.category_mapping.get(category, "")
             numeric_subcategory = self.subcategory_mapping.get(subcategory, "")
@@ -177,7 +255,7 @@ class FormPrefillerService:
             if not form_data:
                 print(f"Searching for form by title containing: {subcategory}")
                 for key, form in self.forms_data.items():
-                    title = form.get("title", "")
+                    title = self._safe_encode_text(form.get("title", ""))
                     if subcategory in title:
                         form_data = form
                         form_key = key
@@ -187,23 +265,24 @@ class FormPrefillerService:
             if not form_data:
                 print(f"No matching form found for {category}/{subcategory}")
                 return {
-                    "title": f"{category} - {subcategory} Form",
+                    "title": self._safe_encode_text(f"{category} - {subcategory} Form"),
                     "elements": []
                 }
             
-            # Return the complete form structure
-            return form_data
+            # Clean the form data before returning
+            cleaned_form_data = self._clean_form_data(form_data)
+            return cleaned_form_data
             
         except Exception as e:
             print(f"Error retrieving form template: {str(e)}")
             return {
-                "title": f"{category} - {subcategory} Form",
+                "title": self._safe_encode_text(f"{category} - {subcategory} Form"),
                 "elements": []
             }
     
     def prefill_form(self, category: str, subcategory: str, initial_analysis: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate pre-filled form data based on category and initial analysis
+        Generate pre-filled form data based on category and initial analysis - ENCODING SAFE
 
         Args:
             category (str): Selected legal category
@@ -214,7 +293,12 @@ class FormPrefillerService:
             Dict containing pre-filled form fields and form structure
         """
         try:
+            # Clean input parameters
+            category = self._safe_encode_text(category)
+            subcategory = self._safe_encode_text(subcategory)
+            
             print(f"Prefilling form for {category}/{subcategory}")
+            
             # Get the specific form template for this category/subcategory
             form_template = self.get_form_template(category, subcategory)
             
@@ -224,35 +308,39 @@ class FormPrefillerService:
                     "error": f"No form template found for {category}/{subcategory}"
                 }
             
-            # Extract field information for the AI to use
+            # Extract field information for the AI to use - with text cleaning
             field_info = []
             for element in form_template.get("elements", []):
-                field_name = element.get("name")
+                field_name = self._safe_encode_text(element.get("name", ""))
                 field_type = element.get("type", "text")
-                options = element.get("options", []) if field_type in ["radio", "checkbox"] else None
+                
+                # Clean options if they exist
+                options = None
+                if field_type in ["radio", "checkbox"] and element.get("options"):
+                    options = [self._safe_encode_text(opt) for opt in element.get("options", [])]
                 
                 if field_name:
                     field_info.append({
                         "name": field_name,
-                        "title": element.get("title", ""),
+                        "title": self._safe_encode_text(element.get("title", "")),
                         "type": field_type,
                         "options": options
                     })
             
-            # Get case text from whatever field is available
+            # Get case text from whatever field is available - WITH CLEANING
             case_text = ""
             if 'original_text' in initial_analysis and initial_analysis['original_text'].strip():
-                case_text = initial_analysis['original_text']
+                case_text = self._safe_encode_text(initial_analysis['original_text'])
             elif 'cleaned_text' in initial_analysis:
-                case_text = initial_analysis['cleaned_text']
+                case_text = self._safe_encode_text(initial_analysis['cleaned_text'])
             else:
                 # Try to find any text field we can use
                 for key, value in initial_analysis.items():
                     if isinstance(value, str) and len(value) > 100:
-                        case_text = value
+                        case_text = self._safe_encode_text(value)
                         break
             
-            # Extract useful information for hints
+            # Extract useful information for hints - with text cleaning
             occupation_hint = ""
             if case_text:
                 useful_info = []
@@ -284,12 +372,12 @@ class FormPrefillerService:
                 if useful_info:
                     occupation_hint = "\n\nNote: The following information may be useful for filling the form:\n" + "\n".join(useful_info)
             
-            # Constructing a precise prompt for the AI
+            # Constructing a precise prompt for the AI - with safe JSON
             prompt = f"""
             Extract and structure information to pre-fill a legal form for {category} - {subcategory}.
             Use the case details below to extract values for the following specific form fields:
             
-            {json.dumps(field_info, indent=2)}
+            {self._safe_json_dumps(field_info, indent=2)}
             
             Follow these guidelines:
             - Return ALL field names in your JSON response matching exactly the names provided above
@@ -300,6 +388,7 @@ class FormPrefillerService:
             - For dates mentioned approximately (like "10 years ago" or "three years ago"), convert to an estimated date
             - For single-select fields (radio buttons): Select the most appropriate option based on the information provided
             - For multi-select fields (checkboxes): Include all options that apply based on the information
+            - IMPORTANT: Use only ASCII characters in your response to avoid encoding issues
             
             Format your response as a valid JSON object with all field names from the template, providing the best possible values based on the available information.{occupation_hint}
             
@@ -307,14 +396,15 @@ class FormPrefillerService:
             {case_text}
             """
             
-            # Use a comprehensive system prompt
+            # Use a comprehensive system prompt - emphasizing ASCII output
             system_prompt = """You are an expert legal assistant specializing in structured data extraction for legal forms. 
             Your job is to extract information from case details to fill in form fields.
             Be proactive about filling in fields where you have enough context to make a reasonable determination.
             For fields like occupation, disability type, employment status, and similar factual information, make your best assessment.
             For fields asking about preferences or future plans, use contextual clues when available.
             Only leave fields completely blank when you have absolutely no information to work with.
-            IMPORTANT: Return ALL field names in your JSON response, even if the value is an empty string."""
+            IMPORTANT: Return ALL field names in your JSON response, even if the value is an empty string.
+            CRITICAL: Use only ASCII characters in your response to ensure proper form display."""
             
             # Query GPT-4o for pre-filled form fields
             response = self.client.chat.completions.create(
@@ -323,14 +413,18 @@ class FormPrefillerService:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": prompt}
                 ],
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
+                temperature=0.1  # Lower temperature for more consistent output
             )
             
-            # Parse the AI-generated structured response
+            # Parse the AI-generated structured response - WITH CLEANING
             prefilled_data_str = response.choices[0].message.content
+            prefilled_data_str = self._safe_encode_text(prefilled_data_str)
             
             try:
                 prefilled_data = json.loads(prefilled_data_str)
+                # Clean all prefilled data
+                prefilled_data = self._clean_form_data(prefilled_data)
                 print(f"Prefilled data fields: {list(prefilled_data.keys())}")
             except json.JSONDecodeError as e:
                 return {
@@ -353,14 +447,14 @@ class FormPrefillerService:
                 for field in mismatched_fields:
                     prefilled_data.pop(field, None)
             
-            # Serialize the prefilled data
-            prefilled_data_str = json.dumps(prefilled_data)
+            # Serialize the prefilled data with safe encoding
+            prefilled_data_str = self._safe_json_dumps(prefilled_data)
             
             # Return the response with both the prefilled data and form structure
             response_data = {
                 "status": "success",
                 "prefilled_data": prefilled_data_str,
-                "form_structure": form_template,  # Include the complete form structure
+                "form_structure": form_template,  # Already cleaned in get_form_template
                 "category": category,
                 "subcategory": subcategory
             }
@@ -374,12 +468,12 @@ class FormPrefillerService:
             print(traceback.format_exc())
             return {
                 "status": "error",
-                "error": str(e)
+                "error": self._safe_encode_text(str(e))
             }
 
     def validate_prefilled_data(self, prefilled_data: Dict[str, Any], form_template: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Validate pre-filled data against form template
+        Validate pre-filled data against form template - ENCODING SAFE
 
         Args:
             prefilled_data (Dict[str, Any]): Pre-filled form data
@@ -393,19 +487,23 @@ class FormPrefillerService:
         for element in form_template.get("elements", []):
             field_name = element.get("name")
             if field_name:
+                # Clean all form template data
                 field_rules[field_name] = {
                     "type": element.get("type", "text"),
-                    "title": element.get("title", ""),
-                    "options": element.get("options", [])
+                    "title": self._safe_encode_text(element.get("title", "")),
+                    "options": [self._safe_encode_text(opt) for opt in element.get("options", [])]
                 }
         
-        # If prefilled_data is already a dict, use it directly
+        # If prefilled_data is already a dict, use it directly, otherwise parse
         if not isinstance(prefilled_data, dict):
             try:
                 prefilled_data = json.loads(prefilled_data) if isinstance(prefilled_data, str) else {}
             except json.JSONDecodeError:
                 return {"status": "error", "error": "Invalid JSON in prefilled data"}
-                
+        
+        # Clean all prefilled data
+        prefilled_data = self._clean_form_data(prefilled_data)
+        
         validated_data = {}
         
         # Track validation results for debugging
@@ -449,13 +547,13 @@ class FormPrefillerService:
         
         print(f"Validation summary - Passed: {len(validation_results['passed'])}, Failed: {len(validation_results['failed'])}")
         if validation_results["failed"]:
-            print(f"Failed validations: {json.dumps(validation_results['failed'], indent=2)}")
+            print(f"Failed validations: {self._safe_json_dumps(validation_results['failed'], indent=2)}")
         
         return validated_data
 
     def _validate_field(self, value: Any, field_rules: Dict[str, Any]) -> bool:
         """
-        Validate a single field value against rules
+        Validate a single field value against rules - ENCODING SAFE
         
         Args:
             value (Any): Field value to validate
@@ -465,7 +563,11 @@ class FormPrefillerService:
             bool: True if valid
         """
         if value is None or value == "":
-            return True  # Empty values are considered valid now
+            return True  # Empty values are considered valid
+        
+        # Clean the value for validation
+        if isinstance(value, str):
+            value = self._safe_encode_text(value)
             
         # Basic validation based on field type
         field_type = field_rules.get("type", "text")
@@ -489,49 +591,88 @@ class FormPrefillerService:
             # Basic date format validation could be added here
             return True
             
-        # Radio button validation (single select)
+        # Radio button validation (single select) - ENCODING SAFE
         elif field_type == "radio" and isinstance(value, str):
             options = field_rules.get("options", [])
             
-            # Fix encoding issues in options
-            cleaned_options = []
-            for option in options:
-                # Clean up any potential encoding issues (especially for em-dashes)
-                cleaned_option = option.replace('â€"', '-')
-                cleaned_options.append(cleaned_option)
+            # Normalize the input value
+            normalized_value = self._normalize_option_text(value)
             
-            # Print options and value for debugging
-            print(f"Validating radio option: '{value}'")
-            print(f"Available options: {options}")
-            print(f"Available options (cleaned): {cleaned_options}")
+            # Normalize all options for comparison
+            normalized_options = [self._normalize_option_text(opt) for opt in options]
             
-            # Check if the value is an exact match to any option or cleaned option
-            if value in options or value in cleaned_options:
+            print(f"Validating radio option: '{normalized_value}'")
+            print(f"Available options (normalized): {normalized_options}")
+            
+            # Check for exact match in normalized options
+            if normalized_value in normalized_options:
                 return True
                 
-            # If not an exact match, check if it's contained in any option
-            for option in options:
-                if value in option:
-                    print(f"Found partial match: '{value}' in '{option}'")
-                    return True
-                    
-            # Also check in cleaned options
-            for option in cleaned_options:
-                if value in option:
-                    print(f"Found partial match in cleaned option: '{value}' in '{option}'")
+            # Check for partial matches in normalized options
+            for norm_option in normalized_options:
+                if normalized_value in norm_option or norm_option in normalized_value:
+                    print(f"Found partial match: '{normalized_value}' <-> '{norm_option}'")
                     return True
                     
             return False
             
-        # Checkbox validation (multi-select)
+        # Checkbox validation (multi-select) - ENCODING SAFE
         elif field_type == "checkbox" and isinstance(value, list):
             options = field_rules.get("options", [])
-            return all(option in options for option in value)
+            normalized_options = [self._normalize_option_text(opt) for opt in options]
+            normalized_values = [self._normalize_option_text(v) for v in value]
+            return all(norm_val in normalized_options for norm_val in normalized_values)
         
-        # Checkbox validation for string format (comma-separated values)
+        # Checkbox validation for string format (comma-separated values) - ENCODING SAFE
         elif field_type == "checkbox" and isinstance(value, str):
             options = field_rules.get("options", [])
-            selected_options = [opt.strip() for opt in value.split(',') if opt.strip()]
-            return all(option in options for option in selected_options)
+            normalized_options = [self._normalize_option_text(opt) for opt in options]
+            
+            selected_options = [self._normalize_option_text(opt.strip()) for opt in value.split(',') if opt.strip()]
+            return all(norm_opt in normalized_options for norm_opt in selected_options)
             
         return False  # Default to False if no validation rules match
+
+    def get_form_safe_prefill(self, category: str, subcategory: str, initial_analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get form prefill with additional encoding safety for display
+        
+        Args:
+            category (str): Legal category
+            subcategory (str): Legal subcategory  
+            initial_analysis (Dict[str, Any]): Case analysis data
+            
+        Returns:
+            Dict with form-safe prefilled data
+        """
+        try:
+            # Get the standard prefill
+            result = self.prefill_form(category, subcategory, initial_analysis)
+            
+            if result.get("status") == "success":
+                # Additional safety layer for form display
+                
+                # Re-clean the prefilled data
+                if isinstance(result.get("prefilled_data"), str):
+                    try:
+                        prefilled_dict = json.loads(result["prefilled_data"])
+                        cleaned_prefilled = self._clean_form_data(prefilled_dict)
+                        result["prefilled_data"] = self._safe_json_dumps(cleaned_prefilled)
+                    except json.JSONDecodeError:
+                        pass
+                
+                # Clean form structure
+                if result.get("form_structure"):
+                    result["form_structure"] = self._clean_form_data(result["form_structure"])
+                
+                # Clean category/subcategory
+                result["category"] = self._safe_encode_text(result.get("category", ""))
+                result["subcategory"] = self._safe_encode_text(result.get("subcategory", ""))
+            
+            return result
+            
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": self._safe_encode_text(str(e))
+            }
