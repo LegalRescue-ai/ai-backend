@@ -20,8 +20,6 @@ class ConfidenceLevel(Enum):
 class AgentRole(Enum):
     SPECIALIST = "specialist"
     COORDINATOR = "coordinator"
-    VALIDATOR = "validator"
-    SUMMARIZER = "summarizer"
 
 @dataclass
 class LegalClassification:
@@ -43,7 +41,6 @@ class CaseAnalysisResult:
     secondary_classifications: List[LegalClassification]
     complexity_level: str
     requires_multiple_attorneys: bool
-    case_summary: str
     total_processing_time: float
     agents_consulted: List[str]
     confidence_consensus: float
@@ -62,7 +59,7 @@ class BaseAgent(ABC):
         pass
 
 class LegalSpecialistAgent(BaseAgent):
-    """Specialist agent focused on one area of law - ENCODING FIXED"""
+    """Specialist agent focused on one area of law"""
     
     def __init__(self, agent_id: str, client: openai.OpenAI, legal_area: str, 
                  keywords: List[str], subcategories: List[str]):
@@ -73,20 +70,17 @@ class LegalSpecialistAgent(BaseAgent):
         self.role = AgentRole.SPECIALIST
         
     def process(self, case_text: str, context: Dict[str, Any] = None) -> Optional[LegalClassification]:
-        """Analyze case for relevance to this legal area - ENCODING SAFE"""
+        """Analyze case for relevance to this legal area"""
         start_time = time.time()
         
         try:
-            # Simple validation - no complex encoding handling
             if not case_text or len(case_text.strip()) < 10:
                 print(f"[{self.legal_area}] Case text too short")
                 return None
             
-            # Simple keyword screening
             case_lower = case_text.lower()
             keywords_found = [kw for kw in self.keywords if kw.lower() in case_lower]
             
-            # SIMPLIFIED DEBUG OUTPUT - no emojis, simple text
             print(f"[{self.legal_area}] Agent Analysis:")
             print(f"   Case preview: {case_text[:100]}...")
             print(f"   Keywords found: {keywords_found}")
@@ -97,7 +91,6 @@ class LegalSpecialistAgent(BaseAgent):
                 
             print(f"   Result: Relevant - proceeding with LLM analysis")
                 
-            # LLM analysis - same approach as your working simple version
             prompt = f"""You are a {self.legal_area} specialist attorney with 20+ years experience.
 
 ANALYZE THIS CASE ONLY FROM A {self.legal_area.upper()} PERSPECTIVE:
@@ -125,7 +118,6 @@ Return JSON in this exact format:
     "immediate_actions": ["2-3 immediate {self.legal_area} actions needed"]
 }}"""
 
-            # Use same approach as your working simple version
             response = self.client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
@@ -140,16 +132,13 @@ Return JSON in this exact format:
                 max_tokens=600
             )
             
-            # SIMPLE JSON PARSING - same as working version
             result = json.loads(response.choices[0].message.content)
-            
             print(f"   LLM Response: {result}")
             
             if not result.get("relevant", False):
                 print(f"   Final Result: LLM determined not relevant")
                 return None
                 
-            # Calculate relevance score
             urgency = result.get("urgency_score", 0.5)
             complexity = result.get("complexity_score", 0.5)
             keyword_density = len(keywords_found) / max(len(self.keywords), 1)
@@ -200,21 +189,17 @@ class CoordinatorAgent(BaseAgent):
         if not classifications:
             raise Exception("No valid classifications from specialist agents")
             
-        # Sort by combined relevance and urgency
         classifications.sort(key=lambda x: (x.relevance_score + x.urgency_score) / 2, reverse=True)
         
         primary = classifications[0]
         secondaries = classifications[1:] if len(classifications) > 1 else []
         
-        # Determine complexity
         complexity_level = self._assess_complexity(classifications)
         requires_multiple_attorneys = len(classifications) > 1
         
-        # Calculate consensus confidence
         confidence_scores = [self._confidence_to_score(c.confidence) for c in classifications]
         confidence_consensus = sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0.5
         
-        # Get processing stats
         total_processing_time = sum(c.processing_time for c in classifications)
         agents_consulted = [c.agent_id for c in classifications]
         
@@ -223,7 +208,6 @@ class CoordinatorAgent(BaseAgent):
             secondary_classifications=secondaries,
             complexity_level=complexity_level,
             requires_multiple_attorneys=requires_multiple_attorneys,
-            case_summary="",  # Will be filled by SummarizerAgent
             total_processing_time=total_processing_time,
             agents_consulted=agents_consulted,
             confidence_consensus=confidence_consensus
@@ -250,82 +234,12 @@ class CoordinatorAgent(BaseAgent):
             ConfidenceLevel.LOW: 0.4
         }.get(confidence, 0.5)
 
-class SummarizerAgent(BaseAgent):
-    """Creates comprehensive case summaries considering all legal areas"""
-    
-    def __init__(self, agent_id: str, client: openai.OpenAI):
-        super().__init__(agent_id, client)
-        self.role = AgentRole.SUMMARIZER
-        
-    def process(self, case_text: str, context: Dict[str, Any] = None) -> str:
-        """Generate comprehensive summary of multi-faceted case"""
-        result = context.get("analysis_result")
-        
-        if not result:
-            return "Summary unavailable - no analysis result provided"
-            
-        primary = result.primary_classification
-        secondaries = result.secondary_classifications
-        
-        areas_involved = [primary.category] + [s.category for s in secondaries]
-        
-        prompt = f"""Create a professional legal case summary for a multi-faceted case.
-
-CASE TEXT: "{case_text}"
-
-LEGAL ANALYSIS:
-Primary Issue: {primary.category} - {primary.subcategory}
-- Confidence: {primary.confidence.value}
-- Urgency: {primary.urgency_score:.1f}/1.0
-- Reasoning: {primary.reasoning}
-
-Additional Legal Areas: {len(secondaries)}
-{chr(10).join([f"- {s.category} - {s.subcategory} (urgency: {s.urgency_score:.1f})" for s in secondaries])}
-
-Case Complexity: {result.complexity_level}
-Multiple Attorneys Needed: {result.requires_multiple_attorneys}
-
-REQUIREMENTS:
-- Professional but accessible language
-- Acknowledge ALL legal areas involved
-- Prioritize issues by urgency and complexity
-- Suggest coordination strategy if multiple attorneys needed
-- Include immediate next steps
-- 3-4 sentences maximum
-
-Focus on providing actionable insights for legal professionals."""
-
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {
-                        "role": "system", 
-                        "content": "You are a senior legal coordinator who specializes in complex multi-faceted cases. Create clear, actionable case summaries."
-                    },
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3,
-                max_tokens=400
-            )
-            
-            return response.choices[0].message.content.strip()
-            
-        except Exception as e:
-            print(f"Summary generation error: {e}")
-            return f"Multi-area case involving {', '.join(areas_involved)}. Primary focus: {primary.category} - {primary.subcategory}."
-
 class SynchronousMultiAgentLegalAnalyzer:
-    """
-    ENCODING-SAFE Multi-Agent Legal Analyzer
-    Uses the same simple approach as your working single-agent version
-    """
+    """Multi-Agent Legal Analyzer"""
     
-    # Version tracking
-    SYSTEM_VERSION = "3.1.0-ENCODING-FIXED"
-    PROMPT_VERSION = "2024-07-06-encoding-safe"
+    SYSTEM_VERSION = "3.1.0"
+    PROMPT_VERSION = "2024-07-06"
     
-    # Same categories as your working simple version
     LEGAL_CATEGORIES = {
         "Family Law": [
             "Adoptions", "Child Custody & Visitation", "Child Support", "Divorce",
@@ -382,23 +296,17 @@ class SynchronousMultiAgentLegalAnalyzer:
         self.client = openai.OpenAI(api_key=api_key)
         self.pii_remover = PIIRemover()
         
-        # Initialize specialist agents
         self.specialist_agents = self._create_specialist_agents()
-        
-        # Initialize coordination agents
         self.coordinator = CoordinatorAgent("coordinator-001", self.client)
-        self.summarizer = SummarizerAgent("summarizer-001", self.client)
         
         print(f"Multi-Agent System Initialized:")
         print(f"   - {len(self.specialist_agents)} Specialist Agents")
         print(f"   - 1 Coordinator Agent")
-        print(f"   - 1 Summarizer Agent")
-        print(f"   - Total: {len(self.specialist_agents) + 2} Agents")
+        print(f"   - Total: {len(self.specialist_agents) + 1} Agents")
 
     def _create_specialist_agents(self) -> List[LegalSpecialistAgent]:
         """Create specialist agents for each legal area"""
         
-        # Enhanced keywords for better detection
         specialist_configs = [
             {
                 "area": "Criminal Law",
@@ -486,31 +394,30 @@ class SynchronousMultiAgentLegalAnalyzer:
         return agents
 
     def initial_analysis(self, case_text: str, max_retries: int = 2) -> Dict[str, Any]:
-        """
-        ENCODING-SAFE Multi-Agent Analysis Process
-        Uses same simple approach as your working single-agent version
-        """
+        """Multi-Agent Analysis Process"""
         try:
             start_time = time.time()
             
             print(f"MULTI-AGENT ANALYSIS STARTING")
             print(f"Case preview: {case_text[:100]}...")
+            
+            print(f"Processing PII removal and quality assessment...")
+            cleaned_text = self.pii_remover.clean_text(case_text)
+            quality_assessment = self._assess_text_quality(case_text, cleaned_text)
+            
             print(f"Deploying {len(self.specialist_agents)} specialist agents...")
             
-            # Step 1: Deploy all specialist agents in parallel
             valid_classifications = []
             agent_performance = {}
             
             print(f"Running {len(self.specialist_agents)} agents in parallel...")
             
             with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-                # Submit all specialist tasks
                 future_to_agent = {
-                    executor.submit(agent.process, case_text): agent 
+                    executor.submit(agent.process, cleaned_text): agent 
                     for agent in self.specialist_agents
                 }
                 
-                # Collect results as they complete
                 for future in concurrent.futures.as_completed(future_to_agent):
                     agent = future_to_agent[future]
                     
@@ -545,33 +452,19 @@ class SynchronousMultiAgentLegalAnalyzer:
             
             print(f"RESULTS: {len(valid_classifications)} legal areas identified")
             
-            # Step 2: Coordinate results
             print(f"Coordinator processing results...")
             coordination_context = {"classifications": valid_classifications}
-            analysis_result = self.coordinator.process(case_text, coordination_context)
+            analysis_result = self.coordinator.process(cleaned_text, coordination_context)
             
             print(f"Coordination complete:")
             print(f"   Primary: {analysis_result.primary_classification.category} - {analysis_result.primary_classification.subcategory}")
             print(f"   Secondary areas: {len(analysis_result.secondary_classifications)}")
             print(f"   Complexity: {analysis_result.complexity_level}")
             
-            # Step 3: Generate summary
-            print(f"Generating case summary...")
-            summary_context = {"analysis_result": analysis_result}
-            case_summary = self.summarizer.process(case_text, summary_context)
-            analysis_result.case_summary = case_summary
-            
-            print(f"Summary generated: {len(case_summary)} characters")
-            
-            # Step 4: PII removal and quality assessment
-            cleaned_text = self.pii_remover.clean_text(case_text)
-            quality_assessment = self._assess_text_quality(case_text, cleaned_text)
-            
             total_time = time.time() - start_time
             
             print(f"MULTI-AGENT ANALYSIS COMPLETE in {total_time:.2f}s")
             
-            # Create result compatible with existing system
             enhanced_result = {
                 "category": analysis_result.primary_classification.category,
                 "subcategory": analysis_result.primary_classification.subcategory,
@@ -581,7 +474,6 @@ class SynchronousMultiAgentLegalAnalyzer:
                 "method": "multi_agent_cooperative_sync",
                 "gibberish_detected": quality_assessment["gibberish_detected"],
                 
-                # Multi-agent specific data
                 "secondary_issues": [
                     {
                         "category": sec.category,
@@ -597,9 +489,7 @@ class SynchronousMultiAgentLegalAnalyzer:
                 "requires_multiple_attorneys": analysis_result.requires_multiple_attorneys,
                 "confidence_consensus": analysis_result.confidence_consensus,
                 "total_legal_areas": 1 + len(analysis_result.secondary_classifications),
-                "case_summary": analysis_result.case_summary,
                 
-                # Agent performance data
                 "agents_consulted": analysis_result.agents_consulted,
                 "total_processing_time": total_time,
                 "agent_performance": agent_performance,
@@ -614,7 +504,6 @@ class SynchronousMultiAgentLegalAnalyzer:
                 ]
             }
             
-            # SAFE LOGGING - avoid encoding issues in logs
             self._log_multi_agent_analysis(case_text, enhanced_result, True, agent_performance)
             
             return {
@@ -623,7 +512,7 @@ class SynchronousMultiAgentLegalAnalyzer:
                 "timestamp": datetime.utcnow().isoformat(),
                 "original_text": case_text,
                 "cleaned_text": cleaned_text,
-                "analysis": json.dumps(enhanced_result, ensure_ascii=False),  # Keep UTF-8 support but be safe
+                "analysis": json.dumps(enhanced_result, ensure_ascii=False),
                 "system_version": self.SYSTEM_VERSION,
                 "prompt_version": self.PROMPT_VERSION,
                 "processing_stats": {
@@ -651,7 +540,7 @@ class SynchronousMultiAgentLegalAnalyzer:
             return error_response
 
     def _assess_text_quality(self, original: str, cleaned: str) -> Dict[str, Any]:
-        """Assess text quality - same as working version"""
+        """Assess text quality"""
         try:
             original_words = len(original.split())
             cleaned_words = len(cleaned.split())
@@ -698,9 +587,8 @@ class SynchronousMultiAgentLegalAnalyzer:
 
     def _log_multi_agent_analysis(self, case_text: str, response: Dict[str, Any], 
                                  success: bool, agent_performance: Dict[str, Any]) -> None:
-        """ENCODING-SAFE logging"""
+        """Log analysis results"""
         try:
-            # SAFE hash generation
             case_hash = "unknown"
             try:
                 case_hash = hashlib.sha256(case_text.encode('utf-8', errors='replace')).hexdigest()
@@ -715,11 +603,10 @@ class SynchronousMultiAgentLegalAnalyzer:
                 "case_length": len(case_text),
                 "analysis_type": "multi_agent_cooperative_sync",
                 "success": success,
-                "total_agents": len(self.specialist_agents) + 2,
+                "total_agents": len(self.specialist_agents) + 1,
                 "responding_agents": len([p for p in agent_performance.values() if p.get("status") == "success"])
             }
             
-            # SAFE JSON logging - avoid encoding issues
             try:
                 log_json = json.dumps(log_entry, ensure_ascii=False, indent=2)
                 print(f"MULTI-AGENT LOG: {log_json}")
@@ -732,9 +619,8 @@ class SynchronousMultiAgentLegalAnalyzer:
         except Exception as e:
             print(f"Logging error (non-critical): {e}")
 
-    # Legacy compatibility method - same as your working simple version
     def generate_final_summary(self, initial_analysis: Dict[str, Any], form_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Legacy compatibility wrapper - same approach as working simple version"""
+        """Generate a final case summary using PII-cleaned case text and user-provided form data"""
         try:
             if initial_analysis.get("status") == "error":
                 return {
@@ -744,52 +630,105 @@ class SynchronousMultiAgentLegalAnalyzer:
                     "system_version": self.SYSTEM_VERSION
                 }
             
-            # Parse analysis data
-            analysis_data = json.loads(initial_analysis.get("analysis", "{}"))
-            existing_summary = analysis_data.get("case_summary", "")
+            if isinstance(initial_analysis.get("analysis"), str):
+                analysis_data = json.loads(initial_analysis.get("analysis", "{}"))
+            else:
+                analysis_data = initial_analysis.get("analysis", {})
             
-            if existing_summary:
-                return {
-                    "status": "success",
-                    "timestamp": datetime.utcnow().isoformat(),
-                    "summary": json.dumps({
-                        "title": analysis_data.get("case_title", "Legal Case"),
-                        "summary": {
-                            "general_case_summary": existing_summary,
-                            "key_aspects": analysis_data.get("key_details", []),
-                            "potential_merits": [f"Strong {analysis_data.get('category')} case"],
-                            "critical_factors": [f"Requires {analysis_data.get('case_complexity')} legal strategy"]
-                        }
-                    }, ensure_ascii=False),
-                    "system_version": self.SYSTEM_VERSION
-                }
+            category = analysis_data.get("category", "Unknown")
+            subcategory = analysis_data.get("subcategory", "Unknown")
             
-            # Fallback summary
+            cleaned_case_text = initial_analysis.get("cleaned_text", "No case details available.")
+            
+            case_title = analysis_data.get("case_title")
+            if not case_title:
+                title_prompt = f"""Generate a specific, descriptive title (MAXIMUM 70 characters) for this {category} - {subcategory} case based on these details:
+                
+                Case details: {cleaned_case_text}
+                Form data: {form_data}
+                
+                The title MUST NOT contain any personally identifiable information (PII) such as names, addresses, specific dates, or unique identifiers.
+                
+                Focus on the legal situation, not the individuals involved.
+                Examples of good titles:
+                - "Interstate Adoption with Biological Parent Consent"
+                - "Workplace Discrimination Based on Religious Practices"
+                - "Contested Foreclosure with Improper Notice Claims"
+                
+                YOUR RESPONSE MUST BE ONLY THE TITLE TEXT, MAXIMUM 70 CHARACTERS.
+                """
+                
+                title_response = self.client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {"role": "system", "content": "You generate concise, specific legal case titles without any PII, maximum 70 characters."},
+                        {"role": "user", "content": title_prompt}
+                    ]
+                )
+                
+                case_title = title_response.choices[0].message.content.strip('"').strip()
+                
+                if len(case_title) > 70:
+                    case_title = case_title[:67] + "..."
+            else:
+                if len(case_title) > 70:
+                    case_title = case_title[:67] + "..."
+            
+            prompt = f"""You are a professional legal summarizer assisting a {category} attorney specializing in {subcategory} cases in reviewing potential client leads.
+
+Follow these guidelines:
+1. STRICTLY FORBIDDEN: Do not include or reference the original case description.
+2. STRICTLY FORBIDDEN: Remove ALL Personally Identifiable Information (PII).
+3. Each bullet point should be a complete, professional statement.
+4. Use formal legal terminology relevant to {category} cases.
+5. Focus only on legal aspects, requirements, and considerations.
+6. Ensure descriptions are abstract and applicable to similar cases.
+
+### **PII-Cleaned Case Details:**
+{cleaned_case_text}
+
+### **User-Provided Form Responses:**
+{form_data}
+
+Now, create a structured case summary:
+{{
+  "title": "{case_title}",
+  "summary": "summary with sections:
+              General Case Summary
+                concise paragraph (3-4 sentences) summarizing core legal situation
+              Key aspects of the case
+                [4-5 bullet points listing key legal components]
+              Potential Merits of the Case
+                [4-5 bullet points analyzing legal strategies and potential outcomes]
+              Critical factors
+                [4-5 bullet points listing and analyzing critical factors of the case]
+            
+              "
+}}"""
+
+            response = self.client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": "You are a legal document summarizer."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+
+            summary = response.choices[0].message.content
+
             return {
                 "status": "success",
                 "timestamp": datetime.utcnow().isoformat(),
-                "summary": json.dumps({
-                    "title": "Multi-Area Legal Case",
-                    "summary": {
-                        "general_case_summary": f"Complex case involving {analysis_data.get('category')} and potentially other legal areas.",
-                        "key_aspects": analysis_data.get("key_details", []),
-                        "potential_merits": ["Multi-faceted legal strategy required"],
-                        "critical_factors": ["Coordination between multiple legal specialties"]
-                    }
-                }, ensure_ascii=False),
-                "system_version": self.SYSTEM_VERSION
+                "summary": summary
             }
-            
+
         except Exception as e:
-            print(f"Summary generation error: {str(e)}")
             return {
                 "status": "error",
                 "error": str(e),
-                "timestamp": datetime.utcnow().isoformat(),
-                "system_version": self.SYSTEM_VERSION
+                "timestamp": datetime.utcnow().isoformat()
             }
 
-# FORM MATCHING HELPER FUNCTIONS (unchanged)
 def create_subcategory_to_form_mapping():
     """Create mapping from subcategory names to form titles"""
     return {
@@ -901,18 +840,15 @@ def find_form_by_subcategory(subcategory, forms_data):
     target_title = mapping.get(subcategory)
     
     if target_title:
-        # Search for form with matching title
         for form_id, form_data in forms_data.items():
             if form_data.get("title") == target_title:
                 return form_id, form_data
     
     return None, None
 
-# FLASK INTEGRATION - Drop-in replacement for your existing analyzer
 class MultiAgentLegalAnalyzer(SynchronousMultiAgentLegalAnalyzer):
-    """Main class - encoding-safe multi-agent system for Flask integration"""
+    """Main class for Flask integration"""
     pass
 
-# Backward compatibility aliases
 CaseAnalyzer = MultiAgentLegalAnalyzer
 BulletproofCaseAnalyzer = MultiAgentLegalAnalyzer
