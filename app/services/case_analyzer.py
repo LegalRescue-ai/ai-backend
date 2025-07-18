@@ -80,26 +80,6 @@ class InputGuardrails:
                 validation_result["severity"] = "warning"
                 break
         
-        legal_indicators = [
-            'legal', 'law', 'attorney', 'lawyer', 'court', 'case', 'lawsuit',
-            'contract', 'agreement', 'violation', 'injury', 'accident', 'dispute',
-            'criminal', 'civil', 'rights', 'claim', 'damages', 'compensation',
-            'arrest', 'charge', 'divorce', 'custody', 'property', 'business',
-            'employment', 'discrimination', 'harassment', 'medical', 'malpractice',
-            'insurance', 'bankruptcy', 'tax', 'estate', 'will', 'trust',
-            'immigration', 'visa', 'deportation', 'patent', 'copyright', 'trademark',
-            'landlord', 'tenant', 'eviction', 'lease', 'mortgage', 'foreclosure',
-            'fired', 'employer', 'workplace', 'wages', 'overtime', 'benefits',
-            'convicted', 'sentenced', 'probation', 'bail', 'felony', 'misdemeanor',
-            'sue', 'sued', 'suing', 'liable', 'liability', 'negligence', 'fault',
-            'settlement', 'judgment', 'verdict', 'trial', 'hearing', 'deposition'
-        ]
-        
-        has_legal_context = any(indicator in case_text.lower() for indicator in legal_indicators)
-        if not has_legal_context:
-            validation_result["issues"].append("No clear legal context detected")
-            validation_result["severity"] = "warning"
-        
         return validation_result
 
 class OutputGuardrails:
@@ -172,193 +152,133 @@ class LegalSpecialistAgent(BaseAgent):
             keywords_found = [kw for kw in self.keywords if kw.lower() in case_lower]
             concepts_found = [concept for concept in self.legal_concepts if concept.lower() in case_lower]
             
-            if keywords_found or concepts_found:
-                return self._perform_specialist_analysis(case_text, keywords_found + concepts_found, start_time, fallback_used=False)
-            else:
-                return self._perform_fallback_analysis(case_text, start_time)
+            return self._perform_comprehensive_analysis(case_text, keywords_found + concepts_found, start_time)
                 
         except Exception as e:
             return None
     
-    def _perform_specialist_analysis(self, case_text: str, indicators_found: List[str], start_time: float, fallback_used: bool = False) -> Optional[LegalClassification]:
+    def _perform_comprehensive_analysis(self, case_text: str, indicators_found: List[str], start_time: float) -> Optional[LegalClassification]:
+        legal_definitions = self._get_legal_area_definitions()
         case_examples = "\n".join([f"• {desc}" for desc in self.case_descriptions])
-        legal_concepts = "\n".join([f"• {concept}" for concept in self.legal_concepts])
         
-        # Enhanced prompts for specific areas that commonly get misclassified
-        if self.legal_area == "Business/Corporate Law":
-            specific_guidance = """
-CRITICAL BUSINESS LAW INDICATORS - CLASSIFY AS BUSINESS LAW IF ANY APPLY:
-• Commercial contracts (modeling, entertainment, service agreements)
-• Business partnerships or joint ventures
-• Vendor/supplier agreements and disputes
-• Professional service contracts (agencies, consultants, contractors)
-• Commercial transactions between businesses and individuals
-• Company formation, dissolution, or ownership disputes
-• Breach of commercial agreements or contracts
-• Business registration or licensing issues
-• Commercial fraud or misrepresentation
-• Entertainment industry contracts (modeling, talent, production)
+        system_prompt = f"""You are a senior {self.legal_area} attorney with 25+ years of experience. Your expertise includes all aspects of {self.legal_area} legal practice, statutes, regulations, and case law.
 
-EXAMPLES THAT ARE BUSINESS LAW:
-• Modeling agency contract disputes
-• Service provider non-performance
-• Professional service agreements gone wrong
-• Commercial licensing disputes
-• Vendor payment disputes
-• Business partnership breakdowns"""
-            
-        elif self.legal_area == "Government & Administrative Law":
-            specific_guidance = """
-GOVERNMENT LAW SCOPE - ONLY CLASSIFY IF DIRECTLY INVOLVES:
-• Government agencies (Social Security, VA, unemployment offices)
-• Government benefits (disability, social security, veterans benefits)
-• Government regulatory violations or compliance
-• Administrative proceedings with government entities
-• Public sector employment issues
-• Government licensing by regulatory bodies
-• Constitutional rights violations by government
+Your role is to conduct comprehensive legal analysis to determine if a case requires {self.legal_area} legal representation. You must analyze the legal substance of the case, not just look for keywords.
 
-DO NOT CLASSIFY AS GOVERNMENT LAW:
-• Private business disputes (even if business is unregistered)
-• Commercial contracts between private parties
-• Private company service agreements
-• Entertainment/modeling agency disputes
-• Private professional services
-• Business-to-consumer issues
-• Private company registration issues"""
-            
-        elif self.legal_area == "Employment Law":
-            specific_guidance = """
-EMPLOYMENT LAW SCOPE - ONLY CLASSIFY IF INVOLVES:
-• Employer-employee relationship (W-2, payroll, benefits)
-• Workplace discrimination or harassment
-• Wrongful termination from employment
-• Wage and hour violations by employers
-• Workplace safety violations
-• Employment contracts (not independent contractor agreements)
+ANALYSIS FRAMEWORK:
+1. Legal Relationship Analysis: What legal relationships exist between the parties?
+2. Rights and Obligations: What legal rights, duties, or obligations are at stake?
+3. Governing Law: What statutes, regulations, or legal principles apply?
+4. Legal Remedy: What type of legal remedy or resolution is needed?
+5. Jurisdiction: Which legal specialist would be most qualified to handle this matter?
 
-DO NOT CLASSIFY AS EMPLOYMENT LAW:
-• Independent contractor disputes
-• Modeling agency agreements (these are business contracts)
-• Professional service agreements
-• Talent agency contracts
-• Freelance or gig work disputes"""
-            
-        elif self.legal_area == "Product & Services Liability Law":
-            specific_guidance = """
-PRODUCT/SERVICES LIABILITY SCOPE - CLASSIFY IF INVOLVES:
-• Defective physical products causing injury
-• Professional malpractice (attorney, medical, accounting)
-• Service-related injuries or damages
-• Product recalls or safety issues
-• Consumer protection from defective goods
+CRITICAL INSTRUCTION: Make your determination based on legal analysis, not keyword matching. Focus on the underlying legal issues and relationships."""
 
-MAY ALSO CLASSIFY SERVICES LIABILITY FOR:
-• Professional services that failed to deliver as promised
-• Service contracts with inadequate performance
-• Consumer fraud in service delivery"""
-            
-        else:
-            specific_guidance = ""
-        
-        prompt = f"""You are an expert {self.legal_area} attorney with 25+ years of experience. Analyze this case to determine if it requires {self.legal_area} legal representation.
-
-CASE DESCRIPTION:
+        analysis_prompt = f"""CASE FOR ANALYSIS:
 "{case_text}"
 
-{self.legal_area.upper()} LEGAL EXPERTISE COVERS:
-{legal_concepts}
+{self.legal_area.upper()} LEGAL DOMAIN ANALYSIS:
 
-{specific_guidance}
+AREA OF LAW DEFINITION:
+{legal_definitions}
 
-TYPICAL {self.legal_area.upper()} SCENARIOS:
+SUBCATEGORIES WITHIN {self.legal_area.upper()}:
+{', '.join(self.subcategories)}
+
+TYPICAL CASE SCENARIOS:
 {case_examples}
 
-AVAILABLE SUBCATEGORIES: {', '.join(self.subcategories)}
+COMPREHENSIVE LEGAL ANALYSIS REQUIRED:
 
-ANALYSIS REQUIREMENTS:
-1. Determine if this case PRIMARILY involves {self.legal_area} legal issues
-2. Consider if this is the MAIN legal problem requiring {self.legal_area} expertise
-3. Identify the most appropriate subcategory if relevant
-4. Assess complexity, urgency, and legal strength
+1. LEGAL RELATIONSHIP ANALYSIS:
+   - What is the primary legal relationship between parties?
+   - Are there contractual, statutory, or common law obligations involved?
+   - What type of legal dispute or matter is this?
 
-CLASSIFICATION STANDARDS:
-• HIGH confidence: Clear {self.legal_area} issue with strong legal basis
-• MEDIUM confidence: Probable {self.legal_area} issue requiring investigation  
-• LOW confidence: Possible {self.legal_area} implications, uncertain without more facts
+2. SUBSTANTIVE LAW ANALYSIS:
+   - Which area of law governs this situation?
+   - What legal principles, statutes, or regulations apply?
+   - What legal rights or duties are at issue?
 
-CRITICAL: Focus on the PRIMARY legal issue. If this case is PRIMARILY a {self.legal_area} matter, classify it. If it's primarily another area of law, do NOT classify it as {self.legal_area}.
+3. PROCEDURAL CONSIDERATIONS:
+   - What type of legal proceeding or action is needed?
+   - Which court or administrative body has jurisdiction?
+   - What legal remedies are available?
 
-REQUIRED JSON RESPONSE:
+4. PROFESSIONAL COMPETENCY ASSESSMENT:
+   - Would a {self.legal_area} attorney be the primary specialist needed?
+   - Is this matter within the core competency of {self.legal_area} practice?
+   - Are there any secondary legal areas involved?
+
+DECISION CRITERIA:
+- PRIMARY TEST: Does this case primarily involve {self.legal_area} legal issues?
+- COMPETENCY TEST: Would a {self.legal_area} attorney be the most qualified specialist?
+- SUBSTANCE TEST: Do the legal rights, obligations, or remedies fall within {self.legal_area}?
+
+CONFIDENCE LEVELS:
+- HIGH: Clear {self.legal_area} matter requiring {self.legal_area} expertise with strong legal basis
+- MEDIUM: Likely {self.legal_area} matter but requires further investigation or has mixed legal issues
+- LOW: Possible {self.legal_area} connection but uncertain or weak legal basis
+
+REQUIRED JSON RESPONSE FORMAT:
 {{
-    "relevant": true/false,
-    "subcategory": "exact subcategory name or null if not relevant",
-    "confidence": "high/medium/low", 
-    "reasoning": "detailed analysis focusing on why this is/isn't primarily a {self.legal_area} matter",
-    "urgency_score": 0.0-1.0,
-    "complexity_score": 0.0-1.0,
-    "key_factors": ["3-5 specific {self.legal_area} factors identified"],
-    "immediate_actions": ["2-4 recommended legal steps"],
-    "strength_assessment": "assessment of legal position strength",
-    "primary_legal_issue": "what is the main legal problem in this case"
+    "is_relevant": true/false,
+    "primary_legal_area": "{self.legal_area} or other area name",
+    "subcategory": "specific subcategory name or null",
+    "confidence_level": "high/medium/low",
+    "legal_reasoning": "detailed legal analysis explaining the determination",
+    "legal_relationships": ["key legal relationships identified"],
+    "applicable_law": ["relevant statutes, regulations, or legal principles"],
+    "legal_remedies": ["available legal remedies or actions"],
+    "urgency_assessment": 0.0-1.0,
+    "complexity_assessment": 0.0-1.0,
+    "competency_match": "assessment of whether {self.legal_area} attorney is most qualified",
+    "secondary_areas": ["other legal areas that may be involved"]
 }}
 
-IMPORTANT: Only classify if this is PRIMARILY a {self.legal_area} matter requiring {self.legal_area} expertise."""
+CRITICAL: Base your analysis on legal substance and relationships, not keyword presence. Every case involves legal issues that can be analyzed and classified."""
 
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {
-                        "role": "system", 
-                        "content": f"""You are an expert {self.legal_area} attorney. Provide precise professional legal analysis.
-
-REQUIREMENTS:
-- Always make your best professional judgment
-- If any reasonable {self.legal_area} connection exists, classify it
-- When uncertain, classify with LOW confidence rather than rejecting
-- Focus on PRIMARY legal issue requiring attention
-- Response must be valid JSON format
-
-MAKE BEST POSSIBLE CLASSIFICATION - Do not refuse to classify reasonable cases."""
-                    },
-                    {"role": "user", "content": prompt}
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": analysis_prompt}
                 ],
                 response_format={"type": "json_object"},
                 temperature=0.1,
-                max_tokens=1000
+                max_tokens=1500
             )
             
             result = json.loads(response.choices[0].message.content)
             
-            if result.get("relevant", False):
-                classification_dict = {
-                    "category": self.legal_area,
-                    "subcategory": result.get("subcategory"),
-                    "confidence": result.get("confidence", "medium"),
-                    "reasoning": result.get("reasoning", "")
-                }
-                
-                validation = OutputGuardrails.validate_classification(
-                    classification_dict, 
-                    {self.legal_area: self.subcategories}
-                )
-                
-                if not validation["is_valid"]:
-                    return None
-            
-            if not result.get("relevant", False):
+            if not result.get("is_relevant", False) or result.get("primary_legal_area") != self.legal_area:
                 return None
             
-            urgency = result.get("urgency_score", 0.5)
-            complexity = result.get("complexity_score", 0.5)
-            indicator_density = len(indicators_found) / max(len(self.keywords + self.legal_concepts), 1)
-            confidence_weight = {"high": 1.0, "medium": 0.7, "low": 0.4}.get(result.get("confidence", "medium"), 0.7)
+            subcategory = result.get("subcategory")
+            if not subcategory or subcategory not in self.subcategories:
+                subcategory = self._determine_best_subcategory(case_text, result)
             
-            strength_keywords = ["strong", "clear", "definitive", "compelling"]
-            strength_bonus = 0.1 if any(word in result.get("strength_assessment", "").lower() for word in strength_keywords) else 0
+            classification_dict = {
+                "category": self.legal_area,
+                "subcategory": subcategory,
+                "confidence": result.get("confidence_level", "medium"),
+                "reasoning": result.get("legal_reasoning", "")
+            }
             
-            relevance_score = (urgency * 0.3 + complexity * 0.25 + indicator_density * 0.15 + confidence_weight * 0.3 + strength_bonus)
+            validation = OutputGuardrails.validate_classification(
+                classification_dict, 
+                {self.legal_area: self.subcategories}
+            )
+            
+            if not validation["is_valid"]:
+                return None
+            
+            urgency = result.get("urgency_assessment", 0.5)
+            complexity = result.get("complexity_assessment", 0.5)
+            confidence_weight = {"high": 1.0, "medium": 0.7, "low": 0.5}.get(result.get("confidence_level", "medium"), 0.7)
+            
+            relevance_score = (urgency * 0.3 + complexity * 0.3 + confidence_weight * 0.4)
             processing_time = time.time() - start_time
             
             confidence_map = {
@@ -369,81 +289,124 @@ MAKE BEST POSSIBLE CLASSIFICATION - Do not refuse to classify reasonable cases."
             
             classification = LegalClassification(
                 category=self.legal_area,
-                subcategory=result.get("subcategory", self.subcategories[0]),
-                confidence=confidence_map.get(result.get("confidence", "medium"), ConfidenceLevel.MEDIUM),
-                reasoning=result.get("reasoning", ""),
+                subcategory=subcategory,
+                confidence=confidence_map.get(result.get("confidence_level", "medium"), ConfidenceLevel.MEDIUM),
+                reasoning=result.get("legal_reasoning", ""),
                 keywords_found=indicators_found,
                 relevance_score=relevance_score,
                 urgency_score=urgency,
                 agent_id=self.agent_id,
                 processing_time=processing_time,
-                fallback_used=fallback_used
+                fallback_used=False
             )
             
             return classification
             
         except Exception as e:
-            return None
+            return self._perform_fallback_analysis(case_text, start_time)
     
-    def _perform_fallback_analysis(self, case_text: str, start_time: float) -> Optional[LegalClassification]:
-        legal_concepts = "\n".join([f"• {concept}" for concept in self.legal_concepts])
+    def _get_legal_area_definitions(self) -> str:
+        definitions = {
+            "Family Law": "Legal matters involving family relationships, including marriage, divorce, child custody, adoption, domestic relations, and family-related disputes. Governs legal rights and obligations between family members.",
+            
+            "Employment Law": "Legal matters involving the employer-employee relationship, including workplace rights, employment contracts, discrimination, harassment, wrongful termination, wages, and workplace conditions. Covers both statutory employment protections and contractual employment relationships.",
+            
+            "Criminal Law": "Legal matters involving violations of criminal statutes, including arrests, charges, criminal proceedings, and defense against criminal allegations. Covers felonies, misdemeanors, and criminal violations prosecuted by the state.",
+            
+            "Real Estate Law": "Legal matters involving real property transactions, ownership rights, property disputes, real estate contracts, mortgages, foreclosures, and property development. Governs rights and obligations related to real property.",
+            
+            "Business/Corporate Law": "Legal matters involving business operations, commercial transactions, corporate governance, business contracts, partnerships, business disputes, and commercial relationships. Includes entertainment industry contracts and professional service agreements.",
+            
+            "Immigration Law": "Legal matters involving immigration status, visa applications, deportation proceedings, citizenship, asylum, and immigration-related proceedings before immigration courts and agencies.",
+            
+            "Personal Injury Law": "Legal matters involving physical injuries, medical malpractice, accidents, negligence claims, and compensation for personal injuries or damages caused by others' actions or negligence.",
+            
+            "Wills, Trusts, & Estates Law": "Legal matters involving estate planning, probate proceedings, will contests, trust administration, inheritance, and posthumous asset distribution. Governs transfer of assets upon death or incapacity.",
+            
+            "Bankruptcy, Finances, & Tax Law": "Legal matters involving debt relief, bankruptcy proceedings, tax disputes, financial restructuring, creditor-debtor relationships, and tax compliance or disputes with tax authorities.",
+            
+            "Government & Administrative Law": "Legal matters involving government agencies, administrative proceedings, government benefits, regulatory compliance, administrative appeals, and disputes with government entities or administrative bodies.",
+            
+            "Product & Services Liability Law": "Legal matters involving defective products, service failures, consumer protection, professional malpractice, warranties, and liability for products or services that cause harm or fail to perform as expected.",
+            
+            "Intellectual Property Law": "Legal matters involving patents, copyrights, trademarks, trade secrets, and other intellectual property rights, including infringement claims and IP protection.",
+            
+            "Landlord/Tenant Law": "Legal matters involving rental relationships, lease agreements, eviction proceedings, habitability issues, rent disputes, and rights and obligations between landlords and tenants."
+        }
         
-        prompt = f"""You are conducting comprehensive {self.legal_area} legal analysis. Even without obvious indicators, determine if this case has ANY connection to {self.legal_area}.
+        return definitions.get(self.legal_area, f"Legal matters primarily governed by {self.legal_area} statutes, regulations, and legal principles.")
+    
+    def _determine_best_subcategory(self, case_text: str, analysis_result: Dict[str, Any]) -> str:
+        if not self.subcategories:
+            return "General"
+        
+        subcategory_prompt = f"""Based on your analysis of this {self.legal_area} case, determine the most appropriate subcategory.
 
-CASE DESCRIPTION: "{case_text}"
+CASE: {case_text}
 
-{self.legal_area.upper()} LEGAL DOMAIN: {legal_concepts}
+ANALYSIS RESULTS: {analysis_result}
 
-SUBCATEGORIES: {', '.join(self.subcategories)}
+AVAILABLE SUBCATEGORIES:
+{chr(10).join([f"• {sub}" for sub in self.subcategories])}
 
-FALLBACK ANALYSIS - MAKE BEST JUDGMENT:
-1. Look for IMPLIED {self.legal_area} legal issues
-2. Consider if situation could DEVELOP into {self.legal_area} matter
-3. Analyze underlying {self.legal_area} rights/duties/obligations
-4. Assess if person would BENEFIT from {self.legal_area} consultation
-5. Consider {self.legal_area} legal relationships or processes
-
-DECISION CRITERIA:
-• Does this involve {self.legal_area} legal rights or obligations?
-• Would a {self.legal_area} attorney be appropriate to consult?
-• Are there {self.legal_area} statutes/regulations that apply?
-• Is this governed by {self.legal_area} legal principles?
-
-CRITICAL: Make your best professional judgment. If there's ANY reasonable {self.legal_area} connection, classify it with LOW confidence rather than rejecting.
-
-REQUIRED JSON RESPONSE:
-{{
-    "relevant": true/false,
-    "subcategory": "most appropriate subcategory or null",
-    "confidence": "low/medium",
-    "reasoning": "detailed analysis of {self.legal_area} connection",
-    "urgency_score": 0.0-1.0,
-    "complexity_score": 0.0-1.0,
-    "key_factors": ["factors supporting classification"],
-    "immediate_actions": ["recommended steps if relevant"],
-    "connection_type": "describe type of {self.legal_area} connection"
-}}
-
-FALLBACK REQUIREMENT: Err on side of classification with LOW confidence rather than rejection."""
+Select the single most appropriate subcategory that best matches the primary legal issue. Respond with only the exact subcategory name."""
 
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {
-                        "role": "system", 
-                        "content": f"""You are performing fallback analysis for {self.legal_area}.
+                    {"role": "system", "content": f"You select the most appropriate {self.legal_area} subcategory based on legal analysis."},
+                    {"role": "user", "content": subcategory_prompt}
+                ],
+                temperature=0.1,
+                max_tokens=100
+            )
+            
+            selected = response.choices[0].message.content.strip().strip('"').strip("'")
+            
+            if selected in self.subcategories:
+                return selected
+            
+            for subcategory in self.subcategories:
+                if subcategory.lower() in selected.lower() or selected.lower() in subcategory.lower():
+                    return subcategory
+            
+            return self.subcategories[0]
+            
+        except Exception:
+            return self.subcategories[0]
+    
+    def _perform_fallback_analysis(self, case_text: str, start_time: float) -> Optional[LegalClassification]:
+        fallback_prompt = f"""As a {self.legal_area} attorney, conduct fallback analysis for potential {self.legal_area} legal issues that may not be immediately apparent.
 
-REQUIREMENTS:
-- Make best professional judgment even with limited indicators
-- If ANY reasonable {self.legal_area} connection exists, classify it
-- Use LOW confidence for uncertain cases rather than rejecting
-- Focus on PRIMARY legal issue
-- Provide detailed reasoning for decision
+CASE: "{case_text}"
 
-MAKE BEST POSSIBLE CLASSIFICATION - Prefer classification over rejection."""
-                    },
-                    {"role": "user", "content": prompt}
+FALLBACK ANALYSIS CRITERIA:
+1. Could this situation evolve into a {self.legal_area} matter?
+2. Are there underlying {self.legal_area} legal relationships?
+3. Would consulting a {self.legal_area} attorney be beneficial?
+4. Are there {self.legal_area} legal principles that apply?
+
+DECISION: Even if not clearly a {self.legal_area} matter, if there is ANY reasonable connection to {self.legal_area}, classify with LOW confidence rather than rejecting.
+
+SUBCATEGORIES: {', '.join(self.subcategories)}
+
+JSON RESPONSE:
+{{
+    "is_relevant": true/false,
+    "subcategory": "most appropriate subcategory or null",
+    "confidence_level": "low/medium",
+    "legal_reasoning": "detailed reasoning for classification or rejection",
+    "urgency_assessment": 0.0-1.0,
+    "complexity_assessment": 0.0-1.0
+}}"""
+
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": f"You are conducting fallback analysis for {self.legal_area}. Prefer classification with low confidence over rejection when any connection exists."},
+                    {"role": "user", "content": fallback_prompt}
                 ],
                 response_format={"type": "json_object"},
                 temperature=0.2,
@@ -452,15 +415,36 @@ MAKE BEST POSSIBLE CLASSIFICATION - Prefer classification over rejection."""
             
             result = json.loads(response.choices[0].message.content)
             
-            if result.get("relevant", False):
-                confidence = result.get("confidence", "low")
-                if confidence == "high":
-                    confidence = "medium"
-                result["confidence"] = confidence
-                
-                return self._perform_specialist_analysis(case_text, [], start_time, fallback_used=True)
-            else:
+            if not result.get("is_relevant", False):
                 return None
+            
+            subcategory = result.get("subcategory") or self.subcategories[0]
+            if subcategory not in self.subcategories:
+                subcategory = self.subcategories[0]
+            
+            processing_time = time.time() - start_time
+            confidence_level = result.get("confidence_level", "low")
+            
+            confidence_map = {
+                "high": ConfidenceLevel.MEDIUM,  # Cap fallback at medium
+                "medium": ConfidenceLevel.MEDIUM,
+                "low": ConfidenceLevel.LOW
+            }
+            
+            classification = LegalClassification(
+                category=self.legal_area,
+                subcategory=subcategory,
+                confidence=confidence_map.get(confidence_level, ConfidenceLevel.LOW),
+                reasoning=result.get("legal_reasoning", "Fallback analysis classification"),
+                keywords_found=[],
+                relevance_score=0.4,  # Lower relevance for fallback
+                urgency_score=result.get("urgency_assessment", 0.5),
+                agent_id=self.agent_id,
+                processing_time=processing_time,
+                fallback_used=True
+            )
+            
+            return classification
                 
         except Exception as e:
             return None
@@ -470,127 +454,75 @@ class FinalFallbackAgent(BaseAgent):
         super().__init__(agent_id, client)
         self.legal_categories = legal_categories
         
-    def _perform_edge_case_analysis(self, case_text: str, start_time: float) -> LegalClassification:
-        """Dedicated edge case analysis that ALWAYS classifies within existing categories"""
+    def process(self, case_text: str, context: Dict[str, Any] = None) -> LegalClassification:
+        start_time = time.time()
         
-        prompt = f"""You are a senior legal analyst with 30+ years experience across ALL areas of law. You must classify this case within the existing legal categories - NO EXCEPTIONS.
+        comprehensive_prompt = f"""You are a senior legal analyst with expertise across all areas of law. You must classify this case into one of the established legal categories based on comprehensive legal analysis.
 
-CASE DESCRIPTION: "{case_text}"
+CASE FOR CLASSIFICATION: "{case_text}"
 
-MANDATORY CLASSIFICATION WITHIN THESE CATEGORIES:
-1. **Family Law**: Marriage, divorce, custody, adoption, family relationships
-2. **Employment Law**: Employer-employee relationships, workplace issues, labor disputes  
-3. **Criminal Law**: Arrests, charges, criminal violations, legal defense
-4. **Real Estate Law**: Property transactions, mortgages, real estate disputes
-5. **Business/Corporate Law**: Commercial contracts, business disputes, professional services, agencies, entertainment contracts, modeling agreements, service providers
-6. **Immigration Law**: Visa, citizenship, deportation, immigration status
-7. **Personal Injury Law**: Accidents, injuries, medical malpractice, negligence
-8. **Wills, Trusts, & Estates Law**: Estate planning, inheritance, probate, trusts
-9. **Bankruptcy, Finances, & Tax Law**: Debt, bankruptcy, tax issues, financial problems
-10. **Government & Administrative Law**: Government agencies, benefits, administrative proceedings
-11. **Product & Services Liability Law**: Defective products, service failures, consumer protection
-12. **Intellectual Property Law**: Patents, copyrights, trademarks, IP disputes
-13. **Landlord/Tenant Law**: Rental disputes, evictions, lease issues
+LEGAL CATEGORIES AND THEIR CORE DOMAINS:
 
-EDGE CASE ANALYSIS METHODOLOGY:
-1. **Identify core relationships**: Who are the main parties? (individual-business, individual-individual, business-business)
-2. **Determine primary transaction type**: What kind of agreement, dispute, or issue is this?
-3. **Assess legal remedy needed**: What type of legal help does this person need?
-4. **Match to best category**: Which legal specialist would be most qualified to handle this?
+1. **Family Law**: Marriage, divorce, child custody, adoption, family relationships, domestic relations
+2. **Employment Law**: Employer-employee relationships, workplace rights, employment discrimination, labor disputes
+3. **Criminal Law**: Criminal charges, arrests, criminal violations, criminal defense, criminal proceedings
+4. **Real Estate Law**: Property transactions, mortgages, real estate disputes, property rights, foreclosures
+5. **Business/Corporate Law**: Business contracts, commercial disputes, corporate matters, professional services, entertainment contracts
+6. **Immigration Law**: Immigration status, deportation, visas, citizenship, immigration proceedings
+7. **Personal Injury Law**: Physical injuries, accidents, medical malpractice, negligence claims, injury compensation
+8. **Wills, Trusts, & Estates Law**: Estate planning, probate, inheritance, trusts, posthumous asset distribution
+9. **Bankruptcy, Finances, & Tax Law**: Debt relief, bankruptcy, tax disputes, financial problems, creditor issues
+10. **Government & Administrative Law**: Government agencies, administrative proceedings, government benefits, regulatory matters
+11. **Product & Services Liability Law**: Defective products, service failures, consumer protection, professional malpractice
+12. **Intellectual Property Law**: Patents, copyrights, trademarks, IP protection, IP infringement
+13. **Landlord/Tenant Law**: Rental relationships, lease disputes, eviction proceedings, landlord-tenant rights
 
-ANALYSIS DECISION TREE:
-- **Government agency involved?** → Government & Administrative Law
-- **Criminal charges/arrests?** → Criminal Law  
-- **Family/marriage relationships?** → Family Law
-- **Property/real estate?** → Real Estate Law
-- **Traditional employment (W-2, payroll)?** → Employment Law
-- **Commercial contracts/business agreements?** → Business/Corporate Law
-- **Physical injuries?** → Personal Injury Law
-- **Intellectual property?** → Intellectual Property Law
-- **Rental properties?** → Landlord/Tenant Law
-- **Estate/inheritance?** → Wills, Trusts, & Estates Law
-- **Debt/financial issues?** → Bankruptcy, Finances, & Tax Law
-- **Immigration status?** → Immigration Law
-- **Product/service problems?** → Product & Services Liability Law
+ANALYSIS METHODOLOGY:
+1. Identify the primary parties and their relationship
+2. Determine the core legal issue or dispute
+3. Assess which area of law governs the situation
+4. Consider which legal specialist would be most qualified
+5. Match to the most appropriate category and subcategory
 
-CRITICAL INSTRUCTIONS:
-- You MUST classify this case into one of the 13 categories above
-- Make your BEST professional judgment based on the primary legal issue
-- Even if unclear, choose the MOST APPROPRIATE category
-- Focus on what type of attorney would be best qualified to help
-- Consider the main legal relationship and transaction type
-- NEVER refuse to classify - always make best guess
+SUBCATEGORIES BY CATEGORY:
+{self._format_subcategories()}
 
-SUBCATEGORIES BY AREA:
-- Family Law: Adoptions, Child Custody & Visitation, Child Support, Divorce, Guardianship, Paternity, Separations, Spousal Support or Alimony
-- Employment Law: Disabilities, Employment Contracts, Employment Discrimination, Pensions and Benefits, Sexual Harassment, Wages and Overtime Pay, Workplace Disputes, Wrongful Termination
-- Criminal Law: General Criminal Defense, Environmental Violations, Drug Crimes, Drunk Driving/DUI/DWI, Felonies, Misdemeanors, Speeding and Moving Violations, White Collar Crime, Tax Evasion
-- Real Estate Law: Commercial Real Estate, Condominiums and Cooperatives, Construction Disputes, Foreclosures, Mortgages, Purchase and Sale of Residence, Title and Boundary Disputes
-- Business/Corporate Law: Breach of Contract, Corporate Tax, Business Disputes, Buying and Selling a Business, Contract Drafting and Review, Corporations LLCs Partnerships etc, Entertainment Law
-- Immigration Law: Citizenship, Deportation, Permanent Visas or Green Cards, Temporary Visas
-- Personal Injury Law: Automobile Accidents, Dangerous Property or Buildings, Defective Products, Medical Malpractice, Personal Injury General
-- Wills Trusts & Estates Law: Contested Wills or Probate, Drafting Wills and Trusts, Estate Administration, Estate Planning
-- Bankruptcy Finances & Tax Law: Collections, Consumer Bankruptcy, Consumer Credit, Income Tax, Property Tax
-- Government & Administrative Law: Education and Schools, Social Security Disability, Social Security Retirement, Social Security Dependent Benefits, Social Security Survivor Benefits, Veterans Benefits, General Administrative Law, Environmental Law, Liquor Licenses, Constitutional Law
-- Product & Services Liability Law: Attorney Malpractice, Defective Products, Warranties, Consumer Protection and Fraud
-- Intellectual Property Law: Copyright, Patents, Trademarks
-- Landlord/Tenant Law: General Landlord and Tenant Issues
+MANDATORY CLASSIFICATION: You must classify this case. Choose the category that best fits the primary legal issue, even if the fit is not perfect.
 
-REQUIRED JSON RESPONSE:
+JSON RESPONSE REQUIRED:
 {{
-    "category": "exact category name from list above",
-    "subcategory": "most appropriate subcategory from the category chosen",
-    "confidence": "low/medium/high",
-    "reasoning": "detailed explanation of why this category is the best fit based on the decision tree",
-    "urgency_score": 0.0-1.0,
-    "complexity_score": 0.0-1.0,
-    "key_factors": ["3-5 factors that led to this classification"],
-    "primary_legal_issue": "main legal problem identified",
-    "attorney_type_needed": "what type of lawyer would be most qualified",
-    "decision_tree_step": "which step in the decision tree led to this classification"
-}}
-
-MANDATORY: You must classify this case. Make your best professional judgment. Every case can be classified within these 13 categories. Choose the BEST FIT based on the primary legal issue."""
+    "category": "exact category name from the 13 categories above",
+    "subcategory": "most appropriate subcategory from the chosen category",
+    "confidence_level": "low/medium/high",
+    "legal_reasoning": "detailed explanation of classification based on legal analysis",
+    "primary_legal_issue": "the main legal problem identified",
+    "urgency_assessment": 0.0-1.0,
+    "complexity_assessment": 0.0-1.0,
+    "alternative_categories": ["other categories that could potentially apply"]
+}}"""
 
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {
-                        "role": "system", 
-                        "content": """You are a senior legal analyst conducting mandatory edge case classification. 
-
-CORE PRINCIPLE: Every case can be classified within the 13 legal categories. Your job is to find the BEST FIT.
-
-DECISION METHODOLOGY:
-1. Identify the main parties and their relationship
-2. Determine the primary legal issue or transaction
-3. Consider what type of attorney is most qualified
-4. Match to the most appropriate category
-5. Choose the best subcategory within that area
-
-CRITICAL: You CANNOT refuse to classify. Make your best professional judgment based on the primary legal issue. Focus on what type of legal specialist would be most qualified to handle this matter.
-
-RESPONSE MUST BE VALID JSON."""
-                    },
-                    {"role": "user", "content": prompt}
+                    {"role": "system", "content": "You are a senior legal analyst who must classify every case into one of the 13 established legal categories. Use comprehensive legal analysis to determine the best fit. Every case can be classified."},
+                    {"role": "user", "content": comprehensive_prompt}
                 ],
                 response_format={"type": "json_object"},
-                temperature=0.3,
-                max_tokens=1000
+                temperature=0.2,
+                max_tokens=1200
             )
             
             result = json.loads(response.choices[0].message.content)
             
-            category = result.get("category")
+            category = result.get("category", "Business/Corporate Law")
             subcategory = result.get("subcategory")
             
             # Validate and correct if necessary
             if category not in self.legal_categories:
                 category = "Business/Corporate Law"
-                subcategory = "Business Disputes"
             
-            if subcategory not in self.legal_categories[category]:
+            if not subcategory or subcategory not in self.legal_categories[category]:
                 subcategory = self.legal_categories[category][0]
             
             processing_time = time.time() - start_time
@@ -604,11 +536,11 @@ RESPONSE MUST BE VALID JSON."""
             classification = LegalClassification(
                 category=category,
                 subcategory=subcategory,
-                confidence=confidence_map.get(result.get("confidence", "medium"), ConfidenceLevel.MEDIUM),
-                reasoning=result.get("reasoning", "Edge case analysis - best fit classification"),
+                confidence=confidence_map.get(result.get("confidence_level", "medium"), ConfidenceLevel.MEDIUM),
+                reasoning=result.get("legal_reasoning", "Comprehensive legal analysis classification"),
                 keywords_found=[],
-                relevance_score=0.7,  # Good relevance for edge case analysis
-                urgency_score=result.get("urgency_score", 0.5),
+                relevance_score=0.7,
+                urgency_score=result.get("urgency_assessment", 0.5),
                 agent_id=self.agent_id,
                 processing_time=processing_time,
                 fallback_used=True
@@ -623,7 +555,7 @@ RESPONSE MUST BE VALID JSON."""
                 category="Business/Corporate Law",
                 subcategory="Business Disputes",
                 confidence=ConfidenceLevel.MEDIUM,
-                reasoning="Edge case analysis with system fallback - requires manual review",
+                reasoning="System fallback classification - requires manual review",
                 keywords_found=[],
                 relevance_score=0.6,
                 urgency_score=0.5,
@@ -631,9 +563,13 @@ RESPONSE MUST BE VALID JSON."""
                 processing_time=processing_time,
                 fallback_used=True
             )
-    def process(self, case_text: str, context: Dict[str, Any] = None) -> LegalClassification:
-        """Use edge case analysis to ensure EVERY case gets classified"""
-        return self._perform_edge_case_analysis(case_text, time.time())
+    
+    def _format_subcategories(self) -> str:
+        formatted = []
+        for category, subcategories in self.legal_categories.items():
+            subcats = ", ".join(subcategories)
+            formatted.append(f"**{category}**: {subcats}")
+        return "\n".join(formatted)
 
 class CoordinatorAgent(BaseAgent):
     def __init__(self, agent_id: str, client: openai.OpenAI):
@@ -646,6 +582,7 @@ class CoordinatorAgent(BaseAgent):
         if not classifications:
             raise Exception("No valid classifications from specialist agents")
         
+        # Sort by relevance and confidence
         classifications.sort(key=lambda x: (
             not x.fallback_used,
             x.relevance_score * self._confidence_to_score(x.confidence),
@@ -662,7 +599,7 @@ class CoordinatorAgent(BaseAgent):
         confidence_scores = [self._confidence_to_score(c.confidence) for c in classifications]
         confidence_consensus = sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0.7
         
-        # Ensure minimum confidence to avoid rejection
+        # Ensure minimum confidence
         confidence_consensus = max(0.6, confidence_consensus)
         
         # Minimal penalty for fallback usage
@@ -708,8 +645,8 @@ class CoordinatorAgent(BaseAgent):
         }.get(confidence, 0.5)
 
 class SynchronousMultiAgentLegalAnalyzer:
-    SYSTEM_VERSION = "4.2.0"
-    PROMPT_VERSION = "2024-07-16-never-fail"
+    SYSTEM_VERSION = "5.0.0"
+    PROMPT_VERSION = "2024-07-18-comprehensive"
     
     LEGAL_CATEGORIES = {
         "Family Law": [
@@ -783,12 +720,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "due process", "search and seizure", "Miranda rights", "plea bargaining",
                                  "criminal penalties", "criminal record", "legal defense", "prosecution"],
                 "descriptions": [
-                    "Person A was arrested for DUI after being stopped at a traffic checkpoint",
-                    "Person B was charged with drug possession after a police search",
-                    "Person C faces felony charges for white-collar fraud involving business accounts",
-                    "Person D received a misdemeanor citation for public intoxication",
-                    "Person E was charged with assault after a bar fight incident",
-                    "Person F needs criminal defense for theft allegations at their workplace"
+                    "Defendant charged with felony drug possession requiring criminal defense strategy",
+                    "Individual arrested for DUI seeking representation for criminal proceedings",
+                    "Person facing white-collar fraud charges in federal criminal court",
+                    "Defendant requiring legal representation for assault charges and plea negotiations",
+                    "Individual needing criminal defense for theft allegations and trial preparation"
                 ]
             },
             {
@@ -800,11 +736,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "visa applications", "citizenship eligibility", "asylum claims",
                                  "deportation defense", "immigration court", "USCIS procedures"],
                 "descriptions": [
-                    "Person A received a deportation notice after overstaying their visa",
-                    "Person B's green card application was denied due to criminal history",
-                    "Person C seeks asylum after fleeing persecution in their home country",
-                    "Person D faces removal proceedings despite having DACA status",
-                    "Person E's citizenship application was rejected due to incomplete documentation"
+                    "Individual facing removal proceedings requiring deportation defense",
+                    "Foreign national seeking asylum protection from persecution",
+                    "Person applying for permanent residence through family sponsorship",
+                    "Individual appealing denial of citizenship application",
+                    "Worker requiring legal assistance with employment-based visa application"
                 ]
             },
             {
@@ -816,11 +752,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "domestic relations", "family court procedures", "child advocacy",
                                  "spousal maintenance", "custody arrangements", "adoption law"],
                 "descriptions": [
-                    "Person A seeks divorce after 10 years of marriage with custody disputes",
-                    "Person B wants to modify child support payments due to job loss",
-                    "Person C is adopting their stepchild and needs legal documentation",
-                    "Person D disputes paternity claims and requests DNA testing",
-                    "Person E seeks emergency custody due to domestic violence concerns"
+                    "Couple seeking legal divorce with contested child custody arrangements",
+                    "Parent requesting modification of child support due to changed circumstances",
+                    "Individual pursuing stepchild adoption requiring legal documentation",
+                    "Party disputing paternity and seeking court-ordered DNA testing",
+                    "Parent seeking emergency custody modification due to safety concerns"
                 ]
             },
             {
@@ -832,11 +768,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "labor law", "employment contracts", "workplace harassment",
                                  "wage and hour law", "workers' compensation", "employment benefits"],
                 "descriptions": [
-                    "Person A was terminated after reporting workplace safety violations",
-                    "Person B faces discrimination based on age and gender in promotion decisions",
-                    "Person C experienced sexual harassment from their supervisor",
-                    "Person D was denied reasonable accommodation for their disability",
-                    "Person E wasn't paid overtime despite working 60-hour weeks"
+                    "Employee terminated in retaliation for reporting workplace safety violations",
+                    "Worker experiencing age and gender discrimination in promotion decisions",
+                    "Employee subjected to sexual harassment by supervisor requiring legal action",
+                    "Worker denied reasonable disability accommodation in workplace",
+                    "Employee denied overtime compensation despite working excessive hours"
                 ]
             },
             {
@@ -848,11 +784,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "premises liability", "product liability", "insurance coverage",
                                  "damages assessment", "liability determination", "injury compensation"],
                 "descriptions": [
-                    "Person A suffered serious injuries in a rear-end collision",
-                    "Person B slipped and fell in a grocery store due to wet floors",
-                    "Person C underwent wrong-site surgery due to medical error",
-                    "Person D was injured by a defective product that malfunctioned",
-                    "Person E developed complications from misdiagnosed medical condition"
+                    "Individual injured in motor vehicle collision seeking compensation for damages",
+                    "Person injured in slip and fall accident due to negligent premises maintenance",
+                    "Patient harmed by medical malpractice requiring professional liability claim",
+                    "Consumer injured by defective product seeking product liability compensation",
+                    "Individual suffering complications from misdiagnosed medical condition"
                 ]
             },
             {
@@ -870,14 +806,13 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "modeling contracts", "talent representation", "commercial fraud",
                                  "contract performance", "breach of contract", "contract cancellation"],
                 "descriptions": [
-                    "Person A's business partner breached their partnership agreement",
-                    "Person B's company faces breach of contract claims from a vendor", 
-                    "Person C needs to dissolve their LLC due to partner disputes",
-                    "Person D's corporation is involved in a merger negotiation",
-                    "Person E discovered their competitor is using stolen trade secrets",
-                    "Person F signed a modeling agency contract that promised work but delivered nothing",
-                    "Person G's talent agency wants expensive cancellation fees for poor service",
-                    "Person H's service provider failed to deliver promised professional services"
+                    "Business partners disputing partnership agreement terms and profit distribution",
+                    "Company facing breach of contract claims from commercial vendor",
+                    "Corporation requiring legal assistance with merger and acquisition transaction",
+                    "Business owner discovering competitor using proprietary trade secrets",
+                    "Individual with modeling agency contract dispute regarding service delivery",
+                    "Professional service provider facing contract performance disputes",
+                    "Entertainment industry professional requiring contract review and negotiation"
                 ]
             },
             {
@@ -889,11 +824,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "trademark registration", "IP infringement", "licensing agreements",
                                  "trade secrets", "IP litigation", "creative works protection"],
                 "descriptions": [
-                    "Person A discovered their copyrighted content was stolen and republished",
-                    "Person B's trademark application was rejected due to similarity conflicts",
-                    "Person C believes their patent is being infringed by a competitor",
-                    "Person D's company logo was copied by another business",
-                    "Person E wants to protect their invention with a patent application"
+                    "Creator discovering unauthorized use of copyrighted material requiring enforcement action",
+                    "Business owner facing trademark infringement claims from competitor",
+                    "Inventor seeking patent protection for new technological innovation",
+                    "Company pursuing trade secret misappropriation claim against former employee",
+                    "Artist requiring copyright registration and licensing agreement assistance"
                 ]
             },
             {
@@ -905,11 +840,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "property disputes", "real estate closings", "property rights",
                                  "foreclosure proceedings", "title issues", "property development"],
                 "descriptions": [
-                    "Person A faces foreclosure proceedings on their family home",
-                    "Person B discovered title defects when trying to sell their property",
-                    "Person C's real estate closing was delayed due to inspection issues",
-                    "Person D disputes their property boundary with their neighbor",
-                    "Person E was denied a mortgage despite meeting all requirements"
+                    "Homeowner facing foreclosure proceedings requiring legal defense",
+                    "Property buyer discovering title defects requiring legal resolution",
+                    "Real estate transaction delayed due to contract disputes and inspection issues",
+                    "Property owners disputing boundary lines with neighboring landowners",
+                    "Commercial property developer facing zoning and land use restrictions"
                 ]
             },
             {
@@ -921,11 +856,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "product safety", "professional malpractice", "consumer fraud",
                                  "defective products", "service liability", "consumer rights"],
                 "descriptions": [
-                    "Person A was injured by a defective product that malfunctioned",
-                    "Person B's car was recalled due to safety defects after purchase",
-                    "Person C suffered damages due to contaminated food products",
-                    "Person D's attorney committed malpractice by missing filing deadlines",
-                    "Person E was deceived by false advertising claims about a product"
+                    "Consumer injured by defective product requiring product liability claim",
+                    "Individual harmed by contaminated food product seeking compensation",
+                    "Client pursuing attorney malpractice claim for missed legal deadlines",
+                    "Consumer deceived by false advertising requiring consumer protection action",
+                    "Person harmed by recalled product that was not properly warned about defects"
                 ]
             },
             {
@@ -937,11 +872,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "creditor rights", "tax compliance", "debt collection", "financial planning",
                                  "tax disputes", "bankruptcy proceedings"],
                 "descriptions": [
-                    "Person A considers filing Chapter 7 bankruptcy due to overwhelming debt",
-                    "Person B faces aggressive debt collection actions from creditors",
-                    "Person C was audited by the IRS for three consecutive years",
-                    "Person D disputes their property tax assessment increase",
-                    "Person E needs help with tax planning for their small business"
+                    "Individual filing Chapter 7 bankruptcy for overwhelming debt relief",
+                    "Debtor facing aggressive creditor collection actions requiring legal protection",
+                    "Taxpayer undergoing IRS audit requiring professional tax representation",
+                    "Property owner disputing tax assessment and seeking property tax reduction",
+                    "Small business owner requiring tax planning and compliance assistance"
                 ]
             },
             {
@@ -956,13 +891,13 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "state agencies", "regulatory enforcement", "government licensing",
                                  "public benefits", "administrative review"],
                 "descriptions": [
-                    "Person A's social security disability claim was denied after two years",
-                    "Person B's veterans benefits were reduced without proper notice", 
-                    "Person C was denied unemployment benefits despite qualifying",
-                    "Person D appeals their Medicare coverage denial decision",
-                    "Person E faces administrative hearing for professional license suspension",
-                    "Person F's business license was suspended by regulatory agency",
-                    "Person G appeals denial of government benefit application"
+                    "Individual appealing denial of Social Security disability benefits determination",
+                    "Veteran challenging reduction of VA benefits requiring administrative appeal", 
+                    "Person denied unemployment benefits seeking administrative review",
+                    "Individual appealing Medicare coverage denial through administrative process",
+                    "Professional facing license suspension by regulatory agency requiring defense",
+                    "Business owner appealing regulatory agency enforcement action",
+                    "Individual challenging government agency benefit determination"
                 ]
             },
             {
@@ -974,11 +909,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "inheritance law", "will contests", "estate administration", "fiduciary duties",
                                  "estate taxation", "trust law"],
                 "descriptions": [
-                    "Person A contests their father's will due to suspicious circumstances",
-                    "Person B needs to establish a trust for their minor children",
-                    "Person C faces probate complications as executor of an estate",
-                    "Person D requires estate planning for their growing business",
-                    "Person E needs power of attorney for their aging parent"
+                    "Family member contesting will due to suspicious circumstances and undue influence",
+                    "Individual establishing trust for minor children and estate planning purposes",
+                    "Executor facing complex probate administration with contested inheritance claims",
+                    "Business owner requiring comprehensive estate planning for asset protection",
+                    "Family member seeking power of attorney for incapacitated relative"
                 ]
             },
             {
@@ -990,11 +925,11 @@ class SynchronousMultiAgentLegalAnalyzer:
                                  "habitability standards", "eviction procedures", "rental disputes",
                                  "housing regulations", "lease agreements", "property management"],
                 "descriptions": [
-                    "Person A faces eviction due to non-payment of rent during COVID-19",
-                    "Person B's landlord refuses to return their security deposit",
-                    "Person C's apartment has mold issues that landlord won't address",
-                    "Person D's lease was terminated without proper notice",
-                    "Person E disputes rent increase that violates rent control laws"
+                    "Tenant facing eviction proceedings requiring legal defense",
+                    "Renter pursuing security deposit return from non-responsive landlord",
+                    "Tenant dealing with habitability issues and landlord negligence",
+                    "Landlord pursuing eviction for lease violations and non-payment",
+                    "Renter challenging improper rent increase under rent control regulations"
                 ]
             }
         ]
@@ -1092,7 +1027,7 @@ class SynchronousMultiAgentLegalAnalyzer:
                 "confidence": analysis_result.primary_classification.confidence.value,
                 "reasoning": analysis_result.primary_classification.reasoning,
                 "case_title": f"{analysis_result.primary_classification.subcategory} Case",
-                "method": "never_fail_classification",
+                "method": "comprehensive_legal_analysis",
                 "gibberish_detected": quality_assessment["gibberish_detected"],
                 "fallback_used": analysis_result.primary_classification.fallback_used,
                 
@@ -1133,7 +1068,7 @@ class SynchronousMultiAgentLegalAnalyzer:
             
             return {
                 "status": "success",
-                "method": "never_fail_classification",
+                "method": "comprehensive_legal_analysis",
                 "timestamp": datetime.utcnow().isoformat(),
                 "original_text": case_text,
                 "cleaned_text": cleaned_text,
@@ -1287,21 +1222,20 @@ class SynchronousMultiAgentLegalAnalyzer:
                 "prompt_version": self.PROMPT_VERSION,
                 "case_text_hash": case_hash,
                 "case_length": len(case_text),
-                "analysis_type": "never_fail_classification",
+                "analysis_type": "comprehensive_legal_analysis",
                 "success": success,
                 "total_agents": len(self.specialist_agents) + 2,
                 "responding_agents": len([p for p in agent_performance.values() if p.get("status") == "success"]),
                 "fallback_agents_used": fallback_count,
                 "high_confidence_classifications": high_confidence_count,
                 "guardrails_applied": True,
-                "never_fail_enabled": True
+                "comprehensive_analysis_enabled": True
             }
                 
         except Exception as e:
             pass
 
     def generate_final_summary(self, initial_analysis: Dict[str, Any], form_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate a final case summary using PII-cleaned case text and user-provided form data"""
         try:
             if initial_analysis.get("status") == "error":
                 return {
@@ -1340,7 +1274,7 @@ class SynchronousMultiAgentLegalAnalyzer:
                 """
                 
                 title_response = self.client.chat.completions.create(
-                    model="gpt-4o",
+                    model="gpt-4o-mini",
                     messages=[
                         {"role": "system", "content": "You generate concise, specific legal case titles without any PII, maximum 70 characters."},
                         {"role": "user", "content": title_prompt}
@@ -1388,7 +1322,7 @@ Now, create a structured case summary:
 }}"""
 
             response = self.client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": "You are a legal document summarizer."},
                     {"role": "user", "content": prompt}
