@@ -4443,7 +4443,7 @@
         "title": "Where did the injury occur?"
       },
       {
-        "type": "radio",
+        "type": "checlbox",
         "name": "injuryTypes",
         "title": "What are the nature and types of injuries sustained?",
         "options": [
@@ -4682,7 +4682,7 @@
         "title": "Where did the injury occur?"
       },
       {
-        "type": "radio",
+        "type": "checkbox",
         "name": "injuryTypes",
         "title": "What are the nature and types of injuries sustained?",
         "options": [
@@ -4869,7 +4869,7 @@
         "title": "When was the product determined to be defective or caused injury? (mm/dd/yyyy)"
       },
       {
-        "type": "radio",
+        "type": "checkbox" ,
         "name": "injuriesCaused",
         "title": "What injuries did the product cause, if any?",
         "options": [
@@ -5107,7 +5107,7 @@
         "title": "Where did the injury occur?"
       },
       {
-        "type": "radio",
+        "type": "checkbox",
         "name": "injuryTypes",
         "title": "What are the nature and types of injuries sustained?",
         "options": [
