@@ -213,7 +213,8 @@ def prefill_form():
 def generate_summary():
     """
     Final summary generation endpoint
-    Accepts completed form data, generates final summary and stores it in Supabase
+    Accepts completed form data, generates final summary and stores it in both
+    AI_case_submission and AI_case_submission_admin tables in Supabase
     """
     try:
         current_app.logger.info("Starting generate_summary process")
@@ -268,7 +269,6 @@ def generate_summary():
                 summary_sections = summary_data.get('summary', {})
                 
                 # Extract the different sections
-                # Each section should be an array of strings
                 case_summary = summary_sections.get('General Case Summary', [])
                 key_aspects = summary_sections.get('Key aspects of the case', [])
                 
@@ -296,8 +296,7 @@ def generate_summary():
             except json.JSONDecodeError as e:
                 current_app.logger.warning(f"JSON parse error: {str(e)}")
                 
-                # If we couldn't parse the JSON, use regex as fallback
-                # This approach is kept from the original implementation as a fallback
+                # Fallback to regex parsing if direct JSON parse fails
                 json_block_pattern = r"```json\s*([\s\S]*?)\s*```"
                 json_match = re.search(json_block_pattern, summary_text, re.DOTALL)
                 
@@ -307,32 +306,25 @@ def generate_summary():
                     json_text = ''.join(ch for ch in json_text if ord(ch) >= 32 or ch in '\n\r\t')
                     
                     try:
-                        # Try to parse the JSON block
                         summary_data = json.loads(json_text)
                         current_app.logger.info("Successfully parsed summary JSON block")
                         
-                        # Extract title and summary as before
                         title = summary_data.get('title', 'Untitled Case')
                         summary_sections = summary_data.get('summary', {})
                         
-                        # Extract the different sections
                         case_summary = summary_sections.get('General Case Summary', "")
                         key_aspects = summary_sections.get('Key aspects of the case', [])
                         potential_merits = summary_sections.get('Potential Merits of the Case', [])
                         critical_factors = summary_sections.get('Critical factors', [])
                         
                     except json.JSONDecodeError:
-                        # If still can't parse, use regex to extract each section
                         current_app.logger.warning("Falling back to regex extraction")
-                        title = "Case Summary"  # Default title
-                        
-                        # Using empty arrays as default
+                        title = "Case Summary"
                         case_summary = ""
                         key_aspects = []
                         potential_merits = []
                         critical_factors = []
                 else:
-                    # If no JSON block found, use default values
                     current_app.logger.warning("No JSON structure found, using defaults")
                     title = "Case Summary"
                     case_summary = ""
@@ -345,7 +337,7 @@ def generate_summary():
             db_service = DatabaseService()
             
             try:
-                current_app.logger.info("Storing case data")
+                current_app.logger.info("Storing case data in both tables")
                 case_data = {
                     "title": title,
                     "summary": case_summary,
@@ -355,13 +347,34 @@ def generate_summary():
                     "CaseId": caseId,
                 }
                 
+                   # First store in the main table
                 stored_case = db_service.create_record('AI_case_submission', case_data)
+    
+                if stored_case and len(stored_case) > 0:
+        # Get the ID from the main table insertion
+                 main_id = stored_case[0]['id']
+        
+             # Add the ID to the data for the admin table
+                admin_case_data = case_data.copy()
+                admin_case_data['id'] = main_id
+        
+        # Store in admin table with the same ID
+                stored_admin_case = db_service.create_record('AI_case_submission_admin', admin_case_data)
                 
-                # Add the database ID to the response
+                # Add the database IDs to the response
                 summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
-                summary_result['stored'] = True
+                summary_result['admin_case_id'] = stored_admin_case[0]['id'] if stored_admin_case and len(stored_admin_case) > 0 else None
+                summary_result['stored'] = bool(stored_case and stored_admin_case)
                 
-                current_app.logger.info(f"Case summary stored with ID: {summary_result.get('case_id')}")
+                current_app.logger.info(f"Case summary stored with IDs: {summary_result.get('case_id')} (main) and {summary_result.get('admin_case_id')} (admin)")
+                
+                if not stored_case or not stored_admin_case:
+                    summary_result['partial_storage'] = True
+                    if not stored_case:
+                        current_app.logger.warning("Failed to store in AI_case_submission")
+                    if not stored_admin_case:
+                        current_app.logger.warning("Failed to store in AI_case_submission_admin")
+                
             except Exception as db_error:
                 current_app.logger.error(f"Database error: {str(db_error)}")
                 summary_result['stored'] = False
@@ -380,7 +393,6 @@ def generate_summary():
             "status": "error",
             "message": str(e)
         }), 500
-
 
 def extract_list_items(html_content, section_title):
     """Extract list items from a specific section in the HTML content"""
