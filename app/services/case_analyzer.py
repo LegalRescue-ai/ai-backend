@@ -26,7 +26,7 @@ class AgentRole(Enum):
     COORDINATOR = "coordinator"
 
 def get_confidence_label(score: int) -> str:
-    if score >= 70:
+    if score >= 75:
         return "High"
     elif score >= 40:
         return "Medium"
@@ -103,7 +103,7 @@ def print_overall_metrics_summary(analysis_result: 'CaseAnalysisResult', process
 class LegalClassification:
     category: str
     subcategory: str
-    confidence_score: int  # Changed from ConfidenceLevel enum to int 1-100
+    confidence_score: int
     reasoning: str
     keywords_found: List[str]
     relevance_score: float
@@ -127,7 +127,7 @@ class CaseAnalysisResult:
     requires_multiple_attorneys: bool
     total_processing_time: float
     agents_consulted: List[str]
-    confidence_consensus: int  # Changed to int 1-100
+    confidence_consensus: int
     consistency_score: float = 0.0
     validation_passed: bool = True
     accuracy_score: float = 0.0
@@ -289,60 +289,153 @@ class EnhancedLegalSpecialistAgent(BaseAgent):
     def _calculate_dynamic_confidence(self, result: Dict[str, Any], accuracy_score: float, 
                                     relevance_score: float, complexity: float, urgency: float, 
                                     case_text: str) -> int:
-        import time
-        import random
+        import hashlib
         
-        # Create unique seed from case content + current time microseconds
-        case_bytes = case_text.encode('utf-8', errors='ignore')
-        content_sum = sum(case_bytes[:min(50, len(case_bytes))])
-        time_micro = int(time.time() * 1000000) % 1000000
-        unique_seed = (content_sum + time_micro + len(case_text)) % 2147483647
+        reasoning = result.get("legal_reasoning", "")
+        reasoning_score = 0
         
-        # Use this as random seed for this specific case
-        random.seed(unique_seed)
+        reasoning_len = len(reasoning)
+        legal_keywords = ["statute", "law", "legal", "court", "jurisdiction", "precedent", "regulation", "rights", "obligation", "procedure"]
+        legal_keyword_count = sum(1 for word in legal_keywords if word in reasoning.lower())
         
-        # Generate base score from FULL range with weighted distribution
-        distribution_choice = random.randint(1, 100)
+        if reasoning_len > 300:
+            reasoning_score += 12
+        elif reasoning_len > 200:
+            reasoning_score += 9
+        elif reasoning_len > 150:
+            reasoning_score += 7
+        elif reasoning_len > 100:
+            reasoning_score += 5
+        elif reasoning_len > 50:
+            reasoning_score += 2
         
-        if distribution_choice <= 20:      # 20% chance - Very Low (18-39)
-            base_score = random.randint(18, 39)
-        elif distribution_choice <= 35:   # 15% chance - Low (40-54) 
-            base_score = random.randint(40, 54)
-        elif distribution_choice <= 55:   # 20% chance - Mid-Low (55-69)
-            base_score = random.randint(55, 69)
-        elif distribution_choice <= 75:   # 20% chance - Mid-High (70-84)
-            base_score = random.randint(70, 84)
-        elif distribution_choice <= 90:   # 15% chance - High (85-94)
-            base_score = random.randint(85, 94)
-        else:                              # 10% chance - Ultra High (95-98)
-            base_score = random.randint(95, 98)
+        reasoning_score += min(8, legal_keyword_count * 1.5)
         
-        # Add small content-based adjustments (max ±5 points)
-        case_length = len(case_text.split())
-        if case_length > 100:
-            base_score += random.randint(0, 3)
-        elif case_length > 50:
-            base_score += random.randint(0, 2)
-        elif case_length < 15:
-            base_score -= random.randint(0, 2)
+        sentences = [s.strip() for s in reasoning.split('.') if len(s.strip()) > 10]
+        if len(sentences) >= 6:
+            reasoning_score += 5
+        elif len(sentences) >= 4:
+            reasoning_score += 3
+        elif len(sentences) >= 2:
+            reasoning_score += 1
         
-        # Add accuracy factor (max ±3 points)
-        if accuracy_score > 0.8:
-            base_score += random.randint(0, 3)
-        elif accuracy_score < 0.4:
-            base_score -= random.randint(0, 2)
+        legal_relationships = result.get("legal_relationships", [])
+        applicable_law = result.get("applicable_law", [])
+        legal_remedies = result.get("legal_remedies", [])
         
-        # Ensure bounds
-        final_score = max(18, min(98, base_score))
+        structure_score = 0
+        structure_score += min(8, len(legal_relationships) * 2.5)
+        structure_score += min(7, len(applicable_law) * 2)
+        structure_score += min(5, len(legal_remedies) * 1.5)
         
-        # FORCE different score if too close to last one
+        case_words = len(case_text.split())
+        sentences_in_case = len([s for s in case_text.split('.') if len(s.strip()) > 5])
+        
+        complexity_score = 0
+        
+        if case_words > 200:
+            complexity_score += 10
+        elif case_words > 150:
+            complexity_score += 8
+        elif case_words > 100:
+            complexity_score += 6
+        elif case_words > 60:
+            complexity_score += 4
+        elif case_words > 30:
+            complexity_score += 2
+        
+        avg_sentence_length = case_words / max(sentences_in_case, 1)
+        if avg_sentence_length > 15:
+            complexity_score += 5
+        elif avg_sentence_length > 12:
+            complexity_score += 3
+        elif avg_sentence_length > 8:
+            complexity_score += 2
+        
+        detail_indicators = ['date', 'time', 'amount', 'contract', 'agreement', 'document', 'evidence', 'witness']
+        detail_count = sum(1 for indicator in detail_indicators if indicator in case_text.lower())
+        complexity_score += min(5, detail_count)
+        
+        specialized_terms = [
+            'adoption', 'custody', 'divorce', 'paternity', 'guardianship', 'alimony',
+            'employment', 'discrimination', 'harassment', 'wrongful termination', 'wages',
+            'criminal', 'felony', 'misdemeanor', 'plea', 'sentencing', 'probation',
+            'contract', 'breach', 'damages', 'liability', 'negligence', 'tort',
+            'property', 'real estate', 'mortgage', 'foreclosure', 'title', 'deed',
+            'immigration', 'visa', 'citizenship', 'deportation', 'asylum',
+            'bankruptcy', 'debt', 'creditor', 'discharge', 'liquidation',
+            'malpractice', 'standard of care', 'expert witness', 'causation',
+            'intellectual property', 'copyright', 'trademark', 'patent', 'infringement'
+        ]
+        
+        terms_found = sum(1 for term in specialized_terms if term in case_text.lower())
+        terminology_score = min(15, int(terms_found * 1.8))
+        
+        confidence_level = result.get("confidence_level", "low")
+        analytical_score = 0
+        
+        if confidence_level == "high":
+            analytical_score += 4
+        elif confidence_level == "medium":
+            analytical_score += 2
+        
+        competency_match = result.get("competency_match", "")
+        if len(competency_match) > 150:
+            analytical_score += 4
+        elif len(competency_match) > 100:
+            analytical_score += 3
+        elif len(competency_match) > 50:
+            analytical_score += 2
+        elif len(competency_match) > 20:
+            analytical_score += 1
+        
+        secondary_areas = result.get("secondary_areas", [])
+        if len(secondary_areas) > 0:
+            analytical_score += 2
+        
+        validation_score = 0
+        validation_score += int(accuracy_score * 5)
+        validation_score += int(relevance_score * 3)
+        validation_score += int(complexity * 2)
+        
+        case_hash = hashlib.md5(case_text.encode()).hexdigest()
+        content_factors = []
+        
+        for i in range(0, len(case_hash), 8):
+            hex_segment = case_hash[i:i+8]
+            content_factors.append(int(hex_segment, 16) % 100)
+        
+        word_diversity = len(set(case_text.lower().split())) / max(len(case_text.split()), 1)
+        char_distribution = len(set(case_text.lower())) / max(len(case_text), 1)
+        
+        authenticity_modifier = (word_diversity * 5) + (char_distribution * 10)
+        authenticity_modifier = min(8, max(-3, authenticity_modifier - 7))
+        
+        base_composite = (
+            reasoning_score +
+            structure_score +
+            complexity_score +
+            terminology_score +
+            analytical_score +
+            validation_score
+        )
+        
+        case_signature = sum(content_factors[:3]) % 21 - 10
+        natural_variation = case_signature + authenticity_modifier
+        
+        final_score = int(base_composite + natural_variation)
+        
+        final_score = max(20, min(96, final_score))
+        
+        uniqueness_factor = (content_factors[3] % 7) - 3
+        final_score += uniqueness_factor
+        
+        final_score = max(20, min(96, final_score))
+        
         if self.last_confidence_score is not None:
-            if abs(final_score - self.last_confidence_score) < 8:
-                # Generate completely different score
-                attempts = 0
-                while abs(final_score - self.last_confidence_score) < 8 and attempts < 10:
-                    final_score = random.randint(18, 98)
-                    attempts += 1
+            if abs(final_score - self.last_confidence_score) < 2:
+                content_differentiation = (content_factors[4] % 9) - 4
+                final_score = max(20, min(96, final_score + content_differentiation))
         
         self.last_confidence_score = final_score
         return final_score
@@ -670,7 +763,7 @@ ENHANCED JSON RESPONSE:
             
             confidence_score = max(20, self._calculate_dynamic_confidence(
                 result, accuracy_score, relevance_score, complexity, urgency, case_text
-            ) - 20)  # Reduce fallback scores significantly
+            ) - 20)
             
             consistency_hash = ConsistencyValidator.generate_consistency_hash(case_text, result)
             
@@ -704,49 +797,132 @@ class FinalFallbackAgent(BaseAgent):
         self.last_confidence_score = None
 
     def _calculate_final_confidence(self, result: Dict[str, Any], category: str, case_text: str) -> int:
-        import time
-        import random
+        import hashlib
         
-        # Create unique seed
-        case_bytes = case_text.encode('utf-8', errors='ignore')
-        content_sum = sum(case_bytes[:min(40, len(case_bytes))])
-        time_micro = int(time.time() * 1000000) % 1000000
-        category_sum = sum(ord(c) for c in category)
-        unique_seed = (content_sum + time_micro + category_sum + len(case_text)) % 2147483647
+        case_words = len(case_text.split())
+        case_sentences = len([s for s in case_text.split('.') if len(s.strip()) > 5])
         
-        random.seed(unique_seed)
+        detail_score = 0
         
-        # Simple weighted distribution across FULL range
-        distribution_roll = random.randint(1, 100)
+        if case_words > 150:
+            detail_score += 12
+        elif case_words > 100:
+            detail_score += 9
+        elif case_words > 60:
+            detail_score += 6
+        elif case_words > 30:
+            detail_score += 4
+        elif case_words > 15:
+            detail_score += 2
         
-        if distribution_roll <= 25:      # 25% - Low range (15-44)
-            base_score = random.randint(15, 44)
-        elif distribution_roll <= 45:   # 20% - Mid-Low (45-64)
-            base_score = random.randint(45, 64)
-        elif distribution_roll <= 70:   # 25% - Mid-High (65-84)
-            base_score = random.randint(65, 84)
-        elif distribution_roll <= 90:   # 20% - High (85-94)
-            base_score = random.randint(85, 94)
-        else:                            # 10% - Ultra High (95-98)
-            base_score = random.randint(95, 98)
+        if case_sentences >= 8:
+            detail_score += 8
+        elif case_sentences >= 5:
+            detail_score += 5
+        elif case_sentences >= 3:
+            detail_score += 3
+        elif case_sentences >= 2:
+            detail_score += 1
         
-        # Small adjustments based on content
-        case_length = len(case_text.split())
-        if case_length > 75:
-            base_score += random.randint(0, 4)
-        elif case_length < 20:
-            base_score -= random.randint(0, 3)
+        avg_words_per_sentence = case_words / max(case_sentences, 1)
+        if avg_words_per_sentence > 12:
+            detail_score += 6
+        elif avg_words_per_sentence > 8:
+            detail_score += 4
+        elif avg_words_per_sentence > 5:
+            detail_score += 2
         
-        # Ensure bounds
-        final_score = max(15, min(98, base_score))
+        context_words = ['because', 'since', 'after', 'before', 'when', 'where', 'how', 'why']
+        context_count = sum(1 for word in context_words if word in case_text.lower())
+        detail_score += min(4, context_count)
         
-        # Force different if too close to last
+        reasoning = result.get("legal_reasoning", "")
+        primary_issue = result.get("primary_legal_issue", "")
+        attorney_type = result.get("attorney_type_needed", "")
+        
+        reasoning_score = 0
+        
+        reasoning_len = len(reasoning)
+        if reasoning_len > 200:
+            reasoning_score += 10
+        elif reasoning_len > 150:
+            reasoning_score += 8
+        elif reasoning_len > 100:
+            reasoning_score += 6
+        elif reasoning_len > 60:
+            reasoning_score += 4
+        elif reasoning_len > 30:
+            reasoning_score += 2
+        
+        if len(primary_issue) > 60:
+            reasoning_score += 7
+        elif len(primary_issue) > 40:
+            reasoning_score += 5
+        elif len(primary_issue) > 20:
+            reasoning_score += 3
+        elif len(primary_issue) > 10:
+            reasoning_score += 1
+        
+        if len(attorney_type) > 50:
+            reasoning_score += 5
+        elif len(attorney_type) > 30:
+            reasoning_score += 3
+        elif len(attorney_type) > 15:
+            reasoning_score += 2
+        elif len(attorney_type) > 5:
+            reasoning_score += 1
+        
+        legal_terms = ['law', 'legal', 'court', 'statute', 'regulation', 'procedure', 'jurisdiction', 'precedent']
+        term_count = sum(1 for term in legal_terms if term in reasoning.lower())
+        reasoning_score += min(3, term_count)
+        
+        category_indicators = {
+            'Family Law': ['family', 'child', 'parent', 'marriage', 'divorce', 'custody', 'adoption'],
+            'Employment Law': ['job', 'work', 'employer', 'employee', 'fired', 'discrimination', 'wage'],
+            'Criminal Law': ['criminal', 'arrest', 'charge', 'court', 'police', 'guilty', 'crime'],
+            'Real Estate Law': ['property', 'house', 'real estate', 'mortgage', 'deed', 'title'],
+            'Business/Corporate Law': ['business', 'company', 'contract', 'agreement', 'corporate'],
+            'Personal Injury Law': ['injury', 'accident', 'hurt', 'medical', 'hospital', 'doctor'],
+            'Immigration Law': ['immigration', 'visa', 'citizen', 'deport', 'green card']
+        }
+        
+        specificity_score = 0
+        if category in category_indicators:
+            relevant_terms = category_indicators[category]
+            matches = sum(1 for term in relevant_terms if term in case_text.lower())
+            specificity_score = min(15, matches * 2.5)
+        else:
+            specificity_score = 8
+        
+        case_hash = hashlib.md5((case_text + category).encode()).hexdigest()
+        content_factors = []
+        
+        for i in range(0, len(case_hash), 6):
+            hex_segment = case_hash[i:i+6]
+            content_factors.append(int(hex_segment, 16) % 100)
+        
+        unique_words = len(set(case_text.lower().split()))
+        word_diversity = unique_words / max(len(case_text.split()), 1)
+        
+        content_signature = sum(content_factors[:2]) % 17 - 8
+        diversity_factor = int((word_diversity - 0.6) * 10)
+        
+        base_composite = detail_score + reasoning_score + specificity_score
+        
+        natural_adjustment = content_signature + diversity_factor
+        final_score = int(base_composite + natural_adjustment + 25)
+        
+        final_score = max(20, min(82, final_score))
+        
+        uniqueness_modifier = (content_factors[2] % 5) - 2
+        final_score += uniqueness_modifier
+        
+        final_score = max(20, min(82, final_score))
+        
         if self.last_confidence_score is not None:
-            if abs(final_score - self.last_confidence_score) < 8:
-                attempts = 0
-                while abs(final_score - self.last_confidence_score) < 8 and attempts < 10:
-                    final_score = random.randint(15, 98)
-                    attempts += 1
+            if abs(final_score - self.last_confidence_score) < 3:
+                differentiation = (content_factors[3] % 7) - 3
+                final_score = max(20, min(82, final_score + differentiation))
         
         self.last_confidence_score = final_score
         return final_score
@@ -858,7 +1034,7 @@ ENHANCED JSON RESPONSE:
             
         except Exception as e:
             processing_time = time.time() - start_time
-            fallback_score = 28 + (abs(hash(case_text + "fallback")) % 25)  # 28-52 range
+            fallback_score = 20 + (abs(hash(case_text + "fallback")) % 25)
             fallback_classification = LegalClassification(
                 category="Business/Corporate Law",
                 subcategory="Business Disputes",
@@ -920,50 +1096,86 @@ class EnhancedCoordinatorAgent(BaseAgent):
         complexity_level = self._assess_complexity_enhanced(classifications)
         requires_multiple_attorneys = len(set(c.category for c in classifications)) > 1
         
-        # SIMPLE but FULL SPECTRUM consensus calculation
         import time
-        import random
+        import hashlib
         
-        # Create unique seed for consensus
-        case_bytes = case_text.encode('utf-8', errors='ignore')
-        content_sum = sum(case_bytes[:min(30, len(case_bytes))])
-        time_micro = int(time.time() * 1000000) % 1000000
-        classification_sum = sum(c.confidence_score for c in classifications)
-        unique_seed = (content_sum + time_micro + classification_sum + len(case_text)) % 2147483647
-        
-        random.seed(unique_seed)
-        
-        # Get base from classifications but add full range variation
         confidence_scores = [c.confidence_score for c in classifications]
+        validation_scores = [c.validation_score for c in classifications]
+        
         if confidence_scores:
-            base_confidence = sum(confidence_scores) / len(confidence_scores)
+            avg_confidence = sum(confidence_scores) / len(confidence_scores)
+            confidence_spread = max(confidence_scores) - min(confidence_scores)
+            high_confidence_count = sum(1 for score in confidence_scores if score >= 80)
         else:
-            base_confidence = 55
+            avg_confidence = 50
+            confidence_spread = 0
+            high_confidence_count = 0
+            
+        if validation_scores:
+            avg_validation = sum(validation_scores) / len(validation_scores)
+        else:
+            avg_validation = 0.5
         
-        # Add random variation to spread across full spectrum
-        variation_roll = random.randint(1, 100)
+        fallback_count = sum(1 for c in classifications if c.fallback_used)
+        non_fallback_count = len(classifications) - fallback_count
         
-        if variation_roll <= 30:      # 30% chance - Use random from full range
-            confidence_consensus = random.randint(22, 98)
-        elif variation_roll <= 60:   # 30% chance - Use base with large variation
-            variation = random.randint(-25, 35)
-            confidence_consensus = int(base_confidence + variation)
-        else:                         # 40% chance - Use base with small variation  
-            variation = random.randint(-8, 12)
-            confidence_consensus = int(base_confidence + variation)
+        stability_factor = (non_fallback_count / len(classifications)) if classifications else 0
+        consensus_strength = overall_consistency
         
-        # Apply bounds
-        confidence_consensus = max(22, min(98, confidence_consensus))
+        base_consensus = (
+            avg_confidence * 0.5 +
+            (avg_validation * 40) +
+            (consensus_strength * 20) +
+            (stability_factor * 15) +
+            (high_confidence_count * 3)
+        )
         
-        # Force different if too close to last
+        case_hash = hashlib.md5(case_text.encode()).hexdigest()
+        content_metrics = []
+        
+        for i in range(0, len(case_hash), 8):
+            hex_segment = case_hash[i:i+8] 
+            content_metrics.append(int(hex_segment, 16) % 100)
+        
+        case_words = len(case_text.split())
+        case_sentences = len([s for s in case_text.split('.') if len(s.strip()) > 5])
+        
+        complexity_indicators = [
+            'contract', 'agreement', 'court', 'lawsuit', 'legal', 'attorney',
+            'damages', 'liability', 'breach', 'violation', 'statute', 'regulation'
+        ]
+        
+        complexity_terms = sum(1 for term in complexity_indicators if term in case_text.lower())
+        
+        case_complexity_factor = (
+            (case_words / 50) +
+            (case_sentences / 3) +
+            (complexity_terms / 2) +
+            (confidence_spread / 20)
+        )
+        
+        content_signature = sum(content_metrics[:3]) % 19 - 9
+        
+        case_adjustment = content_signature + int(case_complexity_factor) - 7
+        
+        final_consensus = int(base_consensus + case_adjustment)
+        
+        final_consensus = max(20, min(94, final_consensus))
+        
+        uniqueness_factor = (content_metrics[3] % 6) - 2
         if self.last_consensus_score is not None:
-            if abs(confidence_consensus - self.last_consensus_score) < 8:
-                attempts = 0
-                while abs(confidence_consensus - self.last_consensus_score) < 8 and attempts < 10:
-                    confidence_consensus = random.randint(22, 98)
-                    attempts += 1
+            if abs(final_consensus - self.last_consensus_score) < 4:
+                final_consensus += uniqueness_factor
+                final_consensus = max(20, min(94, final_consensus))
         
-        self.last_consensus_score = confidence_consensus
+        hour_seed = int(time.time() / 3600) % 100
+        content_time_factor = (content_metrics[4] + hour_seed) % 5 - 2
+        final_consensus += content_time_factor
+        
+        final_consensus = max(20, min(94, final_consensus))
+        
+        self.last_consensus_score = final_consensus
+        confidence_consensus = final_consensus
         
         total_processing_time = sum(c.processing_time for c in classifications)
         agents_consulted = [c.agent_id for c in classifications]
@@ -1116,12 +1328,12 @@ class EnhancedMultiAgentLegalAnalyzer:
                     "system_version": self.SYSTEM_VERSION
                 }
             
-            print(f"✓ Input validation passed")
+            print(f"Input validation passed")
             
             print(f"\n--- PII REMOVAL PROCESS ---")
             print(f"Processing text through PII remover...")
             cleaned_text = self.pii_remover.clean_text(case_text)
-            print(f"✓ PII removal completed")
+            print(f"PII removal completed")
             print(f"Cleaned text length: {len(cleaned_text)} characters")
             reduction_pct = ((len(case_text) - len(cleaned_text)) / len(case_text)) * 100 if len(case_text) > 0 else 0
             print(f"Text reduction: {reduction_pct:.1f}%")
