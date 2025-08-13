@@ -156,6 +156,10 @@ def prefill_form():
 
 @case_bp.route('/generate-summary', methods=['POST'])
 def generate_summary():
+    """
+    Final summary generation endpoint
+    Accepts completed form data, generates final summary and stores it in Supabase
+    """
     try:
         data = request.get_json()
         if not data or 'form_data' not in data:
@@ -174,57 +178,141 @@ def generate_summary():
             }), 400
 
         analyzer = CaseAnalyzer(api_key=current_app.config['OPENAI_API_KEY'])
-        summary_result = analyzer.generate_final_summary(initial_analysis, data['form_data'])
         
-        if summary_result.get('status') != 'success':
-            return jsonify(summary_result), 400
+        # Generate final summary
+        current_app.logger.info("Generating final summary")
+        summary_result = analyzer.generate_final_summary(
+            initial_analysis,
+            data['form_data']
+        )
+        current_app.logger.info(f"Summary generated: {summary_result.get('status', 'unknown')}")
 
-        summary_text = summary_result.get('summary', '')
-        
+        # Process the summary for database storage
         try:
-            if isinstance(summary_text, str):
-                summary_data = json.loads(summary_text)
-            else:
-                summary_data = summary_text
-
-            title = summary_data.get('title', 'Untitled Case')
-            summary_sections = summary_data.get('summary', {})
+            current_app.logger.info("Processing summary for database storage")
             
-            case_summary = summary_sections.get('General Case Summary', '')
-            key_aspects = summary_sections.get('Key aspects of the case', []) or summary_sections.get('Key Aspects', [])
-            potential_merits = summary_sections.get('Potential Merits of the Case', []) or summary_sections.get('Potential Merits', [])
-            critical_factors = summary_sections.get('Critical factors', []) or summary_sections.get('Critical Factors', [])
+            # Get the summary text from the result
+            summary_text = summary_result.get('summary', '')
             
-        except (json.JSONDecodeError, TypeError):
-            title = "Case Summary"
-            case_summary = ""
-            key_aspects = []
-            potential_merits = []
-            critical_factors = []
-
-        try:
+            # Check if the summary is in JSON format
+            try:
+                # First, try to parse it directly as JSON
+                if isinstance(summary_text, str):
+                    summary_data = json.loads(summary_text)
+                    current_app.logger.info("Successfully parsed summary JSON")
+                else:
+                    summary_data = summary_text
+                    
+                # Extract title
+                title = summary_data.get('title', 'Untitled Case')
+                
+                # Extract the summary sections
+                summary_sections = summary_data.get('summary', {})
+                
+                # Extract the different sections
+                # Each section should be an array of strings
+                case_summary = summary_sections.get('General Case Summary', [])
+                key_aspects = summary_sections.get('Key aspects of the case', [])
+                
+                # Try alternative capitalization if not found
+                if not key_aspects:
+                    key_aspects = summary_sections.get('Key Aspects of the Case', [])
+                if not key_aspects:
+                    key_aspects = summary_sections.get('Key Aspects', [])
+                
+                potential_merits = summary_sections.get('Potential Merits of the Case', [])
+                if not potential_merits:
+                    potential_merits = summary_sections.get('Potential merits of the case', [])
+                if not potential_merits:
+                    potential_merits = summary_sections.get('Potential Merits', [])
+                
+                critical_factors = summary_sections.get('Critical factors', [])
+                if not critical_factors:
+                    critical_factors = summary_sections.get('Critical Factors', [])
+                
+                current_app.logger.info(f"Extracted case_summary: {len(case_summary)} items")
+                current_app.logger.info(f"Extracted key_aspects: {len(key_aspects)} items")
+                current_app.logger.info(f"Extracted potential_merits: {len(potential_merits)} items")
+                current_app.logger.info(f"Extracted critical_factors: {len(critical_factors)} items")
+                
+            except json.JSONDecodeError as e:
+                current_app.logger.warning(f"JSON parse error: {str(e)}")
+                
+                # If we couldn't parse the JSON, use regex as fallback
+                # This approach is kept from the original implementation as a fallback
+                json_block_pattern = r"```json\s*([\s\S]*?)\s*```"
+                json_match = re.search(json_block_pattern, summary_text, re.DOTALL)
+                
+                if json_match:
+                    # Clean the JSON string 
+                    json_text = json_match.group(1)
+                    json_text = ''.join(ch for ch in json_text if ord(ch) >= 32 or ch in '\n\r\t')
+                    
+                    try:
+                        # Try to parse the JSON block
+                        summary_data = json.loads(json_text)
+                        current_app.logger.info("Successfully parsed summary JSON block")
+                        
+                        # Extract title and summary as before
+                        title = summary_data.get('title', 'Untitled Case')
+                        summary_sections = summary_data.get('summary', {})
+                        
+                        # Extract the different sections
+                        case_summary = summary_sections.get('General Case Summary', "")
+                        key_aspects = summary_sections.get('Key aspects of the case', [])
+                        potential_merits = summary_sections.get('Potential Merits of the Case', [])
+                        critical_factors = summary_sections.get('Critical factors', [])
+                        
+                    except json.JSONDecodeError:
+                        # If still can't parse, use regex to extract each section
+                        current_app.logger.warning("Falling back to regex extraction")
+                        title = "Case Summary"  # Default title
+                        
+                        # Using empty arrays as default
+                        case_summary = ""
+                        key_aspects = []
+                        potential_merits = []
+                        critical_factors = []
+                else:
+                    # If no JSON block found, use default values
+                    current_app.logger.warning("No JSON structure found, using defaults")
+                    title = "Case Summary"
+                    case_summary = ""
+                    key_aspects = []
+                    potential_merits = []
+                    critical_factors = []
+            
+            # Initialize database service
+            current_app.logger.info("Initializing database service")
             db_service = DatabaseService()
-            case_data = {
-                "title": title,
-                "summary": case_summary,
-                "keyAspects": key_aspects,
-                "potentialMerits": potential_merits,
-                "criticalFactors": critical_factors,
-                "CaseId": caseId,
-            }
             
-            stored_case = db_service.create_record('AI_case_submission', case_data)
+            try:
+                current_app.logger.info("Storing case data")
+                case_data = {
+                    "title": title,
+                    "summary": case_summary,
+                    "keyAspects": key_aspects,
+                    "potentialMerits": potential_merits,
+                    "criticalFactors": critical_factors,
+                    "CaseId": caseId,
+                }
+                
+                stored_case = db_service.create_record('AI_case_submission', case_data)
+                
+                # Add the database ID to the response
+                summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
+                summary_result['stored'] = True
+                
+                current_app.logger.info(f"Case summary stored with ID: {summary_result.get('case_id')}")
+            except Exception as db_error:
+                current_app.logger.error(f"Database error: {str(db_error)}")
+                summary_result['stored'] = False
+                summary_result['db_error'] = str(db_error)
             
-            summary_result.update({
-                'case_id': stored_case[0]['id'] if stored_case else None,
-                'stored': True
-            })
-            
-        except Exception as db_error:
-            summary_result.update({
-                'stored': False,
-                'db_error': str(db_error)
-            })
+        except Exception as process_error:
+            current_app.logger.error(f"Error processing summary: {str(process_error)}")
+            summary_result['stored'] = False
+            summary_result['processing_error'] = str(process_error)
 
         return jsonify(summary_result), 200
 
@@ -233,105 +321,6 @@ def generate_summary():
             "status": "error",
             "message": str(e)
         }), 500
-
-
-@case_bp.route('/generate-questionnaire-summary', methods=['POST'])
-@monitor_performance
-def generate_questionnaire_summary():
-    """Ultra-optimized questionnaire summary generation - target under 5 seconds"""
-    start_time = time.time()
-    
-    try:
-        data = request.get_json()
-        
-        if not data or 'form_data' not in data:
-            return jsonify({"status": "error", "message": "Form data is required"}), 400
-
-        form_data = data['form_data']
-        category = data.get('category', 'Legal Matter')
-        subcategory = data.get('subcategory', 'General Consultation')
-        caseId = data.get('caseId')
-        
-        # Extract simplified data from new frontend structure
-        client_name = form_data.get('client_name', 'Client')
-        location = form_data.get('location', 'Unknown Location')
-        case_summary = form_data.get('case_summary', '')[:800]  # Limit to 800 chars
-        key_answers = form_data.get('key_answers', [])[:5]  # Only top 5 answers
-        
-        # OPTIMIZATION 1: Ultra-compressed prompt - 60% shorter than before
-        prompt = f"""Legal summary for {category} - {subcategory}.
-Client: {client_name}
-Location: {location}
-Case: {case_summary}
-Key Info: {key_answers}
-
-JSON:
-{{
-  "title": "Brief title (max 60 chars)",
-  "summary": {{
-    "General Case Summary": "2-3 sentences",
-    "Key aspects of the case": ["Point 1", "Point 2", "Point 3"],
-    "Potential Merits of the Case": ["Merit 1", "Merit 2", "Merit 3"],
-    "Critical factors": ["Factor 1", "Factor 2", "Factor 3"]
-  }}
-}}"""
-
-        # OPTIMIZATION 2: Aggressive API settings for maximum speed
-        client = openai.OpenAI(api_key=current_app.config['OPENAI_API_KEY'])
-        
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Fastest model
-            messages=[
-                {"role": "system", "content": "Generate legal summaries as JSON. Be brief."},
-                {"role": "user", "content": prompt}
-            ],
-            response_format={"type": "json_object"},
-            temperature=0.0,
-            max_tokens=500,  # Reduced from 800
-            timeout=8  # Reduced from 15
-        )
-
-        summary_json = json.loads(response.choices[0].message.content)
-        
-        # OPTIMIZATION 3: Simplified data extraction
-        title = summary_json.get('title', f"{category} Case")
-        summary_sections = summary_json.get('summary', {})
-        
-        case_summary = summary_sections.get('General Case Summary', '')
-        key_aspects = summary_sections.get('Key aspects of the case', [])
-        potential_merits = summary_sections.get('Potential Merits of the Case', [])
-        critical_factors = summary_sections.get('Critical factors', [])
-        
-        # OPTIMIZATION 4: Ultra-fast database operation - no complex error handling
-        db_service = DatabaseService()
-        case_data = {
-            "title": title,
-            "summary": case_summary,
-            "keyAspects": key_aspects,
-            "potentialMerits": potential_merits,
-            "criticalFactors": critical_factors,
-            "CaseId": caseId,
-        }
-        
-        stored_case = db_service.create_record('AI_case_submission', case_data)
-        case_id = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
-        
-        total_time = time.time() - start_time
-        
-        return jsonify({
-            "status": "success",
-            "timestamp": datetime.utcnow().isoformat(),
-            "summary": json.dumps(summary_json),
-            "case_id": case_id,
-            "stored": True,
-            "method": "ultra_optimized",
-            "processing_time": f"{total_time:.2f}s"
-        }), 200
-        
-    except openai.Timeout:
-        return jsonify({"status": "error", "message": "Request timeout"}), 408
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 def extract_list_items(html_content, section_title):
