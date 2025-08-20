@@ -308,7 +308,9 @@ python main.py
 The application will be available at `http://localhost:3001`
 
 ---
-Dependencies Documentation
+
+## Dependencies Documentation
+
 ### Overview
 
 This section provides a comprehensive overview of all dependencies used in this Python project, including both direct dependencies (explicitly imported in your code) and sub-dependencies (required by your direct dependencies).
@@ -578,4 +580,4 @@ All endpoints use JSON format for data exchange with comprehensive error handlin
 - **Confidence Scoring:** AI reliability assessment for quality control
 - **Validation Systems:** Multi-layer data validation and consistency checking
 - **Error Prevention:** Proactive identification and correction of data issues
-- **Manual Review:** Automatic flagging of low-confidence classifications.
+- **Manual Review:** Automatic flagging of low-confidence classifications
