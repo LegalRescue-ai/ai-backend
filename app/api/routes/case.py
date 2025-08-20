@@ -153,179 +153,113 @@ def prefill_form():
             "status": "error",
             "message": str(e)
         }), 500
-
-
+    
 @case_bp.route('/generate-summary', methods=['POST'])
 def generate_summary():
     """
-    Final summary generation endpoint - AI METHOD
-    Accepts completed form data, generates final summary and stores it in Supabase
+    Final summary generation endpoint.
+    Generates final summary, stores it in AI_case_submission,
+    and mirrors it to AI_case_submission_admin.
+    Logs all steps and errors for debugging.
     """
     try:
+        print(">>> Starting generate_summary process")
+        current_app.logger.info("Starting generate_summary process")
+
         data = request.get_json()
         if not data or 'form_data' not in data:
-            return jsonify({
-                "status": "error", 
-                "message": "Form data is required"
-            }), 400
+            return jsonify({"status": "error", "message": "Form data is required"}), 400
 
         initial_analysis = data.get('initial_analysis')
-        caseId = data.get('caseId')
+        case_id = data.get('caseId')
 
         if not initial_analysis:
-            return jsonify({
-                "status": "error",
-                "message": "No initial analysis found. Please analyze the case first."
-            }), 400
+            return jsonify({"status": "error", "message": "No initial analysis found. Please analyze the case first."}), 400
 
-        analyzer = CaseAnalyzer(api_key=current_app.config['OPENAI_API_KEY'])
-        
         # Generate final summary
-        current_app.logger.info("Generating final summary")
-        summary_result = analyzer.generate_final_summary(
-            initial_analysis,
-            data['form_data']
-        )
-        current_app.logger.info(f"Summary generated: {summary_result.get('status', 'unknown')}")
+        analyzer = CaseAnalyzer(api_key=current_app.config['OPENAI_API_KEY'])
+        print(">>> Generating final summary")
+        summary_result = analyzer.generate_final_summary(initial_analysis, data['form_data'])
 
-        # Process the summary for database storage
-        try:
-            current_app.logger.info("Processing summary for database storage")
-            
-            # Get the summary text from the result
-            summary_text = summary_result.get('summary', '')
-            
-            # Check if the summary is in JSON format
+        # Parse summary JSON safely
+        def parse_summary(summary_text):
+            if not summary_text:
+                return "Case Summary", {}
             try:
-                # First, try to parse it directly as JSON
-                if isinstance(summary_text, str):
-                    summary_data = json.loads(summary_text)
-                    current_app.logger.info("Successfully parsed summary JSON")
-                else:
-                    summary_data = summary_text
-                    
-                # Extract title
-                title = summary_data.get('title', 'Untitled Case')
-                
-                # Extract the summary sections
-                summary_sections = summary_data.get('summary', {})
-                
-                # Extract the different sections
-                # Each section should be an array of strings
-                case_summary = summary_sections.get('General Case Summary', [])
-                key_aspects = summary_sections.get('Key aspects of the case', [])
-                
-                # Try alternative capitalization if not found
-                if not key_aspects:
-                    key_aspects = summary_sections.get('Key Aspects of the Case', [])
-                if not key_aspects:
-                    key_aspects = summary_sections.get('Key Aspects', [])
-                
-                potential_merits = summary_sections.get('Potential Merits of the Case', [])
-                if not potential_merits:
-                    potential_merits = summary_sections.get('Potential merits of the case', [])
-                if not potential_merits:
-                    potential_merits = summary_sections.get('Potential Merits', [])
-                
-                critical_factors = summary_sections.get('Critical factors', [])
-                if not critical_factors:
-                    critical_factors = summary_sections.get('Critical Factors', [])
-                
-                current_app.logger.info(f"Extracted case_summary: {len(case_summary)} items")
-                current_app.logger.info(f"Extracted key_aspects: {len(key_aspects)} items")
-                current_app.logger.info(f"Extracted potential_merits: {len(potential_merits)} items")
-                current_app.logger.info(f"Extracted critical_factors: {len(critical_factors)} items")
-                
-            except json.JSONDecodeError as e:
-                current_app.logger.warning(f"JSON parse error: {str(e)}")
-                
-                # If we couldn't parse the JSON, use regex as fallback
-                # This approach is kept from the original implementation as a fallback
-                json_block_pattern = r"```json\s*([\s\S]*?)\s*```"
-                json_match = re.search(json_block_pattern, summary_text, re.DOTALL)
-                
-                if json_match:
-                    # Clean the JSON string 
-                    json_text = json_match.group(1)
-                    json_text = ''.join(ch for ch in json_text if ord(ch) >= 32 or ch in '\n\r\t')
-                    
+                parsed = json.loads(summary_text) if isinstance(summary_text, str) else summary_text
+                return parsed.get('title', 'Untitled Case'), parsed.get('summary', {})
+            except json.JSONDecodeError:
+                match = re.search(r"```json\s*([\s\S]*?)\s*```", summary_text, re.DOTALL)
+                if match:
+                    json_text = ''.join(ch for ch in match.group(1) if ord(ch) >= 32 or ch in '\n\r\t')
                     try:
-                        # Try to parse the JSON block
-                        summary_data = json.loads(json_text)
-                        current_app.logger.info("Successfully parsed summary JSON block")
-                        
-                        # Extract title and summary as before
-                        title = summary_data.get('title', 'Untitled Case')
-                        summary_sections = summary_data.get('summary', {})
-                        
-                        # Extract the different sections
-                        case_summary = summary_sections.get('General Case Summary', "")
-                        key_aspects = summary_sections.get('Key aspects of the case', [])
-                        potential_merits = summary_sections.get('Potential Merits of the Case', [])
-                        critical_factors = summary_sections.get('Critical factors', [])
-                        
+                        parsed = json.loads(json_text)
+                        return parsed.get('title', 'Untitled Case'), parsed.get('summary', {})
                     except json.JSONDecodeError:
-                        # If still can't parse, use regex to extract each section
-                        current_app.logger.warning("Falling back to regex extraction")
-                        title = "Case Summary"  # Default title
-                        
-                        # Using empty arrays as default
-                        case_summary = ""
-                        key_aspects = []
-                        potential_merits = []
-                        critical_factors = []
-                else:
-                    # If no JSON block found, use default values
-                    current_app.logger.warning("No JSON structure found, using defaults")
-                    title = "Case Summary"
-                    case_summary = ""
-                    key_aspects = []
-                    potential_merits = []
-                    critical_factors = []
-            
-            # Initialize database service
-            current_app.logger.info("Initializing database service")
-            db_service = DatabaseService()
-            
-            try:
-                current_app.logger.info("Storing case data")
-                case_data = {
-                    "title": title,
-                    "summary": case_summary,
-                    "keyAspects": key_aspects,
-                    "potentialMerits": potential_merits,
-                    "criticalFactors": critical_factors,
-                    "CaseId": caseId,
-                }
-                
-                stored_case = db_service.create_record('AI_case_submission', case_data)
-                
-                # Add the database ID to the response
-                summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
-                summary_result['stored'] = True
-                
-                current_app.logger.info(f"Case summary stored with ID: {summary_result.get('case_id')}")
-            except Exception as db_error:
-                current_app.logger.error(f"Database error: {str(db_error)}")
-                summary_result['stored'] = False
-                summary_result['db_error'] = str(db_error)
-            
-        except Exception as process_error:
-            current_app.logger.error(f"Error processing summary: {str(process_error)}")
-            summary_result['stored'] = False
-            summary_result['processing_error'] = str(process_error)
+                        return "Case Summary", {}
+                return "Case Summary", {}
 
+        title, summary_sections = parse_summary(summary_result.get('summary', ''))
+
+        # Extract sections with fallback
+        def extract_section(possible_keys, default=None):
+            default = default or []
+            for key in possible_keys:
+                if key in summary_sections:
+                    return summary_sections[key]
+            return default
+
+        case_summary = extract_section(['General Case Summary'], "")
+        key_aspects = extract_section(['Key aspects of the case', 'Key Aspects'], [])
+        potential_merits = extract_section(['Potential Merits of the Case', 'Potential Merits'], [])
+        critical_factors = extract_section(['Critical factors', 'Critical Factors'], [])
+
+        print(f">>> Extracted sections - summary: {case_summary}, key_aspects: {len(key_aspects)}, potential_merits: {len(potential_merits)}, critical_factors: {len(critical_factors)}")
+
+        db_service = DatabaseService()
+
+        # Prepare main case data
+        case_data = {
+            "title": title,
+            "summary": case_summary,
+            "keyAspects": key_aspects,
+            "potentialMerits": potential_merits,
+            "criticalFactors": critical_factors,
+            "CaseId": case_id,
+        }
+
+        # Insert into main table
+        print(">>> Inserting into AI_case_submission")
+        stored_case = db_service.create_record('AI_case_submission', case_data)
+        if not stored_case or len(stored_case) == 0:
+            raise Exception("Failed to store case in AI_case_submission")
+
+        print(">>> Successfully inserted main case")
+
+        # Mirror to admin table
+        print(">>> Inserting into AI_case_submission_admin")
+        stored_admin_case = db_service.create_record('AI_case_submission_admin', stored_case[0])
+        if not stored_admin_case or len(stored_admin_case) == 0:
+            print(">>> Warning: Failed to store duplicate in AI_case_submission_admin")
+
+        # Build response
+        summary_result.update({
+            "case_id": stored_case[0].get('id'),
+            "admin_case_id": stored_admin_case[0].get('id') if stored_admin_case else None,
+            "stored": bool(stored_case and stored_admin_case),
+            "partial_storage": bool(stored_case) and not bool(stored_admin_case)
+        })
+
+        print(f">>> Response: {summary_result}")
         return jsonify(summary_result), 200
 
     except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
-
+        print(f">>> Error generating summary: {e}")
+        current_app.logger.error(f"Error generating summary: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @case_bp.route('/generate-questionnaire-summary', methods=['POST'])
-def generate_questionnaire_summary():
+def generate_questionnaire_summary(): 
     """
     Fast questionnaire-based summary generation endpoint - QUESTIONNAIRE METHOD
     FIXED: Now uses EXACT SAME processing logic as AI method for database storage
@@ -438,7 +372,6 @@ def generate_questionnaire_summary():
                 current_app.logger.warning(f"JSON parse error: {str(e)}")
                 
                 # If we couldn't parse the JSON, use regex as fallback (SAME as AI method)
-                # This approach is kept from the original implementation as a fallback
                 json_block_pattern = r"```json\s*([\s\S]*?)\s*```"
                 json_match = re.search(json_block_pattern, summary_text, re.DOTALL)
                 
@@ -486,7 +419,7 @@ def generate_questionnaire_summary():
             db_service = DatabaseService()
             
             try:
-                current_app.logger.info("Storing case data")
+                current_app.logger.info("Storing case data in both tables")
                 # FIXED: Use EXACT SAME case_data structure as AI method
                 case_data = {
                     "title": title,
@@ -497,13 +430,37 @@ def generate_questionnaire_summary():
                     "CaseId": caseId,
                 }
                 
+                # First store in the main table (SAME as AI method)
                 stored_case = db_service.create_record('AI_case_submission', case_data)
                 
-                # Add the database ID to the response (SAME as AI method)
-                summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
-                summary_result['stored'] = True
-                
-                current_app.logger.info(f"Case summary stored with ID: {summary_result.get('case_id')}")
+                if stored_case and len(stored_case) > 0:
+                    # Get the ID from the main table insertion
+                    main_id = stored_case[0]['id']
+                    
+                    # Add the ID to the data for the admin table
+                    admin_case_data = case_data.copy()
+                    admin_case_data['id'] = main_id
+                    
+                    # Store in admin table with the same ID (SAME as AI method)
+                    stored_admin_case = db_service.create_record('AI_case_submission_admin', admin_case_data)
+
+                    # Add the database IDs to the response (SAME as AI method)
+                    summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
+                    summary_result['admin_case_id'] = stored_admin_case[0]['id'] if stored_admin_case and len(stored_admin_case) > 0 else None
+                    summary_result['stored'] = bool(stored_case and stored_admin_case)
+                    
+                    current_app.logger.info(f"Case summary stored with IDs: {summary_result.get('case_id')} (main) and {summary_result.get('admin_case_id')} (admin)")
+                    
+                    if not stored_case or not stored_admin_case:
+                        summary_result['partial_storage'] = True
+                        if not stored_case:
+                            current_app.logger.warning("Failed to store in AI_case_submission")
+                        if not stored_admin_case:
+                            current_app.logger.warning("Failed to store in AI_case_submission_admin")
+                else:
+                    summary_result['stored'] = False
+                    current_app.logger.warning("Failed to store in AI_case_submission")
+                    
             except Exception as db_error:
                 current_app.logger.error(f"Database error: {str(db_error)}")
                 summary_result['stored'] = False
@@ -518,6 +475,7 @@ def generate_questionnaire_summary():
         return jsonify(summary_result), 200
         
     except Exception as e:
+        current_app.logger.error(f"Error in generate_questionnaire_summary: {str(e)}")
         return jsonify({
             "status": "error",
             "message": str(e)
@@ -525,6 +483,7 @@ def generate_questionnaire_summary():
 
 
 def extract_list_items(html_content, section_title):
+    """Helper function to extract list items from HTML content"""
     escaped_title = re.escape(section_title)
     pattern = f"<h3>{escaped_title}</h3>\\s*<ul>(.+?)</ul>"
     section_match = re.search(pattern, html_content, re.DOTALL)
