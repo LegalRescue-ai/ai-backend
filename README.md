@@ -309,12 +309,6 @@ The application will be available at `http://localhost:3001`
 
 ---
 
-## Dependencies Documentation
-
-> **Auto-generated on:** 2025-08-20 15:36:25  
-> **Project Path:** `C:\Users\Administrator\Desktop\AI-BACKEND\ai-backend`  
-> **Total Packages:** 85
-
 ### Overview
 
 This section provides a comprehensive overview of all dependencies used in this Python project, including both direct dependencies (explicitly imported in your code) and sub-dependencies (required by your direct dependencies).
