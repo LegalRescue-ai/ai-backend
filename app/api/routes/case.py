@@ -158,7 +158,7 @@ def prefill_form():
 @case_bp.route('/generate-summary', methods=['POST'])
 def generate_summary():
     """
-    Final summary generation endpoint
+    Final summary generation endpoint - AI METHOD
     Accepts completed form data, generates final summary and stores it in Supabase
     """
     try:
@@ -324,6 +324,206 @@ def generate_summary():
         }), 500
 
 
+@case_bp.route('/generate-questionnaire-summary', methods=['POST'])
+def generate_questionnaire_summary():
+    """
+    Fast questionnaire-based summary generation endpoint - QUESTIONNAIRE METHOD
+    FIXED: Now uses EXACT SAME processing logic as AI method for database storage
+    """
+    try:
+        request_id = str(uuid.uuid4())[:8]
+        current_app.logger.info(f"[{request_id}] NEW QUESTIONNAIRE SUMMARY REQUEST")
+        
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['form_data', 'caseId', 'category', 'subcategory', 'case_summary']
+        missing_fields = [field for field in required_fields if field not in data]
+        if missing_fields:
+            current_app.logger.error(f"[{request_id}] Missing required fields: {missing_fields}")
+            return jsonify({
+                'status': 'error',
+                'message': f'Missing required fields: {", ".join(missing_fields)}'
+            }), 400
+        
+        # Extract data
+        form_data = data['form_data']
+        caseId = data['caseId']  # Use same variable name as AI method
+        category = data['category'] 
+        subcategory = data['subcategory']
+        case_summary = data['case_summary']
+        
+        # Validate category/subcategory
+        if not category or not subcategory:
+            current_app.logger.error(f"[{request_id}] Invalid category/subcategory")
+            return jsonify({
+                'status': 'error',
+                'message': 'Category and subcategory are required for questionnaire method'
+            }), 400
+        
+        current_app.logger.info(f"[{request_id}] Processing questionnaire for {category} - {subcategory}")
+        
+        # Get analyzer instance
+        analyzer = CaseAnalyzer(api_key=current_app.config['OPENAI_API_KEY'])
+        
+        # Generate questionnaire-based summary (FAST PATH)
+        current_app.logger.info(f"[{request_id}] Generating questionnaire summary")
+        result = analyzer.generate_questionnaire_summary(
+            form_data=form_data,
+            case_summary=case_summary,
+            category=category, 
+            subcategory=subcategory
+        )
+        
+        current_app.logger.info(f"[{request_id}] Questionnaire summary generated: {result.get('status', 'unknown')}")
+        
+        # FIXED: Create summary_result in EXACT same format as AI method
+        summary_result = {
+            "status": result.get("status", "success"),
+            "timestamp": result.get("timestamp", datetime.utcnow().isoformat()),
+            "summary": result.get("summary", ""),
+            "confidence_score": result.get("confidence_score", 85),
+            "confidence_label": result.get("confidence_label", "High")
+        }
+        
+        # FIXED: Process the summary for database storage using EXACT SAME logic as AI method
+        try:
+            current_app.logger.info("Processing summary for database storage")
+            
+            # Get the summary text from the result (SAME as AI method)
+            summary_text = summary_result.get('summary', '')
+            
+            # Check if the summary is in JSON format (SAME logic as AI method)
+            try:
+                # First, try to parse it directly as JSON (SAME as AI method)
+                if isinstance(summary_text, str):
+                    summary_data = json.loads(summary_text)
+                    current_app.logger.info("Successfully parsed summary JSON")
+                else:
+                    summary_data = summary_text
+                    
+                # Extract title (SAME as AI method)
+                title = summary_data.get('title', 'Untitled Case')
+                
+                # Extract the summary sections (SAME as AI method)
+                summary_sections = summary_data.get('summary', {})
+                
+                # Extract the different sections (SAME logic as AI method)
+                # Each section should be an array of strings
+                case_summary = summary_sections.get('General Case Summary', [])
+                key_aspects = summary_sections.get('Key aspects of the case', [])
+                
+                # Try alternative capitalization if not found (SAME as AI method)
+                if not key_aspects:
+                    key_aspects = summary_sections.get('Key Aspects of the Case', [])
+                if not key_aspects:
+                    key_aspects = summary_sections.get('Key Aspects', [])
+                
+                potential_merits = summary_sections.get('Potential Merits of the Case', [])
+                if not potential_merits:
+                    potential_merits = summary_sections.get('Potential merits of the case', [])
+                if not potential_merits:
+                    potential_merits = summary_sections.get('Potential Merits', [])
+                
+                critical_factors = summary_sections.get('Critical factors', [])
+                if not critical_factors:
+                    critical_factors = summary_sections.get('Critical Factors', [])
+                
+                current_app.logger.info(f"Extracted case_summary: {len(case_summary)} items")
+                current_app.logger.info(f"Extracted key_aspects: {len(key_aspects)} items")
+                current_app.logger.info(f"Extracted potential_merits: {len(potential_merits)} items")
+                current_app.logger.info(f"Extracted critical_factors: {len(critical_factors)} items")
+                
+            except json.JSONDecodeError as e:
+                current_app.logger.warning(f"JSON parse error: {str(e)}")
+                
+                # If we couldn't parse the JSON, use regex as fallback (SAME as AI method)
+                # This approach is kept from the original implementation as a fallback
+                json_block_pattern = r"```json\s*([\s\S]*?)\s*```"
+                json_match = re.search(json_block_pattern, summary_text, re.DOTALL)
+                
+                if json_match:
+                    # Clean the JSON string (SAME as AI method)
+                    json_text = json_match.group(1)
+                    json_text = ''.join(ch for ch in json_text if ord(ch) >= 32 or ch in '\n\r\t')
+                    
+                    try:
+                        # Try to parse the JSON block
+                        summary_data = json.loads(json_text)
+                        current_app.logger.info("Successfully parsed summary JSON block")
+                        
+                        # Extract title and summary as before (SAME as AI method)
+                        title = summary_data.get('title', 'Untitled Case')
+                        summary_sections = summary_data.get('summary', {})
+                        
+                        # Extract the different sections
+                        case_summary = summary_sections.get('General Case Summary', "")
+                        key_aspects = summary_sections.get('Key aspects of the case', [])
+                        potential_merits = summary_sections.get('Potential Merits of the Case', [])
+                        critical_factors = summary_sections.get('Critical factors', [])
+                        
+                    except json.JSONDecodeError:
+                        # If still can't parse, use regex to extract each section (SAME as AI method)
+                        current_app.logger.warning("Falling back to regex extraction")
+                        title = "Case Summary"  # Default title
+                        
+                        # Using empty arrays as default
+                        case_summary = ""
+                        key_aspects = []
+                        potential_merits = []
+                        critical_factors = []
+                else:
+                    # If no JSON block found, use default values (SAME as AI method)
+                    current_app.logger.warning("No JSON structure found, using defaults")
+                    title = "Case Summary"
+                    case_summary = ""
+                    key_aspects = []
+                    potential_merits = []
+                    critical_factors = []
+            
+            # Initialize database service (SAME as AI method)
+            current_app.logger.info("Initializing database service")
+            db_service = DatabaseService()
+            
+            try:
+                current_app.logger.info("Storing case data")
+                # FIXED: Use EXACT SAME case_data structure as AI method
+                case_data = {
+                    "title": title,
+                    "summary": case_summary,
+                    "keyAspects": key_aspects,
+                    "potentialMerits": potential_merits,
+                    "criticalFactors": critical_factors,
+                    "CaseId": caseId,
+                }
+                
+                stored_case = db_service.create_record('AI_case_submission', case_data)
+                
+                # Add the database ID to the response (SAME as AI method)
+                summary_result['case_id'] = stored_case[0]['id'] if stored_case and len(stored_case) > 0 else None
+                summary_result['stored'] = True
+                
+                current_app.logger.info(f"Case summary stored with ID: {summary_result.get('case_id')}")
+            except Exception as db_error:
+                current_app.logger.error(f"Database error: {str(db_error)}")
+                summary_result['stored'] = False
+                summary_result['db_error'] = str(db_error)
+            
+        except Exception as process_error:
+            current_app.logger.error(f"Error processing summary: {str(process_error)}")
+            summary_result['stored'] = False
+            summary_result['processing_error'] = str(process_error)
+
+        # Return response in EXACT SAME FORMAT as AI method
+        return jsonify(summary_result), 200
+        
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+
 def extract_list_items(html_content, section_title):
     escaped_title = re.escape(section_title)
     pattern = f"<h3>{escaped_title}</h3>\\s*<ul>(.+?)</ul>"
@@ -412,4 +612,6 @@ def test_db():
             "status": "error",
             "message": str(e)
         }), 500
-    
+
+# Export the blueprint - this is what your main.py imports
+api_bp = case_bp
