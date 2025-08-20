@@ -8,6 +8,7 @@
 - [Legal Practice Areas](#legal-practice-areas)
 - [System Features](#system-features)
 - [Installation](#installation)
+- [Dependencies Documentation](#dependencies-documentation)
 - [API Documentation](#api-documentation)
 - [Security & Compliance](#security--compliance)
 
@@ -18,7 +19,7 @@
 The LegalRescue.ai AI Backend powers seamless legal support through AI-driven case analysis, automatic categorization, intelligent form prefilling, and generation of structured legal summaries — streamlining the path from user input to actionable legal documentation.
 
 **Technology Foundation:**
-- OpenAI GPT-4o for advanced legal text analysis
+- OpenAI GPT-4o Mini for advanced legal text analysis
 - Comprehensive predefined form library in JSON format
 - Supabase database for scalable data management
 - Flask-based RESTful API architecture
@@ -149,8 +150,7 @@ Our platform provides specialized AI analysis and automated form processing acro
 ## System Features
 
 ### AI Processing Engine
-- **Primary Model:** OpenAI GPT-4o for advanced legal analysis
-- **Fallback Processing:** GPT-3.5-turbo for cost optimization
+- **Primary Model:** OpenAI GPT-4o Mini for advanced legal analysis
 - **Custom Legal Prompts:** Specialized prompt engineering for legal accuracy
 - **Confidence Scoring:** Reliability assessment and quality control mechanisms
 
@@ -171,18 +171,23 @@ Our platform provides specialized AI analysis and automated form processing acro
 ## Project Structure
 
 ```
-legalrescue-backend/
+ai-backend/
 ├── main.py                          # Application entry point and Flask app configuration
 ├── requirements.txt                 # Python dependencies
 ├── .env                            # Environment variables (not in repo)
 ├── .gitignore                      # Git ignore rules
 ├── README.md                       # Project documentation
+├── dependencies.md                 # Dependencies documentation
+├── list_libs.py                    # Dependency analysis script
+├── test_api.py                     # API testing script
 │
 ├── app/                            # Main application package
 │   ├── __init__.py
+│   ├── package-lock.json           # NPM package lock file
 │   │
 │   ├── api/                        # API layer
 │   │   ├── __init__.py
+│   │   ├── endpoints.py            # API endpoint definitions
 │   │   └── routes/                 # API route definitions
 │   │       ├── __init__.py
 │   │       ├── case.py             # Case management endpoints
@@ -192,11 +197,12 @@ legalrescue-backend/
 │   │       └── prediction_routes.py # AI prediction endpoints
 │   │
 │   ├── services/                   # Business logic layer
-│   │   ├── __init__.py
 │   │   ├── case_analyzer.py        # AI-powered case analysis service
-│   │   ├── form_prefiller.py       # Intelligent form population service
 │   │   ├── database_service.py     # Supabase database operations
+│   │   ├── form_prefill.py         # Intelligent form population service
 │   │   ├── health_check.py         # System monitoring service
+│   │   ├── legal_specialist_config.py # Legal domain configuration
+│   │   ├── test_cases.py           # Test case definitions
 │   │   │
 │   │   ├── category/               # Category management services
 │   │   │   ├── __init__.py
@@ -204,17 +210,14 @@ legalrescue-backend/
 │   │   │   └── category_validator.py # Category validation logic
 │   │   │
 │   │   ├── form/                   # Form processing services
-│   │   │   ├── __init__.py
 │   │   │   ├── form_generator.py   # Dynamic form generation
 │   │   │   └── form_validator.py   # Form data validation
 │   │   │
 │   │   └── prediction/             # AI prediction services
-│   │       ├── __init__.py
 │   │       ├── category_predictor.py # Legal category prediction
 │   │       └── prompt_generator.py  # AI prompt generation
 │   │
 │   ├── models/                     # Data models and schemas
-│   │   ├── __init__.py
 │   │   ├── case.py                 # Case data models
 │   │   ├── category.py             # Category data models
 │   │   └── form.py                 # Form data models
@@ -233,7 +236,8 @@ legalrescue-backend/
 │       └── legalForms.json         # Predefined legal form templates
 │
 └── logs/                           # Application logs
-    └── app.log                     # Main application log file
+    ├── app.log                     # Main application log file
+    └── legal_case_system.log       # Legal system specific logs
 ```
 
 ### Key Components
@@ -249,7 +253,7 @@ legalrescue-backend/
 - `general_routes.py` - System health monitoring and information endpoints
 
 **Service Layer (`app/services/`):**
-- `case_analyzer.py` - OpenAI GPT-4o integration for legal case analysis
+- `case_analyzer.py` - OpenAI GPT-4o Mini integration for legal case analysis
 - `form_prefiller.py` - AI-powered form population using predefined JSON templates
 - `database_service.py` - Supabase database operations and data management
 - `health_check.py` - System performance monitoring and diagnostics
@@ -271,7 +275,7 @@ legalrescue-backend/
 
 ### Prerequisites
 - Python 3.8 or higher
-- OpenAI API key with GPT-4o access
+- OpenAI API key with GPT-4o Mini access
 - Supabase account with database credentials
 - Minimum 4GB RAM (8GB recommended for production environments)
 
@@ -302,6 +306,223 @@ python main.py
 ```
 
 The application will be available at `http://localhost:3001`
+
+---
+
+## Dependencies Documentation
+
+> **Auto-generated on:** 2025-08-20 15:36:25  
+> **Project Path:** `C:\Users\Administrator\Desktop\AI-BACKEND\ai-backend`  
+> **Total Packages:** 85
+
+### Overview
+
+This section provides a comprehensive overview of all dependencies used in this Python project, including both direct dependencies (explicitly imported in your code) and sub-dependencies (required by your direct dependencies).
+
+### Quick Setup
+
+To set up this project environment:
+
+```bash
+# 1. Create a virtual environment (recommended)
+python -m venv venv
+
+# 2. Activate the virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+
+# 3. Install all dependencies
+pip install -r requirements.txt
+
+# 4. Verify installation
+pip list
+```
+
+### Direct Dependencies (6)
+
+These are the libraries explicitly imported and used in your project code:
+
+| Package | Version | Description |
+|---------|---------|-------------|
+| `Flask` | 2.3.3 | *Direct dependency* |
+| `Flask-Cors` | 4.0.0 | *Direct dependency* |
+| `Flask-Session` | 0.8.0 | *Direct dependency* |
+| `openai` | 1.61.1 | *Direct dependency* |
+| `requests` | 2.31.0 | *Direct dependency* |
+| `supabase` | 1.0.3 | *Direct dependency* |
+
+
+### Sub-Dependencies (79)
+
+These are automatically installed as requirements of your direct dependencies:
+
+| Package | Version | Type |
+|---------|---------|------|
+| `annotated-types` | 0.7.0 | Sub-dependency |
+| `anyio` | 3.7.1 | Sub-dependency |
+| `blinker` | 1.9.0 | Sub-dependency |
+| `cachelib` | 0.13.0 | Sub-dependency |
+| `certifi` | 2025.1.31 | Sub-dependency |
+| `cffi` | 1.17.1 | Sub-dependency |
+| `chardet` | 5.2.0 | Sub-dependency |
+| `charset-normalizer` | 3.4.1 | Sub-dependency |
+| `click` | 8.1.8 | Sub-dependency |
+| `click-log` | 0.4.0 | Sub-dependency |
+| `colorama` | 0.4.6 | Sub-dependency |
+| `cryptography` | 41.0.4 | Sub-dependency |
+| `deprecation` | 2.1.0 | Sub-dependency |
+| `distro` | 1.9.0 | Sub-dependency |
+| `docopt` | 0.6.2 | Sub-dependency |
+| `docutils` | 0.22 | Sub-dependency |
+| `dotty-dict` | 1.3.1 | Sub-dependency |
+| `ecdsa` | 0.19.0 | Sub-dependency |
+| `gitdb` | 4.0.12 | Sub-dependency |
+| `GitPython` | 3.1.45 | Sub-dependency |
+| `gotrue` | 1.3.1 | Sub-dependency |
+| `gunicorn` | 21.2.0 | Sub-dependency |
+| `h11` | 0.14.0 | Sub-dependency |
+| `httpcore` | 0.16.3 | Sub-dependency |
+| `httpx` | 0.23.3 | Sub-dependency |
+| `idna` | 3.10 | Sub-dependency |
+| `importlib_metadata` | 8.7.0 | Sub-dependency |
+| `invoke` | 1.7.3 | Sub-dependency |
+| `itsdangerous` | 2.2.0 | Sub-dependency |
+| `jaraco.classes` | 3.4.0 | Sub-dependency |
+| `jaraco.context` | 6.0.1 | Sub-dependency |
+| `jaraco.functools` | 4.3.0 | Sub-dependency |
+| `Jinja2` | 3.1.5 | Sub-dependency |
+| `jiter` | 0.8.2 | Sub-dependency |
+| `keyring` | 25.6.0 | Sub-dependency |
+| `MarkupSafe` | 3.0.2 | Sub-dependency |
+| `more-itertools` | 10.7.0 | Sub-dependency |
+| `msgspec` | 0.19.0 | Sub-dependency |
+| `nh3` | 0.3.0 | Sub-dependency |
+| `packaging` | 24.2 | Sub-dependency |
+| `pipreqs` | 0.4.13 | Sub-dependency |
+| `pkginfo` | 1.12.1.2 | Sub-dependency |
+| `postgrest` | 0.10.7 | Sub-dependency |
+| `pyasn1` | 0.6.1 | Sub-dependency |
+| `pycparser` | 2.22 | Sub-dependency |
+| `pydantic` | 2.10.6 | Sub-dependency |
+| `pydantic_core` | 2.27.2 | Sub-dependency |
+| `Pygments` | 2.19.2 | Sub-dependency |
+| `python-dateutil` | 2.9.0.post0 | Sub-dependency |
+| `python-dotenv` | 1.0.0 | Sub-dependency |
+| `python-gitlab` | 3.15.0 | Sub-dependency |
+| `python-jose` | 3.3.0 | Sub-dependency |
+| `python-semantic-release` | 7.33.2 | Sub-dependency |
+| `pywin32-ctypes` | 0.2.3 | Sub-dependency |
+| `readme_renderer` | 44.0 | Sub-dependency |
+| `realtime` | 1.0.6 | Sub-dependency |
+| `requests-toolbelt` | 1.0.0 | Sub-dependency |
+| `rfc3986` | 1.5.0 | Sub-dependency |
+| `rsa` | 4.9 | Sub-dependency |
+| `semver` | 2.13.0 | Sub-dependency |
+| `setuptools` | 80.9.0 | Sub-dependency |
+| `six` | 1.17.0 | Sub-dependency |
+| `smmap` | 5.0.2 | Sub-dependency |
+| `sniffio` | 1.3.1 | Sub-dependency |
+| `stdlib-list` | 0.11.1 | Sub-dependency |
+| `storage3` | 0.5.3 | Sub-dependency |
+| `StrEnum` | 0.4.15 | Sub-dependency |
+| `supafunc` | 0.2.2 | Sub-dependency |
+| `tomlkit` | 0.13.3 | Sub-dependency |
+| `tqdm` | 4.67.1 | Sub-dependency |
+| `twine` | 3.8.0 | Sub-dependency |
+| `typing_extensions` | 4.12.2 | Sub-dependency |
+| `urllib3` | 2.3.0 | Sub-dependency |
+| `waitress` | 3.0.2 | Sub-dependency |
+| `websockets` | 12.0 | Sub-dependency |
+| `Werkzeug` | 3.1.3 | Sub-dependency |
+| `wheel` | 0.45.1 | Sub-dependency |
+| `yarg` | 0.1.10 | Sub-dependency |
+| `zipp` | 3.23.0 | Sub-dependency |
+
+
+### Dependency Statistics
+
+- **Direct Dependencies:** 6
+- **Sub-Dependencies:** 79
+- **Total Installed Packages:** 85
+- **Python Files Scanned:** 34
+
+### Import Analysis
+
+**Detected Direct Imports:**
+- `app`
+- `ast`
+- `case`
+- `case_analyzer`
+- `category_routes`
+- `concurrent`
+- `dotenv`
+- `flask`
+- `flask_cors`
+- `flask_session`
+- `form_routes`
+- `general_routes`
+- `importlib`
+- `legal_specialist_config`
+- `openai`
+- `pkg_resources`
+- `platform`
+- `prediction_routes`
+- `psutil`
+- `requests`
+- `supabase`
+- `uuid`
+
+
+### Maintenance
+
+**Updating Dependencies**
+
+```bash
+# Update all packages to latest versions
+pip install --upgrade -r requirements.txt
+
+# Update specific package
+pip install --upgrade package_name
+
+# Re-generate this documentation
+python document_dependencies.py
+```
+
+**Adding New Dependencies**
+
+1. Install the package: `pip install new_package`
+2. Update requirements: `pip freeze > requirements.txt`
+3. Re-run documentation generator: `python document_dependencies.py`
+
+### Requirements.txt
+
+Your current `requirements.txt` file contains all the exact versions needed to reproduce this environment. Always commit this file to version control.
+
+### Troubleshooting
+
+**Common Issues:**
+
+1. **Import Errors:** Ensure all packages in requirements.txt are installed
+2. **Version Conflicts:** Use virtual environments to isolate dependencies
+3. **Missing Packages:** Run `pip install -r requirements.txt` to install all dependencies
+
+**Environment Check:**
+
+```bash
+# Check Python version
+python --version
+
+# Check pip version
+pip --version
+
+# List all installed packages
+pip list
+
+# Check for outdated packages
+pip list --outdated
+```
 
 ---
 
