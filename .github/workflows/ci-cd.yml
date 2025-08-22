@@ -27,6 +27,7 @@ jobs:
             python -m unittest discover
           else
             echo "No tests found"
+          fi
 
   deploy:
     needs: build-test
@@ -44,11 +45,20 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             echo "Deploying updates..."
-            cd /home/ubuntu/ai-backend  
+            cd /home/ubuntu/ai-backend       # <-- your app path
             git fetch
             git reset --hard origin/main
-            source venv/bin/activate         # activate existing virtual environment
+            source venv/bin/activate
             pip install -r requirements.txt
-            pkill gunicorn || true           # stop old Gunicorn
+            pkill gunicorn || true
             nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 &
             echo "Deployment complete!"
+
+      - name: Invalidate CloudFront cache
+        uses: chetan/invalidate-cloudfront-action@v1
+        with:
+          distribution-id: ${{ secrets.CLOUDFRONT_ID }}
+          paths: "/*"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
