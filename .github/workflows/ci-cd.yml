@@ -62,7 +62,7 @@ jobs:
             source venv/bin/activate
             pip install -r requirements.txt
             pkill gunicorn || true
-            nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 &
+            nohup waitress-serve --listen=0.0.0.0:5000 main:app
             echo "Deployment complete!"
 
       - name: Invalidate CloudFront cache
