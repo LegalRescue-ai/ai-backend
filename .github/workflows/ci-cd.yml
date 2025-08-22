@@ -61,6 +61,9 @@ jobs:
             git reset --hard origin/main
             source venv/bin/activate
             pip install -r requirements.txt
+
+            pkill gunicorn || true
+            fuser -k 3001/tcp || true
             pkill gunicorn || true
             nohup nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 &
             echo "Deployment complete!"
