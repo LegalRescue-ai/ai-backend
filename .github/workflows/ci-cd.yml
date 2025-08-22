@@ -27,7 +27,6 @@ jobs:
             python -m unittest discover
           else
             echo "No tests found"
-          fi
 
   deploy:
     needs: build-test
@@ -48,25 +47,49 @@ jobs:
             whoami
             pwd
 
-      - name: Deploy to EC2 via SSH
+      - name: Deploy to EC2 with rollback
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            echo "Deploying updates..."
-            cd /home/ubuntu/ai-backend       # <-- your app path
-            git fetch
-            git reset --hard origin/main
-            source venv/bin/activate
-            pip install -r requirements.txt
+            set -e  # Exit on any failure
 
-            pkill gunicorn || true
+            cd /home/ubuntu/ai-backend
+
+            # Save current commit for rollback
+            PREV_COMMIT=$(git rev-parse HEAD)
+            echo "Previous commit: $PREV_COMMIT"
+
+            # Pull new changes
+            git fetch --all
+            git reset --hard origin/main
+
+            # Activate virtualenv
+            if [ -f "venv/bin/activate" ]; then
+              source venv/bin/activate
+              pip install -r requirements.txt
+            fi
+
+            # Kill old processes
+            pkill -f gunicorn || true
             fuser -k 3001/tcp || true
-            pkill gunicorn || true
-            nohup nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 &
-            echo "Deployment complete!"
+
+            # Start Gunicorn
+            nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
+            sleep 10  # Give it time to start
+
+            # Health check
+            if ! curl -sSf http://127.0.0.1:3001/healthz; then
+              echo "Deployment failed, rolling back..."
+              pkill -f gunicorn || true
+              git reset --hard $PREV_COMMIT
+              nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
+              exit 1
+            fi
+
+            echo "Deployment successful!"
 
       - name: Invalidate CloudFront cache
         uses: chetan/invalidate-cloudfront-action@v1
