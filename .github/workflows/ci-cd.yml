@@ -23,12 +23,11 @@ jobs:
 
       - name: Run tests
         run: |
-            if [ -f "test_main.py" ]; then
-               python -m unittest discover
-            else
-               echo "No tests found"
-            fi
-
+          if [ -f "test_main.py" ]; then
+            python -m unittest discover
+          else
+            echo "No tests found"
+          fi
 
   deploy:
     needs: build-test
@@ -78,8 +77,9 @@ jobs:
             pkill -f gunicorn || true
             fuser -k 3001/tcp || true
 
-            # Start Gunicorn
+            # Start Gunicorn safely in background
             nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
+            disown
             sleep 10  # Give it time to start
 
             # Health check
@@ -88,6 +88,7 @@ jobs:
               pkill -f gunicorn || true
               git reset --hard $PREV_COMMIT
               nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
+              disown
               exit 1
             fi
 
