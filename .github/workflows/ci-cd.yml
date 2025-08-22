@@ -37,62 +37,41 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Test SSH connection
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            echo "SSH connected successfully"
-            whoami
-            pwd
-
-      - name: Deploy to EC2 with rollback
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            set -e  # Exit on any failure
+            set -e
 
             cd /home/ubuntu/ai-backend
 
-            # Save current commit for rollback
-            PREV_COMMIT=$(git rev-parse HEAD)
+            PREV_COMMIT=$(git rev-parse HEAD || echo "none")
             echo "Previous commit: $PREV_COMMIT"
 
-            # Pull new changes
             git fetch --all
             git reset --hard origin/main
 
-            # Activate virtualenv
             if [ -f "venv/bin/activate" ]; then
               source venv/bin/activate
               pip install -r requirements.txt
             fi
 
-            # Kill old processes
             pkill -f gunicorn || true
             fuser -k 3001/tcp || true
 
-            # Start Gunicorn safely in background
-            nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
-            disown
-            sleep 10  # Give it time to start
+            nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 & disown
+            echo "Gunicorn started"
+            exit 0   # <- make sure SSH step exits cleanly
 
-            # Health check
-            if ! curl -sSf http://127.0.0.1:3001/healthz; then
-              echo "Deployment failed, rolling back..."
-              pkill -f gunicorn || true
-              git reset --hard $PREV_COMMIT
-              nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
-              disown
-              exit 1
-            fi
-
-            echo "Deployment successful!"
+      - name: Health check app
+        run: |
+          echo "Waiting for server..."
+          sleep 15
+          curl -f http://${{ secrets.SERVER_HOST }}:3001/healthz || exit 1
+          echo "App is healthy!"
 
       - name: Invalidate CloudFront cache
         uses: chetan/invalidate-cloudfront-action@v1
