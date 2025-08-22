@@ -23,10 +23,12 @@ jobs:
 
       - name: Run tests
         run: |
-          if [ -f "test_main.py" ]; then
-            python -m unittest discover
-          else
-            echo "No tests found"
+            if [ -f "test_main.py" ]; then
+               python -m unittest discover
+            else
+               echo "No tests found"
+            fi
+
 
   deploy:
     needs: build-test
