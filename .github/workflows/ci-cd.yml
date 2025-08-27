@@ -19,18 +19,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f "requirements.txt" ]; then
-            pip install -r requirements.txt
-          fi
+          pip install -r requirements.txt
 
-      - name: Run unit tests
+      - name: Run tests
         run: |
-          echo "🔍 Checking for tests..."
-          if compgen -G "test*.py" > /dev/null || [ -d tests ]; then
-            echo "✅ Running tests in tests/ directory..."
-            python -m unittest discover -s tests -p "test*.py"
+          if [ -f "test_main.py" ]; then
+            python -m unittest discover
           else
-            echo "⚠️ No tests found, skipping."
+            echo "No tests found"
           fi
 
   deploy:
@@ -59,41 +55,91 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            set -e
-
+            set -e  # Exit on any failure
+            
             cd /home/ubuntu/ai-backend
-
+            
+            # Save current commit for rollback
             PREV_COMMIT=$(git rev-parse HEAD)
             echo "Previous commit: $PREV_COMMIT"
-
+            
+            # Pull new changes
             git fetch --all
             git reset --hard origin/main
-
-            if [ -f "venv/bin/activate" ]; then
+            
+            # Create virtual environment if it doesn't exist
+            if [ ! -d "venv" ]; then
+              python -m venv venv
+            fi
+            
+            # Activate virtualenv and install dependencies
+            source venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            
+            # Kill old processes more reliably
+            pkill -f gunicorn || true
+            sleep 2
+            pkill -9 -f gunicorn || true
+            
+            # Start Gunicorn with proper logging
+            nohup venv/bin/gunicorn main:app --bind 0.0.0.0:3001 --workers 4 --access-logfile - --error-logfile - > gunicorn.log 2>&1 &
+            
+            # Wait for Gunicorn to start
+            sleep 15
+            
+            # Health check with retries
+            MAX_RETRIES=5
+            RETRY_COUNT=0
+            HEALTH_CHECK_SUCCESS=false
+            
+            while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+              if curl -sSf http://127.0.0.1:3001/healthz > /dev/null 2>&1; then
+                HEALTH_CHECK_SUCCESS=true
+                break
+              fi
+              
+              echo "Health check attempt $((RETRY_COUNT + 1)) failed, retrying in 5 seconds..."
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              sleep 5
+            done
+            
+            if [ "$HEALTH_CHECK_SUCCESS" = false ]; then
+              echo "Deployment failed after $MAX_RETRIES attempts, rolling back..."
+              
+              # Kill current process
+              pkill -f gunicorn || true
+              sleep 2
+              
+              # Rollback to previous commit
+              git reset --hard $PREV_COMMIT
+              
+              # Reinstall dependencies for previous version
               source venv/bin/activate
               pip install -r requirements.txt
-            else
-              echo "⚠️ No venv found. Please set up one on the server."
+              
+              # Start previous version
+              nohup venv/bin/gunicorn main:app --bind 0.0.0.0:3001 --workers 4 --access-logfile - --error-logfile - > gunicorn.log 2>&1 &
+              
+              # Wait for rollback to start
+              sleep 10
+              
+              # Verify rollback
+              if curl -sSf http://127.0.0.1:3001/healthz > /dev/null 2>&1; then
+                echo "Rollback successful!"
+                exit 1
+              else
+                echo "Rollback also failed! Manual intervention required."
+                exit 1
+              fi
             fi
-
-            pkill -f gunicorn || true
-            fuser -k 3001/tcp || true
-
-            nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
-            sleep 8
-
-            if ! curl -sSf http://127.0.0.1:3001/healthz; then
-              echo "❌ Deployment failed, rolling back..."
-              pkill -f gunicorn || true
-              git reset --hard $PREV_COMMIT
-              nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
-              exit 1
-            fi
-
-            echo "✅ Deployment successful!"
+            
+            echo "Deployment successful!"
+            echo "Gunicorn process:"
+            ps aux | grep gunicorn
 
       - name: Invalidate CloudFront cache
-        uses: chetan/invalidate-cloudfront-action@v1
+        uses: chetan/invalidate-cloudfront-action@v2
         with:
           distribution-id: ${{ secrets.CLOUDFRONT_ID }}
           paths: "/*"
