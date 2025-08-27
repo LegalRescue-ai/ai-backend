@@ -81,6 +81,8 @@ jobs:
 
             # Start Gunicorn in background
             nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
+            disown
+ 
             sleep 10
 
             # Health check
@@ -89,6 +91,7 @@ jobs:
               pkill -f gunicorn || true
               git reset --hard "$PREV_COMMIT"
               nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
+              disown
               echo "↩️ Rolled back to $PREV_COMMIT"
               exit 1
             else
