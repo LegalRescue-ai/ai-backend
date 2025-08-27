@@ -4,166 +4,95 @@ on:
   push:
     branches: [main]
 
-concurrency:
-  group: deploy-ai-backend
-  cancel-in-progress: false
-
-env:
-  PYTHON_VERSION: "3.11"
-  HEALTHCHECK_URL: "http://127.0.0.1:3001/healthz"
-  APP_DIR: "/home/ubuntu/ai-backend"
-  SERVICE_NAME: "ai-backend"
-  VENV_DIR: "/home/ubuntu/ai-backend/venv"
-  GUNICORN_CMD: "/home/ubuntu/ai-backend/venv/bin/gunicorn main:app --bind 0.0.0.0:3001 --workers 4"
-
 jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+          fi
 
-      - name: Run tests (if present)
+      - name: Run unit tests
         run: |
+          echo "🔍 Checking for tests..."
           if compgen -G "test*.py" > /dev/null || [ -d tests ]; then
-            echo "✅ Running tests..."
-            python -m unittest discover -s tests -p "test*.py" || python -m unittest discover
+            echo "✅ Running tests in tests/ directory..."
+            python -m unittest discover -s tests -p "test*.py"
           else
-            echo "⚠️ No tests found, skipping..."
+            echo "⚠️ No tests found, skipping."
           fi
 
   deploy:
     needs: build-test
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout (for metadata only)
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Deploy to EC2 with rollback (systemd-managed)
+      - name: Test SSH connection
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          command_timeout: 20m
           script: |
-            set -euo pipefail
+            echo "SSH connected successfully"
+            whoami
+            pwd
 
-            echo "==> Connecting to ${HOSTNAME} and preparing deploy for ${{ env.SERVICE_NAME }}"
+      - name: Deploy to EC2 with rollback
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -e
 
-            cd "${{ env.APP_DIR }}"
+            cd /home/ubuntu/ai-backend
 
-            # Track previous commit for rollback
-            PREV_COMMIT="$(git rev-parse HEAD || echo 'UNKNOWN')"
-            echo "Previous commit: ${PREV_COMMIT}"
+            PREV_COMMIT=$(git rev-parse HEAD)
+            echo "Previous commit: $PREV_COMMIT"
 
-            # Fetch and hard reset to origin/main
-            git fetch --all --prune
+            git fetch --all
             git reset --hard origin/main
 
-            # Ensure venv exists
-            if [ ! -d "${{ env.VENV_DIR }}" ]; then
-              python3 -m venv "${{ env.VENV_DIR }}"
-            fi
-            source "${{ env.VENV_DIR }}/bin/activate"
-            pip install --upgrade pip
-            pip install -r requirements.txt
-
-            # Write/refresh systemd unit (idempotent)
-            SERVICE_FILE="/etc/systemd/system/${{ env.SERVICE_NAME }}.service"
-            sudo tee "${SERVICE_FILE}" >/dev/null <<'UNIT'
-            [Unit]
-            Description=AI Backend (Gunicorn)
-            After=network.target
-
-            [Service]
-            Type=simple
-            User=ubuntu
-            WorkingDirectory=/home/ubuntu/ai-backend
-            Environment="PATH=/home/ubuntu/ai-backend/venv/bin"
-            # Optional: load environment variables from .env if you have one
-            # EnvironmentFile=-/home/ubuntu/ai-backend/.env
-            ExecStart=/home/ubuntu/ai-backend/venv/bin/gunicorn main:app --bind 0.0.0.0:3001 --workers 4
-            Restart=always
-            RestartSec=3
-            TimeoutStartSec=60
-            TimeoutStopSec=30
-
-            [Install]
-            WantedBy=multi-user.target
-            UNIT
-
-            # Reload systemd and restart service
-            sudo systemctl daemon-reload
-            sudo systemctl enable "${{ env.SERVICE_NAME }}" || true
-
-            echo "==> Stopping existing service (if running)"
-            sudo systemctl stop "${{ env.SERVICE_NAME }}" || true
-
-            echo "==> Starting service"
-            sudo systemctl start "${{ env.SERVICE_NAME }}"
-
-            echo "==> Waiting for app to boot..."
-            # Poll healthcheck up to ~60s
-            for i in $(seq 1 30); do
-              if curl -fsS "${{ env.HEALTHCHECK_URL }}" >/dev/null 2>&1; then
-                echo "✅ Healthcheck passed on attempt $i"
-                HEALTH_OK=1
-                break
-              fi
-              sleep 2
-            done
-
-            if [ "${HEALTH_OK:-0}" != "1" ]; then
-              echo "❌ Healthcheck failed. Rolling back to ${PREV_COMMIT} ..."
-              # Roll back code
-              git reset --hard "${PREV_COMMIT}"
-
-              # Reinstall deps in case versions changed
+            if [ -f "venv/bin/activate" ]; then
+              source venv/bin/activate
               pip install -r requirements.txt
+            else
+              echo "⚠️ No venv found. Please set up one on the server."
+            fi
 
-              # Restart service with previous code
-              sudo systemctl restart "${{ env.SERVICE_NAME }}"
+            pkill -f gunicorn || true
+            fuser -k 3001/tcp || true
 
-              echo "==> Verifying rollback health..."
-              # Give it up to 60s to come back
-              for i in $(seq 1 30); do
-                if curl -fsS "${{ env.HEALTHCHECK_URL }}" >/dev/null 2>&1; then
-                  echo "↩️ Rollback successful on attempt $i (commit ${PREV_COMMIT})"
-                  exit 1  # Make the job fail so you see the rollback in GH Actions
-                fi
-                sleep 2
-              done
+            nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
+            sleep 8
 
-              echo "🚨 Rollback also failed. Showing last 200 lines of journal:"
-              sudo journalctl -u "${{ env.SERVICE_NAME }}" -n 200 --no-pager || true
+            if ! curl -sSf http://127.0.0.1:3001/healthz; then
+              echo "❌ Deployment failed, rolling back..."
+              pkill -f gunicorn || true
+              git reset --hard $PREV_COMMIT
+              nohup gunicorn main:app --bind 0.0.0.0:3001 --workers 4 > gunicorn.log 2>&1 &
               exit 1
             fi
 
-            echo "==> Deployment succeeded. Showing last 50 service log lines:"
-            sudo journalctl -u "${{ env.SERVICE_NAME }}" -n 50 --no-pager || true
             echo "✅ Deployment successful!"
 
-      - name: Invalidate CloudFront (optional)
+      - name: Invalidate CloudFront cache
         uses: chetan/invalidate-cloudfront-action@v1
         with:
           distribution-id: ${{ secrets.CLOUDFRONT_ID }}
