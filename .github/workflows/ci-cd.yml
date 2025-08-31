@@ -62,16 +62,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: python-ai-backend
-          path: /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
+          path: /home/ubuntu/app
 
       - name: Set up application directory
         run: |
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
           sudo mkdir -p /var/log/ai-backend
-          sudo chown ubuntu:ubuntu /var/log/ai-backend
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/app /var/log/ai-backend
 
       - name: Create and activate virtual environment
-        working-directory: /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
+        working-directory: /home/ubuntu/app
         run: |
           python3 -m venv venv
           source venv/bin/activate
@@ -81,15 +80,13 @@ jobs:
           deactivate
 
       - name: Create .env file from secrets
-        working-directory: /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
+        working-directory: /home/ubuntu/app
         run: |
           echo '${{ secrets.APP_SECRETS }}' > /tmp/app_secrets.txt
 
           if jq empty /tmp/app_secrets.txt 2>/dev/null; then
-            echo "✅ Detected JSON secrets format"
             jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' /tmp/app_secrets.txt > .env
           else
-            echo "✅ Detected key=value secrets format"
             cat /tmp/app_secrets.txt > .env
           fi
 
@@ -98,7 +95,7 @@ jobs:
 
       - name: Detect app entrypoint
         id: detect_entrypoint
-        working-directory: /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
+        working-directory: /home/ubuntu/app
         run: |
           if [ -f "wsgi.py" ]; then
             echo "entrypoint=wsgi:app" >> $GITHUB_OUTPUT
@@ -119,10 +116,10 @@ jobs:
           Type=simple
           User=ubuntu
           Group=ubuntu
-          WorkingDirectory=/home/ubuntu/actions-runner/_work/ai-backend/ai-backend
-          Environment=PYTHONPATH=/home/ubuntu/actions-runner/_work/ai-backend/ai-backend
-          EnvironmentFile=/home/ubuntu/actions-runner/_work/ai-backend/ai-backend/.env
-          ExecStart=/home/ubuntu/actions-runner/_work/ai-backend/ai-backend/venv/bin/gunicorn \\
+          WorkingDirectory=/home/ubuntu/app
+          Environment=PYTHONPATH=/home/ubuntu/app
+          EnvironmentFile=/home/ubuntu/app/.env
+          ExecStart=/home/ubuntu/app/venv/bin/gunicorn \\
             --bind 0.0.0.0:8000 \\
             --workers 4 \\
             --timeout 120 \\
@@ -146,7 +143,7 @@ jobs:
 
       - name: Restart application service
         run: |
-          sudo systemctl restart ai-backend.service
+          sudo systemctl restart --no-block ai-backend.service
           sleep 5
           sudo systemctl status ai-backend.service --no-pager -l || true
           echo "Check logs with: sudo journalctl -u ai-backend -n 50 --no-pager"
