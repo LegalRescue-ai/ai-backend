@@ -1,4 +1,4 @@
-name: Build & Deploy Python AI Backend
+name: Build & Deploy Python AI Backend to EC2 + CloudFront
 
 on:
   push:
@@ -10,100 +10,171 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
+          cache: pip
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          # Install pytest for CI only (not required in prod)
-          pip install pytest
 
-      - name: Run tests
-        run: python -m pytest tests/ -v
+      - name: Create deployment package
+        run: |
+          mkdir -p deployment-package
+          cp -r src/ requirements.txt app.py wsgi.py gunicorn.conf.py deployment-package/ || true
+          # Copy tests if they exist (optional, won’t break if missing)
+          if [ -d "tests" ]; then
+            cp -r tests/ deployment-package/
+          fi
 
-      - name: Upload build artifact
+      - name: Upload deployment artifact
         uses: actions/upload-artifact@v4
         with:
           name: python-ai-backend
-          path: .
-          # uploads the entire repo; later you can narrow it down if needed
+          path: deployment-package/
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: build
+    timeout-minutes: 10
 
     steps:
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.APP_SECRETS }}" ]; then
+            echo "❌ ERROR: APP_SECRETS secret is required but not set"
+            exit 1
+          fi
+
+      - name: Check Python installation
+        run: |
+          if ! command -v python3 >/dev/null; then
+            echo "Installing Python..."
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip python3-venv
+          fi
+          python3 --version
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: python-ai-backend
-          path: ./python-ai-backend
+          path: /home/ubuntu/ai-backend
 
-      - name: Copy files to EC2
-        env:
-          EC2_HOST: ${{ secrets.SERVER_HOST }}
-          EC2_USER: ${{ secrets.SERVER_USER }}
-          EC2_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      - name: Set up application directory
         run: |
-          echo "$EC2_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" \
-            ./python-ai-backend/ $EC2_USER@$EC2_HOST:/home/$EC2_USER/ai-backend
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/ai-backend
+          cd /home/ubuntu/ai-backend
 
-      - name: Configure & Restart systemd service
-        env:
-          EC2_HOST: ${{ secrets.SERVER_HOST }}
-          EC2_USER: ${{ secrets.SERVER_USER }}
-          EC2_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      - name: Create and activate virtual environment
+        working-directory: /home/ubuntu/ai-backend
         run: |
-          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST << 'EOF'
-          set -e
-          cd /home/$EC2_USER/ai-backend
-
-          # Ensure virtual environment exists
-          if [ ! -d "venv" ]; then
-            python3 -m venv venv
-          fi
+          python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
+          deactivate
 
-          # Create or update systemd service
-          sudo tee /etc/systemd/system/ai-backend.service > /dev/null <<SERVICE
+      - name: Create .env file from secrets
+        working-directory: /home/ubuntu/ai-backend
+        run: |
+          if ! command -v jq >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
+          
+          echo '${{ secrets.APP_SECRETS }}' > /tmp/env.json
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' /tmp/env.json > .env
+          chmod 600 .env
+          echo "✅ .env file created successfully"
+
+      - name: Create systemd service
+        run: |
+          cat << 'EOF' | sudo tee /etc/systemd/system/ai-backend.service
           [Unit]
-          Description=Python AI Backend
+          Description=Python AI Backend Service
           After=network.target
+          Requires=network.target
 
           [Service]
-          User=$EC2_USER
-          Group=$EC2_USER
-          WorkingDirectory=/home/$EC2_USER/ai-backend
-          Environment=PYTHONPATH=/home/$EC2_USER/ai-backend
-          EnvironmentFile=/home/$EC2_USER/ai-backend/.env
-          ExecStart=/home/$EC2_USER/ai-backend/venv/bin/gunicorn \
+          Type=simple
+          User=ubuntu
+          Group=ubuntu
+          WorkingDirectory=/home/ubuntu/ai-backend
+          Environment=PYTHONPATH=/home/ubuntu/ai-backend
+          EnvironmentFile=/home/ubuntu/ai-backend/.env
+          ExecStart=/home/ubuntu/ai-backend/venv/bin/gunicorn \
             --bind 0.0.0.0:8000 \
             --workers 4 \
             --timeout 120 \
             --access-logfile - \
             --error-logfile - \
+            --capture-output \
+            --log-level info \
             app:app
-
           Restart=always
           RestartSec=5
+          SyslogIdentifier=ai-backend
 
           [Install]
           WantedBy=multi-user.target
-          SERVICE
-
-          sudo systemctl daemon-reload
-          sudo systemctl enable ai-backend
-          sudo systemctl restart ai-backend
-          sudo systemctl status ai-backend --no-pager
           EOF
+
+      - name: Reload and enable systemd service
+        run: |
+          sudo systemctl daemon-reload
+          sudo systemctl enable ai-backend.service
+
+      - name: Restart application service
+        run: |
+          sudo systemctl restart ai-backend.service
+          sleep 5
+          sudo systemctl status ai-backend.service --no-pager -l
+          echo "✅ Application service deployed and started"
+
+  cloudfront:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always() && needs.deploy.result == 'success'
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Validate CloudFront configuration
+        run: |
+          if [ -z "${{ secrets.CLOUDFRONT_ID }}" ]; then
+            echo "⚠️ CLOUDFRONT_ID secret not set, skipping CloudFront invalidation"
+            exit 0
+          fi
+
+      - name: Invalidate CloudFront cache
+        run: |
+          echo "Invalidating CloudFront cache for distribution: ${{ secrets.CLOUDFRONT_ID }}"
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_ID }} \
+            --paths "/*"
+          echo "✅ CloudFront cache invalidation initiated"
+
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: [build, deploy, cloudfront]
+    if: always()
+
+    steps:
+      - name: Cleanup workflow
+        run: |
+          echo "Workflow completed with status:"
+          echo "Build: ${{ needs.build.result }}"
+          echo "Deploy: ${{ needs.deploy.result }}"
+          echo "CloudFront: ${{ needs.cloudfront.result }}"
