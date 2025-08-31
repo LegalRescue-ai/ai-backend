@@ -24,9 +24,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run tests (optional)
+      - name: Install test dependencies
         run: |
-          python -m pytest tests/ -v
+          pip install pytest
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -38,7 +42,6 @@ jobs:
             app.py
             wsgi.py
             gunicorn.conf.py
-            ecosystem.config.js
 
   deploy:
     runs-on: self-hosted
@@ -85,26 +88,7 @@ jobs:
           fi
           jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' /tmp/env.json > /home/ubuntu/ai-backend/.env
 
-      - name: Install and configure Gunicorn
-        run: |
-          if ! command -v gunicorn >/dev/null; then
-            echo "Installing Gunicorn..."
-            sudo apt-get install -y gunicorn
-          fi
-
-      - name: Restart application with PM2
-        working-directory: /home/ubuntu/ai-backend
-        run: |
-          pm2 restart ai-backend || pm2 start gunicorn --name "ai-backend" -- \
-            --bind 0.0.0.0:8000 \
-            --workers 4 \
-            --timeout 120 \
-            --access-logfile - \
-            --error-logfile - \
-            app:app
-          pm2 save
-
-      - name: Setup systemd service (as alternative)
+      - name: Setup systemd service
         run: |
           cat << 'EOF' | sudo tee /etc/systemd/system/ai-backend.service
           [Unit]
@@ -134,28 +118,14 @@ jobs:
 
           sudo systemctl daemon-reload
           sudo systemctl enable ai-backend
-          echo "✅ Systemd service created. Run 'sudo systemctl restart ai-backend' to start."
+          sudo systemctl restart ai-backend
+          echo "✅ Systemd service deployed and restarted."
 
   cloudfront:
     runs-on: ubuntu-latest
     needs: deploy
 
     steps:
-      - name: Validate CloudFront secrets exist
-        run: |
-          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
-            echo "❌ ERROR: AWS_ACCESS_KEY_ID secret is required but not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then
-            echo "❌ ERROR: AWS_SECRET_ACCESS_KEY secret is required but not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
-            echo "❌ ERROR: CLOUDFRONT_DISTRIBUTION_ID secret is required but not set"
-            exit 1
-          fi
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -166,5 +136,5 @@ jobs:
       - name: Invalidate CloudFront cache
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --distribution-id ${{ secrets.CLOUDFRONT_ID }} \
             --paths "/*"
