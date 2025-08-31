@@ -64,6 +64,13 @@ jobs:
           name: python-ai-backend
           path: /home/ubuntu/app
 
+      - name: Copy files into runner workspace
+        run: |
+          mkdir -p ~/actions-runner/_work/ai-backend/ai-backend
+          cp -r /home/ubuntu/app/* ~/actions-runner/_work/ai-backend/ai-backend/
+          echo "✅ Files copied to runner workspace"
+          ls -la ~/actions-runner/_work/ai-backend/ai-backend
+
       - name: Set up application directory
         run: |
           sudo mkdir -p /var/log/ai-backend
