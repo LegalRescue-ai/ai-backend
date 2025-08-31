@@ -28,7 +28,6 @@ jobs:
         run: |
           mkdir -p deployment-package
           cp -r src/ requirements.txt app.py wsgi.py gunicorn.conf.py deployment-package/ || true
-          # Copy tests if they exist (optional, won’t break if missing)
           if [ -d "tests" ]; then
             cp -r tests/ deployment-package/
           fi
@@ -42,7 +41,7 @@ jobs:
   deploy:
     runs-on: self-hosted
     needs: build
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Validate required secrets
@@ -52,14 +51,12 @@ jobs:
             exit 1
           fi
 
-      - name: Check Python installation
+      - name: Ensure Python + venv tools installed
         run: |
-          if ! command -v python3 >/dev/null; then
-            echo "Installing Python..."
-            sudo apt-get update
-            sudo apt-get install -y python3 python3-pip python3-venv
-          fi
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip python3-venv python3-setuptools python3-wheel
           python3 --version
+          pip3 --version
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -70,14 +67,13 @@ jobs:
       - name: Set up application directory
         run: |
           sudo chown -R ubuntu:ubuntu /home/ubuntu/ai-backend
-          cd /home/ubuntu/ai-backend
 
       - name: Create and activate virtual environment
         working-directory: /home/ubuntu/ai-backend
         run: |
           python3 -m venv venv
           source venv/bin/activate
-          pip install --upgrade pip
+          pip install --upgrade pip wheel setuptools
           pip install -r requirements.txt
           deactivate
 
@@ -88,7 +84,6 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y jq
           fi
-          
           echo '${{ secrets.APP_SECRETS }}' > /tmp/env.json
           jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' /tmp/env.json > .env
           chmod 600 .env
