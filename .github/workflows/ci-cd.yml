@@ -62,16 +62,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: python-ai-backend
-          path: /home/ubuntu/ai-backend
+          path: /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
 
       - name: Set up application directory
         run: |
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/ai-backend
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
           sudo mkdir -p /var/log/ai-backend
           sudo chown ubuntu:ubuntu /var/log/ai-backend
 
       - name: Create and activate virtual environment
-        working-directory: /home/ubuntu/ai-backend
+        working-directory: /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
         run: |
           python3 -m venv venv
           source venv/bin/activate
@@ -81,7 +81,7 @@ jobs:
           deactivate
 
       - name: Create .env file from secrets
-        working-directory: /home/ubuntu/ai-backend
+        working-directory: /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
         run: |
           echo '${{ secrets.APP_SECRETS }}' > /tmp/app_secrets.txt
 
@@ -99,7 +99,7 @@ jobs:
 
       - name: Detect app entrypoint
         id: detect_entrypoint
-        working-directory: /home/ubuntu/ai-backend
+        working-directory: /home/ubuntu/actions-runner/_work/ai-backend/ai-backend
         run: |
           if [ -f "wsgi.py" ]; then
             echo "entrypoint=wsgi:app" >> $GITHUB_OUTPUT
@@ -120,10 +120,10 @@ jobs:
           Type=simple
           User=ubuntu
           Group=ubuntu
-          WorkingDirectory=/home/ubuntu/ai-backend
-          Environment=PYTHONPATH=/home/ubuntu/ai-backend
-          EnvironmentFile=/home/ubuntu/ai-backend/.env
-          ExecStart=/home/ubuntu/ai-backend/venv/bin/gunicorn \\
+          WorkingDirectory=/home/ubuntu/actions-runner/_work/ai-backend/ai-backend
+          Environment=PYTHONPATH=/home/ubuntu/actions-runner/_work/ai-backend/ai-backend
+          EnvironmentFile=/home/ubuntu/actions-runner/_work/ai-backend/ai-backend/.env
+          ExecStart=/home/ubuntu/actions-runner/_work/ai-backend/ai-backend/venv/bin/gunicorn \\
             --bind 0.0.0.0:8000 \\
             --workers 4 \\
             --timeout 120 \\
