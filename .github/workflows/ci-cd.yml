@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -24,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Create deployment package
+      - name: Prepare deployment package
         run: |
           mkdir -p deployment-package
           cp -r src/ requirements.txt app.py wsgi.py gunicorn.conf.py deployment-package/ || true
@@ -85,7 +85,6 @@ jobs:
         run: |
           echo '${{ secrets.APP_SECRETS }}' > /tmp/app_secrets.txt
 
-          # Detect if it's JSON or key=value format
           if jq empty /tmp/app_secrets.txt 2>/dev/null; then
             echo "✅ Detected JSON secrets format"
             jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' /tmp/app_secrets.txt > .env
@@ -175,7 +174,7 @@ jobs:
 
       - name: Invalidate CloudFront cache
         run: |
-          echo "Invalidating CloudFront cache for distribution: ${{ secrets.CLOUDFRONT_ID }}"
+          echo "🚀 Invalidating CloudFront cache for distribution: ${{ secrets.CLOUDFRONT_ID }}"
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_ID }} \
             --paths "/*"
@@ -187,9 +186,9 @@ jobs:
     if: always()
 
     steps:
-      - name: Cleanup workflow
+      - name: Cleanup workflow summary
         run: |
-          echo "Workflow completed with status:"
+          echo "🏁 Workflow completed"
           echo "Build: ${{ needs.build.result }}"
           echo "Deploy: ${{ needs.deploy.result }}"
           echo "CloudFront: ${{ needs.cloudfront.result }}"
