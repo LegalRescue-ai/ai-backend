@@ -34,7 +34,11 @@ jobs:
                    --exclude='__pycache__' \
                    --exclude='*.pyc' \
                    ./ deployment-package/
-          echo "✅ Deployment package prepared"
+          # Ensure Node files are included
+          cp -f package.json deployment-package/ || true
+          cp -f package-lock.json deployment-package/ || true
+          cp -f yarn.lock deployment-package/ || true
+          echo "✅ Deployment package prepared (Python + Node support)"
           ls -la deployment-package
 
       - name: Upload deployment artifact
