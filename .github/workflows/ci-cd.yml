@@ -27,10 +27,15 @@ jobs:
       - name: Prepare deployment package
         run: |
           mkdir -p deployment-package
-          cp -r src/ requirements.txt app.py wsgi.py gunicorn.conf.py deployment-package/ || true
-          if [ -d "tests" ]; then
-            cp -r tests/ deployment-package/
-          fi
+          # Copy everything except venv, git, CI config, etc.
+          rsync -av --exclude='.git' \
+                   --exclude='.github' \
+                   --exclude='venv' \
+                   --exclude='__pycache__' \
+                   --exclude='*.pyc' \
+                   ./ deployment-package/
+          echo "✅ Deployment package prepared"
+          ls -la deployment-package
 
       - name: Upload deployment artifact
         uses: actions/upload-artifact@v4
@@ -106,8 +111,13 @@ jobs:
         run: |
           if [ -f "wsgi.py" ]; then
             echo "entrypoint=wsgi:app" >> $GITHUB_OUTPUT
-          else
+          elif [ -f "app.py" ]; then
             echo "entrypoint=app:app" >> $GITHUB_OUTPUT
+          elif [ -f "main.py" ]; then
+            echo "entrypoint=main:app" >> $GITHUB_OUTPUT
+          else
+            echo "❌ ERROR: No entrypoint found (expected main.py, app.py, or wsgi.py)"
+            exit 1
           fi
 
       - name: Create systemd service
