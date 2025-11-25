@@ -295,7 +295,25 @@ pip install -r requirements.txt
 ```
 
 **3. Environment Variables**
-Create `.env` file with required configuration settings including OpenAI API key, Supabase credentials, and security settings.
+
+Create a `.env` file with required configuration settings. Copy from `example.env` and fill in your values:
+
+```bash
+cp example.env .env
+```
+
+**Required Environment Variables:**
+- `SECRET_KEY` - Generate using: `python -c "import secrets; print(secrets.token_hex(32))"`
+- `OPENAI_API_KEY` - Your OpenAI API key
+- `SUPABASE_URL` - Your Supabase project URL
+- `SUPABASE_KEY` - Your Supabase anon/service key
+- `CORS_ORIGINS` - Comma-separated allowed origins (e.g., `https://yourdomain.com`)
+- `FLASK_ENV` - Set to `production` for deployments
+
+⚠️ **Security Notice:** 
+- Generate a **unique** SECRET_KEY for each environment (dev, staging, production)
+- Never commit `.env` files to version control
+- Never reuse SECRET_KEYs across environments
 
 **4. Database Setup**
 Initialize required Supabase tables using provided database schema.
