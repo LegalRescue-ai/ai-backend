@@ -8,7 +8,9 @@ class Config:
     """
     
     # Flask Settings
-    SECRET_KEY = os.getenv('SECRET_KEY', 'your-ultra-secret-key-that-no-one-can-guess')
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    if not SECRET_KEY:
+        raise ValueError("SECRET_KEY environment variable must be set")
     DEBUG = os.getenv('DEBUG', 'False') == 'True'
     ENV = os.getenv('FLASK_ENV', 'development')
     
@@ -43,7 +45,8 @@ class Config:
     OPENAI_REQUEST_TIMEOUT = int(os.getenv('OPENAI_REQUEST_TIMEOUT', 30))
     
     # CORS Configuration
-    CORS_ORIGINS = os.getenv('CORS_ORIGINS', '*')
+    # Must be explicitly set - no default wildcard
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', '')
     
     # Allowed File Upload Types
     ALLOWED_EXTENSIONS = {
