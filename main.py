@@ -52,7 +52,7 @@ def configure_logging(app):
 def validate_environment():
     load_dotenv()
 
-    required_vars = ['SECRET_KEY', 'OPENAI_API_KEY', 'FLASK_ENV', 'SUPABASE_URL', 'SUPABASE_KEY']
+    required_vars = ['SECRET_KEY', 'OPENAI_API_KEY', 'FLASK_ENV', 'SUPABASE_URL', 'SUPABASE_KEY', 'CORS_ORIGINS']
     missing_vars = [var for var in required_vars if not os.getenv(var)]
 
     if missing_vars:
@@ -73,13 +73,11 @@ def create_app(config_object=None):
 
     configure_logging(app)
 
-    CORS(app, resources={r"/api/*": 
-    {"origins":[ 
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://main.dpfd8ph4b67cm.amplifyapp.com",
-    ]
-    }}, supports_credentials=True)
+    # CORS Configuration with explicit origin whitelisting
+    allowed_origins = os.getenv('CORS_ORIGINS', '').split(',')
+    if not allowed_origins or allowed_origins == ['']:
+        raise ValueError("CORS_ORIGINS must be explicitly set")
+    CORS(app, resources={r"/api/*": {"origins": allowed_origins}}, supports_credentials=True)
 
     try:
         openai.api_key = os.getenv('OPENAI_API_KEY')
